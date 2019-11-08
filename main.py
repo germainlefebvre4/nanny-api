@@ -15,18 +15,74 @@ app = Flask(__name__)
 # c.execute('''CREATE TABLE days_exception (creation text, exception text)''')
 # c.close()
 
+weekmask_list = [1,1,0,1,1,0,0]
 salary_month_net = 367
 fees_day_net = 3.08
 
-@app.route("/business/month/<int:year>/<int:month>")
+@app.route("/reports/<int:year>/<int:month>")
 def getBusinessDays(year, month):
-   start = dt.date( year, month, 1 )
-   end = dt.date(year, month, 1) + dd.datedelta(months=1)
-   holidays_fra = [x[0] for x in holidays.FRA(years=2019).items()]
-   bdays = int(np.busday_count( start, end , weekmask=[1,1,0,1,1,0,0], holidays=holidays_fra ))
-   month_str = dt.date(year, month, 1).strftime("%B")
-   fees_month_net = fees_day_net*bdays
-   return  {month_str: {"businessDays": bdays, "salary": salary_month_net, "fees": fees_month_net }}
+    c = conn.cursor()
+    c.execute("select exception from days_exception where exception >= " + str(year)+str(month)+"01" )
+    data = c.fetchall()
+    c.close()
+
+    days_exception = [dt.date(int(x[0][:4]), int(x[0][4:-2]), int(x[0][-2:])) for x in data]
+
+    start = dt.date( year, month, 1 )
+    end = dt.date(year, month, 1) + dd.datedelta(months=1)
+    holidays_fra = [x[0] for x in holidays.FRA(years=year).items()]
+    print(holidays_fra)
+    bdays = int(np.busday_count( start, end , weekmask=weekmask_list, holidays=holidays_fra+days_exception ))
+    month_str = dt.date(year, month, 1).strftime("%B")
+    fees_month_net = fees_day_net*bdays
+    return  {month_str: {"businessDays": bdays, "salary": salary_month_net, "fees": fees_month_net }}
+
+@app.route("/calendar/exceptions", methods=["GET"])
+def getBusinessDayException():
+    c = conn.cursor()
+    c.execute("select * from days_exception")
+    data = c.fetchall()
+    c.close()
+    return json.dumps(data)
+
+@app.route("/calendar/exceptions", methods=["POST"])
+def addBusinessDayException():
+    creation = dt.datetime.now()
+    day = request.form.get("day")
+    month = request.form.get("month")
+    year = request.form.get("year")
+    exception = "{}{}{}".format(year, month, day) # dt.date( year, month, day )
+
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    c.execute('INSERT INTO days_exception(creation,exception) VALUES (?,?)', (creation, exception))
+    conn.commit()
+    c.close()
+    return { "msg": "Day {}-{}-{} added to day exceptions.".format(day, month, year) }, status.HTTP_201_CREATED
+
+@app.route("/calendar/exceptions", methods=["DELETE"])
+def delBusinessDayException():
+    creation = dt.datetime.now()
+    day = request.form.get("day")
+    month = request.form.get("month")
+    year = request.form.get("year")
+    exception = "{}{}{}".format(year, month, day) # dt.date( year, month, day )
+
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    c.execute('DELETE FROM days_exception WHERE exception = ?', [exception])
+    conn.commit()
+    c.close()
+    return { "msg": "Day {}-{}-{} removed from day exceptions.".format(day, month, year) }, status.HTTP_201_CREATED
+
+
+@app.route("/")
+def getProducts():
+    links = [
+        "/business/month/2019/10",
+        "/business/day/exception"
+    ]
+    return render_template('doc.html', links=links)
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=80)
+    app.run(host='0.0.0.0', port=8080)
