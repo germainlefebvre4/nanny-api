@@ -21,8 +21,11 @@ fees_day_net = 3.08
 
 @app.route("/reports/<int:year>/<int:month>")
 def getBusinessDays(year, month):
+    select_start = str(year)+str(month)+"01"
+    select_end_tmp = dt.date(year, month, 1) + dd.datedelta(months=1)
+    select_end = select_end_tmp.strftime('%Y%m%d')
     c = conn.cursor()
-    c.execute("select exception from days_exception where exception >= " + str(year)+str(month)+"01" )
+    c.execute("select exception from days_exception where exception >= " + select_start + " and exception < " + select_end )
     data = c.fetchall()
     c.close()
 
@@ -31,11 +34,11 @@ def getBusinessDays(year, month):
     start = dt.date( year, month, 1 )
     end = dt.date(year, month, 1) + dd.datedelta(months=1)
     holidays_fra = [x[0] for x in holidays.FRA(years=year).items()]
-    print(holidays_fra)
-    bdays = int(np.busday_count( start, end , weekmask=weekmask_list, holidays=holidays_fra+days_exception ))
+    bdays = int(np.busday_count( start, end , weekmask=weekmask_list, holidays=holidays_fra ))
+    bdays_wExceptions = int(np.busday_count( start, end , weekmask=weekmask_list, holidays=holidays_fra+days_exception ))
     month_str = dt.date(year, month, 1).strftime("%B")
     fees_month_net = fees_day_net*bdays
-    return  {month_str: {"businessDays": bdays, "salary": salary_month_net, "fees": fees_month_net }}
+    return  {month_str: {"businessDays": bdays, "businessDaysWithExceptions": bdays_wExceptions, "salary": salary_month_net, "fees": fees_month_net }}
 
 @app.route("/calendar/exceptions", methods=["GET"])
 def getBusinessDayException():
