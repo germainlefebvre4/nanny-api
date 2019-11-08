@@ -1,11 +1,19 @@
-from flask import Flask  # pip install flask
+from flask import Flask, redirect, url_for, request, render_template  # pip install flask
+from flask_api import status
 import sys
 import datetime as dt
 import datedelta as dd
 import numpy as np
 import holidays
+import sqlite3
+import json
 
+DATABASE_NAME = "nanny.db"
+conn = sqlite3.connect(DATABASE_NAME, check_same_thread=False)
 app = Flask(__name__)
+# c = conn.cursor()
+# c.execute('''CREATE TABLE days_exception (creation text, exception text)''')
+# c.close()
 
 salary_month_net = 367
 fees_day_net = 3.08
