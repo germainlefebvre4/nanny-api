@@ -15,4 +15,20 @@ pipenv update
 pipenv run python main.js
 ```
 
+### Systemd service
+```
+[Unit]
+Description=Nanny API Service
+After=multi-user.target
 
+[Service]
+User=root
+WorkingDirectory=/opt/python/nanny-api
+Restart=always
+Type=simple
+ExecStart=/usr/local/bin/pipenv run python main.py
+StandardInput=tty-force
+
+[Install]
+WantedBy=multi-user.target
+```
