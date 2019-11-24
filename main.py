@@ -37,7 +37,7 @@ def getBusinessDays(year, month):
     bdays = int(np.busday_count( start, end , weekmask=weekmask_list, holidays=holidays_fra ))
     bdays_wExceptions = int(np.busday_count( start, end , weekmask=weekmask_list, holidays=holidays_fra+days_exception ))
     month_str = dt.date(year, month, 1).strftime("%B")
-    fees_month_net = fees_day_net*bdays
+    fees_month_net = fees_day_net*bdays_wExceptions
     return  {month_str: {"businessDays": bdays, "businessDaysWithExceptions": bdays_wExceptions, "salary": salary_month_net, "fees": fees_month_net }}
 
 @app.route("/calendar/exceptions", methods=["GET"])
