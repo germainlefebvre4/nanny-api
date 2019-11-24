@@ -15,6 +15,7 @@ app = Flask(__name__)
 # c.execute('''CREATE TABLE days_exception (creation text, exception text)''')
 # c.close()
 
+hours_by_day = 10.5
 weekmask_list = [1,1,0,1,1,0,0]
 salary_month_net = 367
 fees_day_net = 3.08
@@ -36,9 +37,18 @@ def getBusinessDays(year, month):
     holidays_fra = [x[0] for x in holidays.FRA(years=year).items()]
     bdays = int(np.busday_count( start, end , weekmask=weekmask_list, holidays=holidays_fra ))
     bdays_wExceptions = int(np.busday_count( start, end , weekmask=weekmask_list, holidays=holidays_fra+days_exception ))
+    hours_normalByMonth = int(hours_by_day*weekmask_list.count(1)*52/12)
     month_str = dt.date(year, month, 1).strftime("%B")
     fees_month_net = "{0:.2f}".format(fees_day_net*bdays_wExceptions)
-    return  {month_str: {"businessDays": bdays, "businessDaysWithExceptions": bdays_wExceptions, "salary": salary_month_net, "fees": fees_month_net }}
+    return {
+        month_str: {
+            "businessDays": bdays,
+            "businessDaysWithExceptions": bdays_wExceptions,
+            "normalHours": hours_normalByMonth,
+            "salary": salary_month_net,
+            "fees": fees_month_net
+        }
+    }
 
 @app.route("/calendar/exceptions", methods=["GET"])
 def getBusinessDayException():
