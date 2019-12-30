@@ -1,4 +1,5 @@
 from flask import Flask, redirect, url_for, request, render_template  # pip install flask
+from flask_cors import CORS
 from flask_api import status
 import sys
 import datetime as dt
@@ -11,13 +12,16 @@ import json
 DATABASE_NAME = "nanny.db"
 conn = sqlite3.connect(DATABASE_NAME, check_same_thread=False)
 app = Flask(__name__)
+app.config['CORS_HEADERS'] = 'Content-Type'
+cors = CORS(app, resources={r"/.*": {"origins": "http://localhost"}})
+
 # c = conn.cursor()
 # c.execute('''CREATE TABLE days_exception (creation text, exception text)''')
 # c.close()
 
 hours_by_day = 10.5
 weekmask_list = [1,1,0,1,1,0,0]
-salary_month_net = 367
+salary_month_net = 637
 fees_day_net = 3.08
 
 @app.route("/reports/<int:year>/<int:month>")
@@ -41,13 +45,14 @@ def getBusinessDays(year, month):
     month_str = dt.date(year, month, 1).strftime("%B")
     fees_month_net = "{0:.2f}".format(fees_day_net*bdays_wExceptions)
     return {
-        month_str: {
+            "year": year,
+            "month": month_str,
+            "monthId": month,
             "businessDays": bdays,
             "businessDaysWithExceptions": bdays_wExceptions,
             "normalHours": hours_normalByMonth,
             "salary": salary_month_net,
             "fees": fees_month_net
-        }
     }
 
 @app.route("/calendar/exceptions", methods=["GET"])
@@ -92,8 +97,8 @@ def delBusinessDayException():
 @app.route("/")
 def getProducts():
     links = [
-        "/business/month/2019/10",
-        "/business/day/exception"
+        "/reports/2019/10",
+        "/calendar/exceptions"
     ]
     return render_template('doc.html', links=links)
 

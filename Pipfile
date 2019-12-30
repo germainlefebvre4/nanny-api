@@ -11,6 +11,7 @@ datedelta = "*"
 holidays = "*"
 numpy = "*"
 flask-api = "*"
+flask-cors = "*"
 
 [requires]
 python_version = "3.7"
