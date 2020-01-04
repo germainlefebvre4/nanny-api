@@ -5,12 +5,24 @@ Python versions covered:
 * `Python 3.6`
 * `Python 3.7`
 
-## Prepare
+## Getting started
+### Init database
+```sh
+pipenv run flask init-db
+```
+### Run the app
+```sh
+pipenv run flask run --host=0.0.0.0 --port=8080
+```
+Browse the app on localhost port 8080.
+
+## Pipenv
+### Prepare
 ```
 pipenv update
 ```
 
-## Runtime
+### Runtime
 ```
 pipenv run python main.js
 ```

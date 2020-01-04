@@ -11,7 +11,7 @@ import json
 
 DATABASE_NAME = "nanny.db"
 conn = sqlite3.connect(DATABASE_NAME, check_same_thread=False)
-app = Flask(__name__)
+#app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
 cors = CORS(app, resources={r"/.*": {"origins": "http://localhost"}})
 
