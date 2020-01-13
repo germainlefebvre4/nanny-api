@@ -21,12 +21,16 @@ DROP TABLE IF EXISTS days_off;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS absence_type;
 
+
+PRAGMA encoding="UTF-8";
+
+
 /***********************************************************
 * configuration
 ************************************************************/
 
 CREATE TABLE configuration (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     value TEXT NOT NULL
 );
@@ -36,7 +40,7 @@ CREATE TABLE configuration (
 ************************************************************/
 
 CREATE TABLE absence_type (
-    id TEXT NOT NULL,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     kind TEXT NOT NULL
 );
 
@@ -45,7 +49,7 @@ CREATE TABLE absence_type (
 ************************************************************/
 
 CREATE TABLE users (
-    id INTEGER NOT NULL,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     email TEXT NUL NULL UNIQUE,
     firstname TEXT NOT NULL
 );
@@ -55,11 +59,11 @@ CREATE TABLE users (
 ************************************************************/
 
 CREATE TABLE days_off (
-    id TEXT NOT NULL,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     day DATE NOT NULL,
-    usersid INTEGER NOT NULL,
+    userid INTEGER NOT NULL,
     absenceid TEXT NOT NULL,
-    FOREIGN KEY (usersid)
+    FOREIGN KEY (userid)
         REFERENCES users (id)
             ON DELETE CASCADE,
     FOREIGN KEY (absenceid)
@@ -76,3 +80,11 @@ CREATE TABLE days_off (
 /***********************************************************
 * FOREIGN KEYS
 ************************************************************/
+
+/***********************************************************
+* DATA
+************************************************************/
+INSERT INTO users (email, firstname) VALUES ('germain@lefebvre.fr', 'Germain');
+INSERT INTO absence_type (kind) VALUES ('Congé');
+INSERT INTO absence_type (kind) VALUES ('Maladie');
+
