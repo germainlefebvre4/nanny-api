@@ -59,10 +59,10 @@ CREATE TABLE users (
 ************************************************************/
 
 CREATE TABLE days_off (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    day DATE NOT NULL,
+    day TEXT NOT NULL,
     userid INTEGER NOT NULL,
     absenceid TEXT NOT NULL,
+    PRIMARY KEY (userid, day)
     FOREIGN KEY (userid)
         REFERENCES users (id)
             ON DELETE CASCADE,
@@ -84,7 +84,9 @@ CREATE TABLE days_off (
 /***********************************************************
 * DATA
 ************************************************************/
-INSERT INTO users (email, firstname) VALUES ('germain@lefebvre.fr', 'Germain');
-INSERT INTO absence_type (kind) VALUES ('Congé');
-INSERT INTO absence_type (kind) VALUES ('Maladie');
+INSERT INTO users (id, email, firstname) VALUES (1, 'germain@lefebvre.fr', 'Germain');
+INSERT INTO absence_type (id, kind) VALUES (1, 'Absence enfant');
+INSERT INTO absence_type (id, kind) VALUES (2, 'Maladie enfant');
+INSERT INTO absence_type (id, kind) VALUES (3, 'Congé Nounou');
+INSERT INTO absence_type (id, kind) VALUES (4, 'Maladie Nounou');
 

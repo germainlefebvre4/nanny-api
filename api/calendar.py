@@ -18,7 +18,7 @@ def getBusinessDayException():
 
     db = get_db()
     cur = db.cursor()
-    rows = cur.execute("SELECT do.day,us.id,ab.kind FROM days_off as do JOIN users AS us ON us.id = do.userid JOIN absence_type AS ab ON ab.id = do.absenceId ").fetchall()
+    rows = cur.execute("SELECT do.day,us.firstname,ab.kind FROM days_off as do JOIN users AS us ON us.id = do.userid JOIN absence_type AS ab ON ab.id = do.absenceId ").fetchall()
     db.close()
     for row in rows:
         data.append([row[0].strftime('%Y-%m-%d'), row[1], row[2]])
@@ -29,32 +29,49 @@ def getBusinessDayException():
 def addBusinessDayException():
     creation = dt.datetime.now()
     day = request.form.get("day")
-    # month = request.form.get("month")
-    # year = request.form.get("year")
+    absence = request.form.get("absence")
 
     userId = 1
-    absenceId = 1
+    absenceId = "{}".format(absence)
     day = "{}".format(day)
 
     db = get_db()
     cur = db.cursor()
+    rows = cur.execute("SELECT day, userId, absenceId FROM days_off WHERE day = ? AND userId = ? and absenceId = ?", [day, userId, absenceId]).fetchall()
+    if len(rows) > 0:
+        db.close()
+        return { "msg": "Day {} absenceId {} already exists.".format(day, absence) }, status.HTTP_409_CONFLICT
+
+    cur = db.cursor()
     cur.execute('INSERT INTO days_off(userid, absenceid, day) VALUES (?, ?, ?)', (userId, absenceId, day))
     db.commit()
+
     db.close()
 
-    return { "msg": "Day {} added to day exceptions.".format(day) }, status.HTTP_201_CREATED
+    return { "msg": "Day {} absenceId {} added to day exceptions.".format(day, absence) }, status.HTTP_201_CREATED
 
 @bp.route("/calendar/exceptions", methods=["DELETE"])
 def delBusinessDayException():
     creation = dt.datetime.now()
+    absence = request.form.get("absence")
+    absenceId = "{}".format(absence)
     day = request.form.get("day")
-    # month = request.form.get("month")
-    # year = request.form.get("year")
     day = "{}".format(day)
 
     db = get_db()
     cur = db.cursor()
-    cur.execute('DELETE FROM days_off WHERE day = ?', [day])
+    cur.execute('DELETE FROM days_off WHERE absenceid = ? and day = ?', [absenceId, day])
     db.commit()
     db.close()
-    return { "msg": "Day {} removed from day exceptions.".format(day) }, status.HTTP_201_CREATED
+    return { "msg": "Day {} absenceId {} removed from day exceptions.".format(day, absence) }, status.HTTP_201_CREATED
+
+@bp.route("/select", methods=["GET"])
+def getSelect():
+    db = get_db()
+    cur = db.cursor()
+    cur.execute("select * from days_off")
+    rows = cur.fetchall()
+    data = []
+    for row in rows:
+        data.append([x for x in row])
+    return { "msg": data }
