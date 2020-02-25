@@ -24,7 +24,7 @@ pipenv update
 
 ### Runtime
 ```
-pipenv run python main.js
+pipenv run python main.py
 ```
 
 ### Systemd service
