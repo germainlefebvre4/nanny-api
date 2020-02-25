@@ -23,9 +23,10 @@ fees_day_net = 3.08
 
 @bp.route("/reports/<int:year>/<int:month>")
 def getReport(year, month):
-    select_start = "{}-{}-{}".format(year, month, "01") # str(year)+str(month)+"01"
+    select_start = "{:04d}-{:02d}-{:02d}".format(int(year), int(month), 1) # str(year)+str(month)+"01"
     select_end_tmp = dt.date(year, month, 1) + dd.datedelta(months=1)
     select_end = select_end_tmp.strftime('%Y-%m-%d')
+    current_app.logger.info("Dearch dates: From {} to {}".format(select_start, select_end))
 
     # DB queries
     db = get_db()
@@ -70,7 +71,7 @@ def getReport(year, month):
     bdays_fees_wExceptions = int(np.busday_count( start, end , weekmask=weekmask_list, holidays=holidays_fra+dayoff_nanny+disease_nanny+absence_child+disease_child ))
     hours_normalByMonth = int(hours_by_day*weekmask_list.count(1)*52/12)
     fees_month_net = "{0:.2f}".format(fees_day_net*bdays_fees_wExceptions)
-    salary_month_net = str(salary_hour_net*hours_by_day*sum(weekmask_list)*52/12*bdays_salary_wExceptions/bdays)
+    salary_month_net = "{0:.2f}".format(salary_hour_net*hours_by_day*sum(weekmask_list)*52/12*bdays_salary_wExceptions/bdays)
     
     return {
         "year": year,

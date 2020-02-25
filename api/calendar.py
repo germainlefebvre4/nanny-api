@@ -21,7 +21,7 @@ def getBusinessDayException():
     rows = cur.execute("SELECT do.day,us.firstname,ab.kind FROM days_off as do JOIN users AS us ON us.id = do.userid JOIN absence_type AS ab ON ab.id = do.absenceId ").fetchall()
     db.close()
     for row in rows:
-        data.append([row[0].strftime('%Y-%m-%d'), row[1], row[2]])
+        data.append([row[0], row[1], row[2]])
 
     return json.dumps(data)
 

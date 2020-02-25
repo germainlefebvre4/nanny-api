@@ -12,6 +12,8 @@ holidays = "*"
 numpy = "*"
 flask-api = "*"
 flask-cors = "*"
+pytest = "*"
+pytest-cov = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3"
