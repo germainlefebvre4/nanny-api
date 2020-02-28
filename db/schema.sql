@@ -59,10 +59,11 @@ CREATE TABLE users (
 ************************************************************/
 
 CREATE TABLE days_off (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     day TEXT NOT NULL,
     userid INTEGER NOT NULL,
     absenceid TEXT NOT NULL,
-    PRIMARY KEY (userid, day)
+    UNIQUE (userid, day)
     FOREIGN KEY (userid)
         REFERENCES users (id)
             ON DELETE CASCADE,
