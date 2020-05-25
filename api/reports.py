@@ -13,7 +13,7 @@ import sqlite3
 
 from api.db import get_db
 
-bp = Blueprint("reports", __name__)
+bp = Blueprint("reports", __name__, url_prefix="/api")
 
 hours_by_day = 10.5
 weekmask_list = [1,1,0,1,1,0,0]
@@ -56,7 +56,6 @@ def getReport(year, month):
     for disease_nanny_row in disease_nanny_rows:
         [disease_nanny.append(dt.date(int(x[:4]), int(x[5:-3]), int(x[-2:]))) for x in disease_nanny_row]
     current_app.logger.info(disease_nanny)
-    
     db.close()
 
 
@@ -64,6 +63,7 @@ def getReport(year, month):
     start = dt.date( year, month, 1 )
     end = dt.date(year, month, 1) + dd.datedelta(months=1)
     holidays_fra = [x[0] for x in holidays.FRA(years=year).items()]
+    current_app.logger.info(holidays_fra+dayoff_nanny+disease_nanny+absence_child+disease_child)
 
     month_str = dt.date(year, month, 1).strftime("%B")
     bdays = int(np.busday_count( start, end , weekmask=weekmask_list, holidays=holidays_fra ))

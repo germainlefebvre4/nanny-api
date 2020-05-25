@@ -41,5 +41,9 @@ def create_app(test_config=None):
     app.register_blueprint(calendar.bp)
     from . import daysoff
     app.register_blueprint(daysoff.bp)
+    from . import absenceType
+    app.register_blueprint(absenceType.bp)
+    # from . import holidays
+    # app.register_blueprint(holidays.bp)
 
     return app

@@ -1,7 +1,7 @@
 # coding: utf8
 
 from flask import Blueprint
-from flask import Flask, redirect, url_for, request, render_template  # pip install flask
+from flask import Flask, redirect, url_for, request, render_template, jsonify
 from flask import current_app
 from flask_cors import CORS
 from flask_api import status
@@ -11,7 +11,7 @@ import sqlite3
 
 from api.db import get_db
 
-bp = Blueprint("calendar", __name__)
+bp = Blueprint("calendar", __name__, url_prefix="/api")
 
 @bp.route("/calendar/exceptions", methods=["GET"])
 @bp.route("/calendar/exceptions/<int:year>/<int:month>", methods=["GET"])
@@ -28,7 +28,7 @@ def getBusinessDayException(year, month):
     for row in rows:
         data.append([row[0], row[1], row[2]])
 
-    return json.dumps(data)
+    return jsonify(data)
 
 @bp.route("/calendar/exceptions", methods=["POST"])
 def addBusinessDayException():
