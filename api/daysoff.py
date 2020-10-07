@@ -87,8 +87,8 @@ def getDaysOffByMonth():
 @bp.route("/daysoff", methods=["POST"])
 def addDaysOff():
     creation = dt.datetime.now()
-    day = request.form.get("day", default=None, type=string)
-    absence = request.form.get("absence", default=None, type=string)
+    day = request.form.get("day", default=None, type=str)
+    absence = request.form.get("absence", default=None, type=str)
 
     if day and absence:
 
