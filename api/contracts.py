@@ -15,7 +15,6 @@ from api.db import get_db
 bp = Blueprint("contracts", __name__, url_prefix="/api")
 
 
-# To delete in the future
 @bp.route("/contracts", methods=["GET"])
 def getContractsAll():
     db = get_db()
@@ -63,13 +62,13 @@ def addContracts():
     
     userId = request.get_json().get("user_id")
     nannyId = request.get_json().get("nanny_id")
+    weekdays_tmp = request.get_json().get("weekdays")
     creation_date = datetime.now()
 
-    if not (userId or nannyId) or not (isinstance(userId, int) or isinstance(nannyId, int)):
+    if not (userId and nannyId and weekdays_tmp and isinstance(userId, int) and isinstance(nannyId, int)):
         return jsonify(msg='Please give data.'), 422
-
-    # nannyId = "{}".format(nannyId)
-    # userId = "{}".format(userId)
+    
+    weekdays = ",".join(map(str, weekdays_tmp))
 
     db = get_db()
     cur = db.cursor()
@@ -87,9 +86,9 @@ def addContracts():
 
     cur = db.cursor()
     cur.execute("\
-            INSERT INTO contracts(userid, nannyid, creation_date) \
-            VALUES (?, ?, ?)", 
-            (userId, nannyId, creation_date)
+            INSERT INTO contracts(userid, nannyid, weekdays, creation_date) \
+            VALUES (?, ?, ?, ?)", 
+            [userId, nannyId, weekdays, creation_date]
         )
     db.commit()
 
@@ -106,6 +105,52 @@ def addContracts():
     db.close()
 
     return { "msg": f"Contract '{contractId}' created.", "id": contractId }, status.HTTP_201_CREATED
+
+@bp.route("/contracts/<int:contractId>", methods=["PUT"])
+def updateContracts(contractId):
+    userId = 1
+    
+    updated_date = datetime.now()
+    weekdays_tmp = request.get_json().get("weekdays")
+    start_date = datetime.strptime(request.get_json().get("start_date"), "%Y-%m-%d")
+    end_date = datetime.strptime(request.get_json().get("end_date"), "%Y-%m-%d")
+
+    if not (weekdays_tmp and start_date and end_date):
+        return jsonify(msg='Please give data.'), 422
+    
+    weekdays = ",".join(map(str, weekdays_tmp))
+
+    db = get_db()
+    cur = db.cursor()
+    row = cur.execute("\
+            SELECT co.id, co.userid \
+            FROM contracts as co \
+            WHERE co.id = ? \
+                AND co.userId = ?",
+            [contractId, userId]
+        ).fetchone()
+    
+    if not row:
+        return { "msg": f"Contract '{contractId}' not found." }, status.HTTP_404_NOT_FOUND
+        
+    cur = db.cursor()
+    print(weekdays)
+    print(type(weekdays))
+    cur.execute("\
+            UPDATE contracts \
+            SET \
+                weekdays = ? ,\
+                start_date = ? ,\
+                end_date = ? ,\
+                updated_date = ? \
+            WHERE id = ?", 
+            [weekdays, start_date, end_date, updated_date, contractId]
+        )
+    db.commit()
+    db.close()
+
+    return { "msg": f"Contract '{contractId}' created." }, status.HTTP_200_OK
+
 
 @bp.route("/contracts/<int:contractId>", methods=["DELETE"])
 def deleteContracts(contractId):

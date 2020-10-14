@@ -37,18 +37,10 @@ def create_app(test_config=None):
     from . import db
     db.init_app(app)
 
-    from . import reports
-    app.register_blueprint(reports.bp)
-    from . import calendar
-    app.register_blueprint(calendar.bp)
-    from . import workingDays
-    app.register_blueprint(workingDays.bp)
     from . import absenceType
     app.register_blueprint(absenceType.bp)
     from . import contracts
     app.register_blueprint(contracts.bp)
     app.register_blueprint(absenceType.bp)
-    from . import profile
-    app.register_blueprint(profile.bp)
 
     return app

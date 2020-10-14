@@ -2,6 +2,7 @@ import pytest
 from flask_api import status
 import json
 from collections import Counter
+from datetime import datetime
 
 def test_getContracts(client):
     res = client.get('/api/contracts')
@@ -23,7 +24,8 @@ def test_getContractsById(client):
 def test_addContracts(client):
     data = {
         "user_id": 1,
-        "nanny_id": 2
+        "nanny_id": 2,
+        "weekdays": [1,2,3,4,5]
     }
     res = client.post(
         '/api/contracts',
@@ -57,6 +59,24 @@ def test_addContracts_missingParams(client):
     json_data = res.get_json()
     
     assert res.status_code == 422
+    assert isinstance(json_data, dict)
+    assert "msg" in json_data.keys()
+
+
+def test_updateContracts(client):
+    data = {
+        "weekdays": [1,2,4,5],
+        "start_date": "2019-09-01",
+        "end_date": "2020-08-31"
+    }
+    res = client.put(
+        '/api/contracts/1',
+        data=json.dumps(data),
+        content_type='application/json'
+    )
+    json_data = res.get_json()
+    
+    assert res.status_code == status.HTTP_200_OK
     assert isinstance(json_data, dict)
     assert "msg" in json_data.keys()
 

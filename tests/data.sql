@@ -40,8 +40,8 @@ INSERT INTO absence_type (id, kind) VALUES (8, 'CP Nounou exceptionnel');
 * contracts
 ************************************************************/
 
-INSERT INTO contracts (id, creation_date, userid, nannyid) VALUES (1, datetime('now'), 1, 1);
-INSERT INTO contracts (id, creation_date, userid, nannyid) VALUES (2, datetime('now'), 2, 2);
+INSERT INTO contracts (id, weekdays, start_date, end_date, creation_date, userid, nannyid) VALUES (1, "1,2,3,4,5", datetime('now'), datetime('now'), datetime('now'), 1, 1);
+INSERT INTO contracts (id, weekdays, start_date, end_date, creation_date, userid, nannyid) VALUES (2, "1,2,3,4,5", datetime('now'), datetime('now'), datetime('now'), 2, 2);
 
 /***********************************************************
 * working_days

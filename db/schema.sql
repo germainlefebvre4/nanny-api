@@ -72,6 +72,9 @@ CREATE TABLE contracts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nannyid INTEGER NOT NULL,
     userid INTEGER NOT NULL,
+    weekdays TEXT NOT NULL,
+    start_date DATETIME,
+    end_date DATETIME,
     creation_date DATETIME NOT NULL,
     updated_date DATETIME,
     UNIQUE (nannyid, userid)
@@ -126,8 +129,8 @@ INSERT INTO absence_type (id, kind) VALUES (6, 'Maladie nounou');
 INSERT INTO absence_type (id, kind) VALUES (7, 'CP nounou');
 INSERT INTO absence_type (id, kind) VALUES (8, 'CP nounou exceptionnel');
 
-INSERT INTO contracts (id, creation_date, userid, nannyid) VALUES (1, datetime('now'), 1, 1);
-INSERT INTO contracts (id, creation_date, userid, nannyid) VALUES (2, datetime('now'), 2, 2);
+INSERT INTO contracts (id, weekdays, start_date, end_date, creation_date, userid, nannyid) VALUES (1, "1,2,3,4,5", datetime('now'), datetime('now'), datetime('now'), 1, 1);
+INSERT INTO contracts (id, weekdays, start_date, end_date, creation_date, userid, nannyid) VALUES (2, "1,2,3,4,5", datetime('now'), datetime('now'), datetime('now'), 2, 2);
 
 INSERT INTO working_days (id, day, creation_date, contractid, absenceid) 
     VALUES (1, "2020-01-05", datetime('now'), 1, 3);
