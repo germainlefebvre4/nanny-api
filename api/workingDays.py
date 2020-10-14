@@ -20,10 +20,11 @@ bp = Blueprint("workingdays", __name__, url_prefix="/api")
 def getWorkingDaysAll():
     db = get_db()
     cur = db.cursor()
-    rows = cur.execute("SELECT do.id,do.userid,do.absenceid,do.day,us.firstname,ab.kind \
-                        FROM working_days as do \
-                        JOIN users AS us ON us.id = do.userid \
-                        JOIN absence_type AS ab ON ab.id = do.absenceId"
+    rows = cur.execute("SELECT wd.id,wd.userid,wd.absenceid,wd.day,us.firstname,ab.kind \
+            FROM working_days as wd \
+            JOIN contracts as co ON co.id = wd.contractid \
+            JOIN users AS us ON us.id = co.userid \
+            JOIN absence_type AS ab ON ab.id = wd.absenceId"
         ).fetchall()
     db.close()
 
@@ -41,12 +42,14 @@ def getWorkingDaysById(workingdaysId):
         db = get_db()
         cur = db.cursor()
         row = cur.execute("\
-                SELECT do.id,do.userid,do.absenceid,do.day,us.firstname,ab.kind \
-                FROM working_days as do \
-                JOIN users AS us ON us.id = do.userid \
-                JOIN absence_type AS ab ON ab.id = do.absenceId \
-                WHERE do.id = ?", 
-                [workingdaysId]
+                SELECT wd.id,wd.userid,wd.absenceid,wd.day,us.firstname,ab.kind \
+                FROM working_days as wd \
+                JOIN contracts as co ON co.id = wd.contractid \
+                JOIN users AS us ON us.id = co.userid \
+                JOIN absence_type AS ab ON ab.id = wd.absenceId \
+                WHERE wd.id = ? \
+                    AND co.userid = ?", 
+                [workingdaysId, userId]
             ).fetchone()
         db.close()
 
@@ -73,11 +76,11 @@ def getWorkingDaysByRangeDate():
         db = get_db()
         cur = db.cursor()
         rows = cur.execute("\
-                SELECT do.id,do.userid,do.absenceid,do.day,us.firstname,ab.kind \
-                FROM working_days as do \
-                JOIN users AS us ON us.id = do.userid \
-                JOIN absence_type AS ab ON ab.id = do.absenceId \
-                WHERE do.day >= ? AND do.day <= ?", 
+                SELECT wd.id,wd.userid,wd.absenceid,wd.day,us.firstname,ab.kind \
+                FROM working_days as wd \
+                JOIN users AS us ON us.id = wd.userid \
+                JOIN absence_type AS ab ON ab.id = wd.absenceId \
+                WHERE wd.day >= ? AND wd.day <= ?", 
                 [startDay, endDay]
             ).fetchall()
         db.close()
@@ -86,8 +89,11 @@ def getWorkingDaysByRangeDate():
         for row in rows:
             workingdays.append(dict(row))
 
-        holidays_fra = [dict(absenceid=0, kind="Jour férié", day=dt.datetime.strftime(x[0], "%Y-%m-%d")) for x in holidays.FRA(years=year).items() if dt.datetime.strftime(x[0], "%m") == "{:02}".format(month)]
-
+        holidays_fra = [
+                dict(absenceid=0, kind="Jour férié", day=dt.datetime.strftime(x[0], "%Y-%m-%d")) 
+                for x in holidays.FRA(years=year).items() 
+                if dt.datetime.strftime(x[0], "%m") == "{:02}".format(month)
+            ]
         data = workingdays + holidays_fra
 
         return jsonify(data)
@@ -98,11 +104,11 @@ def getWorkingDaysByRangeDate():
         db = get_db()
         cur = db.cursor()
         row = cur.execute("\
-                SELECT do.id,do.userid,do.absenceid,do.day,us.firstname,ab.kind \
-                FROM working_days as do \
-                JOIN users AS us ON us.id = do.userid \
-                JOIN absence_type AS ab ON ab.id = do.absenceId \
-                WHERE do.day = ?", 
+                SELECT wd.id,wd.userid,wd.absenceid,wd.day,us.firstname,ab.kind \
+                FROM working_days as wd \
+                JOIN users AS us ON us.id = wd.userid \
+                JOIN absence_type AS ab ON ab.id = wd.absenceId \
+                WHERE wd.day = ?", 
                 [startDay]
             ).fetchone()
         db.close()
@@ -133,8 +139,13 @@ def addWorkingDays():
         db = get_db()
         cur = db.cursor()
         rows = cur.execute("\
-                SELECT day, userId, absenceId FROM working_days \
-                WHERE day = ? AND userId = ? and absenceId = ?", 
+                SELECT day, userId, absenceId \
+                FROM working_days as wd \
+                JOIN contracts as co ON co.id = wd.contractid \
+                JOIN users AS us ON us.id = co.userid \
+                WHERE wd.day = ? \
+                    AND co.userId = ? \
+                    AND wd.absenceId = ?",
                 [day, userId, absenceId]
             ).fetchall()
         if len(rows) > 0:
@@ -149,7 +160,6 @@ def addWorkingDays():
                 (userId, absenceId, day, creation_date)
             )
         db.commit()
-
         db.close()
 
         return { "msg": "Day {} absenceId {} added to day exceptions.".format(day, absence) }, status.HTTP_201_CREATED

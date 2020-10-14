@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project Name="Sans titre1" Author="germainlef" Version="1.0" Date="14/10/2020" DefaultPackage="1">
+  <Package Id="1" Name="Core" Description="" Color="-1">
+    <Table X="66" Y="170" Width="160" Height="84" Id="1" Name="users" Comment="">
+      <Key Name="id" Comment="" Size="11" Type="Integer" IsNull="False" IsIndex="False" IsUnique="False" IsPrimary="True" AutoIncrement="False" DefaultValue="" />
+      <Key Name="email" Comment="" Size="255" Type="Text" IsNull="False" IsIndex="False" IsUnique="True" IsPrimary="False" AutoIncrement="False" DefaultValue="" />
+      <Key Name="firstname" Comment="" Size="255" Type="Text" IsNull="False" IsIndex="False" IsUnique="False" IsPrimary="False" AutoIncrement="False" DefaultValue="" />
+    </Table>
+    <Table X="499" Y="170" Width="160" Height="84" Id="2" Name="nanny" Comment="">
+      <Key Name="id" Comment="" Size="11" Type="Integer" IsNull="False" IsIndex="False" IsUnique="False" IsPrimary="True" AutoIncrement="False" DefaultValue="" />
+      <Key Name="email" Comment="" Size="255" Type="Text" IsNull="False" IsIndex="False" IsUnique="True" IsPrimary="False" AutoIncrement="False" DefaultValue="" />
+      <Key Name="firstname" Comment="" Size="255" Type="Text" IsNull="True" IsIndex="False" IsUnique="False" IsPrimary="False" AutoIncrement="False" DefaultValue="" />
+    </Table>
+    <Table X="756" Y="325" Width="160" Height="84" Id="3" Name="configuration" Comment="">
+      <Key Name="id" Comment="" Size="11" Type="Integer" IsNull="False" IsIndex="False" IsUnique="False" IsPrimary="True" AutoIncrement="True" DefaultValue="" />
+      <Key Name="key" Comment="" Size="255" Type="Text" IsNull="True" IsIndex="False" IsUnique="True" IsPrimary="False" AutoIncrement="False" DefaultValue="" />
+      <Key Name="value" Comment="" Size="255" Type="Text" IsNull="True" IsIndex="False" IsUnique="False" IsPrimary="False" AutoIncrement="False" DefaultValue="" />
+    </Table>
+    <Table X="260" Y="411" Width="160" Height="116" Id="4" Name="contract" Comment="">
+      <Key Name="id" Comment="" Size="0" Type="Integer" IsNull="False" IsIndex="False" IsUnique="False" IsPrimary="True" AutoIncrement="False" DefaultValue="" />
+      <Key Name="weekdays" Comment="" Size="255" Type="Text" IsNull="False" IsIndex="False" IsUnique="False" IsPrimary="False" AutoIncrement="False" DefaultValue="" />
+      <Key Name="creation_date" Comment="" Size="0" Type="DateTime" IsNull="False" IsIndex="False" IsUnique="False" IsPrimary="False" AutoIncrement="False" DefaultValue="" />
+      <Key Name="updated_date" Comment="" Size="0" Type="DateTime" IsNull="True" IsIndex="False" IsUnique="False" IsPrimary="False" AutoIncrement="False" DefaultValue="" />
+      <ForeignKey Name="FK_CONTRACT_USERS" Prefix="" Comment="Référence users" Reference="1" IsNull="False" IsPrimary="False" OnUpdate="NO ACTION" OnDelete="NO ACTION" />
+      <ForeignKey Name="FK_CONTRACT_NANNY" Prefix="" Comment="Référence nanny" Reference="2" IsNull="False" IsPrimary="False" OnUpdate="NO ACTION" OnDelete="NO ACTION" />
+    </Table>
+    <Table X="563" Y="503" Width="160" Height="84" Id="5" Name="absence_type" Comment="">
+      <Key Name="id" Comment="" Size="11" Type="Integer" IsNull="False" IsIndex="False" IsUnique="False" IsPrimary="True" AutoIncrement="False" DefaultValue="" />
+      <Key Name="kind" Comment="" Size="255" Type="Text" IsNull="True" IsIndex="False" IsUnique="True" IsPrimary="False" AutoIncrement="False" DefaultValue="" />
+    </Table>
+    <Table X="264" Y="656" Width="160" Height="100" Id="6" Name="working_days" Comment="">
+      <Key Name="id" Comment="" Size="11" Type="Integer" IsNull="False" IsIndex="False" IsUnique="False" IsPrimary="True" AutoIncrement="True" DefaultValue="" />
+      <Key Name="day" Comment="" Size="0" Type="DateTime" IsNull="True" IsIndex="False" IsUnique="False" IsPrimary="False" AutoIncrement="False" DefaultValue="" />
+      <Key Name="creation_date" Comment="" Size="0" Type="DateTime" IsNull="True" IsIndex="False" IsUnique="False" IsPrimary="False" AutoIncrement="False" DefaultValue="" />
+      <ForeignKey Name="FK_WORKING_DAYS_CONTRACT" Prefix="" Comment="Référence contract" Reference="4" IsNull="False" IsPrimary="False" OnUpdate="NO ACTION" OnDelete="NO ACTION" />
+      <ForeignKey Name="FK_WORKING_DAYS_ABSENCE_TYPE" Prefix="" Comment="Référence absence_type" Reference="5" IsNull="False" IsPrimary="False" OnUpdate="NO ACTION" OnDelete="NO ACTION" />
+    </Table>
+  </Package>
+</Project>
