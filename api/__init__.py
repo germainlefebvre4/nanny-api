@@ -3,12 +3,14 @@ import os
 from flask import Flask
 from flask_cors import CORS
 
+APP_ENV = os.getenv("APP_ENV", "dev")
+
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         SECRET_KEY='dev',
-        DATABASE=os.path.join(app.instance_path, 'nanny.sqlite'),
+        DATABASE=os.path.join(app.instance_path, f'nanny-{APP_ENV}.sqlite'),
     )
 
     app.config['CORS_HEADERS'] = 'Content-Type'
@@ -39,8 +41,8 @@ def create_app(test_config=None):
     app.register_blueprint(reports.bp)
     from . import calendar
     app.register_blueprint(calendar.bp)
-    from . import daysoff
-    app.register_blueprint(daysoff.bp)
+    from . import workingDays
+    app.register_blueprint(workingDays.bp)
     from . import absenceType
     app.register_blueprint(absenceType.bp)
     # from . import holidays

@@ -10,14 +10,12 @@
 *
 ************************************************************/
 /*
-ALTER TABLE days_off
-    DROP FOREIGN KEY FK_DAYSOFF_USERS,
-    DROP FOREIGN KEY FK_DAYSOFF_ABSENCE;
-
-
+ALTER TABLE working_days
+    DROP FOREIGN KEY FK_WORKINGDAYS_USERS,
+    DROP FOREIGN KEY FK_WORKINGDAYS_ABSENCE;
 */
 DROP TABLE IF EXISTS configuration;
-DROP TABLE IF EXISTS days_off;
+DROP TABLE IF EXISTS working_days;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS absence_type;
 
@@ -55,10 +53,10 @@ CREATE TABLE users (
 );
 
 /***********************************************************
-* days_off
+* working_days
 ************************************************************/
 
-CREATE TABLE days_off (
+CREATE TABLE working_days (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     day TEXT NOT NULL,
     userid INTEGER NOT NULL,
