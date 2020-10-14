@@ -65,13 +65,11 @@ def getWorkingDaysByRangeDate():
     month = request.args.get('month', default=None, type=int)
     day = request.args.get('day', default=None, type=int)
 
-    if year and not month and not day:
-        return jsonify(msg='Please select a month value'), 422
-    elif year and month and not day:
+    
+    if year and month and not day:
         startDay = "{:04d}-{:02d}-{:02d}".format(year, month, 1)
         endDay = "{:04d}-{:02d}-{:02d}".format(year, month, 31)
-        workingdays = []
-
+        
         db = get_db()
         cur = db.cursor()
         rows = cur.execute("\
@@ -84,6 +82,7 @@ def getWorkingDaysByRangeDate():
             ).fetchall()
         db.close()
 
+        workingdays = []
         for row in rows:
             workingdays.append(dict(row))
 
@@ -110,18 +109,20 @@ def getWorkingDaysByRangeDate():
 
         data = []
         if not row:
-            data = {}
+            data = []
         else:
-            data = dict(row)
+            data = [dict(row)]
 
         return jsonify(data)
+    else:
+        return jsonify(msg='Please select a year, month and day value.'), 422
 
 
 @bp.route("/workingdays", methods=["POST"])
 def addWorkingDays():
-    creation = dt.datetime.now()
-    day = request.form.get("day", default=None, type=string)
-    absence = request.form.get("absence", default=None, type=string)
+    creation_date = dt.datetime.now()
+    day = request.get_json().get("day")
+    absence = request.get_json().get("absence")
 
     if day and absence:
 
@@ -131,27 +132,38 @@ def addWorkingDays():
 
         db = get_db()
         cur = db.cursor()
-        rows = cur.execute("SELECT day, userId, absenceId FROM working_days WHERE day = ? AND userId = ? and absenceId = ?", [day, userId, absenceId]).fetchall()
+        rows = cur.execute("\
+                SELECT day, userId, absenceId FROM working_days \
+                WHERE day = ? AND userId = ? and absenceId = ?", 
+                [day, userId, absenceId]
+            ).fetchall()
         if len(rows) > 0:
             db.close()
             current_app.logger.info("Day {} absenceId {} already exists.".format(day, absence))
             return { "msg": "Day {} absenceId {} already exists.".format(day, absence) }, status.HTTP_409_CONFLICT
 
         cur = db.cursor()
-        cur.execute('INSERT INTO working_days(userid, absenceid, day) VALUES (?, ?, ?)', (userId, absenceId, day))
+        cur.execute("\
+                INSERT INTO working_days(userid, absenceid, day, creation_date) \
+                VALUES (?, ?, ?, ?)", 
+                (userId, absenceId, day, creation_date)
+            )
         db.commit()
 
         db.close()
 
         return { "msg": "Day {} absenceId {} added to day exceptions.".format(day, absence) }, status.HTTP_201_CREATED
+    else:
+        return jsonify(msg='Please give data.'), 422
 
 @bp.route("/workingdays/<int:workingdaysId>", methods=["DELETE"])
 def delWorkingDays(workingdaysId):
-    day = str(workingdaysId)
-
-    db = get_db()
-    cur = db.cursor()
-    cur.execute('DELETE FROM working_days WHERE id = ?', [workingdaysId])
-    db.commit()
-    db.close()
-    return { "msg": "Day  {} removed from day exceptions.".format(workingdaysId) }, status.HTTP_200_OK
+    if workingdaysId:
+        db = get_db()
+        cur = db.cursor()
+        cur.execute('DELETE FROM working_days WHERE id = ?', [workingdaysId])
+        db.commit()
+        db.close()
+        return { "msg": "Day  {} removed from day exceptions.".format(workingdaysId) }, status.HTTP_200_OK
+    else:
+        return jsonify(msg='Please give data.'), 422

@@ -61,6 +61,7 @@ CREATE TABLE working_days (
     day TEXT NOT NULL,
     userid INTEGER NOT NULL,
     absenceid TEXT NOT NULL,
+    creation_date TEXT NOT NULL,
     UNIQUE (userid, day)
     FOREIGN KEY (userid)
         REFERENCES users (id)
