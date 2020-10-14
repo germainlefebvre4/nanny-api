@@ -42,8 +42,9 @@ def getContractsById(contractId):
         row = cur.execute("\
                 SELECT co.id, co.userid as user_id, co.nannyid as nanny_id \
                 FROM contracts as co \
-                WHERE co.id = ?",
-                [contractId]
+                WHERE co.id = ? \
+                    AND userid = ?",
+                [contractId, userId]
             ).fetchone()
         db.close()
 
@@ -143,8 +144,9 @@ def updateContracts(contractId):
                 start_date = ? ,\
                 end_date = ? ,\
                 updated_date = ? \
-            WHERE id = ?", 
-            [weekdays, start_date, end_date, updated_date, contractId]
+            WHERE id = ? \
+                AND userid = ?", 
+            [weekdays, start_date, end_date, updated_date, contractId, userId]
         )
     db.commit()
     db.close()
@@ -154,10 +156,16 @@ def updateContracts(contractId):
 
 @bp.route("/contracts/<int:contractId>", methods=["DELETE"])
 def deleteContracts(contractId):
+    userId = 1
+    
     if contractId:
         db = get_db()
         cur = db.cursor()
-        cur.execute('DELETE FROM contracts WHERE id = ?', [contractId])
+        cur.execute("\
+                DELETE FROM contracts \
+                WHERE id = ? \
+                    AND userId = ?", 
+                [contractId, userId])
         db.commit()
         db.close()
         return { "msg": f"Contract '{contractId}' deleted." }, status.HTTP_200_OK
