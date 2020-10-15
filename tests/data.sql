@@ -4,7 +4,7 @@
 DELETE FROM configuration;
 DELETE FROM working_days;
 DELETE FROM users;
-DELETE FROM absence_type;
+DELETE FROM day_type;
 DELETE FROM nannies;
 DELETE FROM contracts;
 
@@ -24,17 +24,17 @@ INSERT INTO nannies (id, email, firstname) VALUES (1, 'claudie@nanny.fr', 'Claud
 INSERT INTO nannies (id, email, firstname) VALUES (2, 'tata@nanny.fr', 'Tata');
 
 /***********************************************************
-* absence
+* day_type
 ************************************************************/
 
-INSERT INTO absence_type (id, kind) VALUES (1, 'Présence enfant');
-INSERT INTO absence_type (id, kind) VALUES (2, 'Maladie Enfant');
-INSERT INTO absence_type (id, kind) VALUES (3, 'Absence Enfant');
-INSERT INTO absence_type (id, kind) VALUES (4, 'CP Enfant');
-INSERT INTO absence_type (id, kind) VALUES (5, 'CP Enfant exceptionnel');
-INSERT INTO absence_type (id, kind) VALUES (6, 'Maladie Nounou');
-INSERT INTO absence_type (id, kind) VALUES (7, 'CP Nounou');
-INSERT INTO absence_type (id, kind) VALUES (8, 'CP Nounou exceptionnel');
+INSERT INTO day_type (id, kind) VALUES (1, 'Présence enfant');
+INSERT INTO day_type (id, kind) VALUES (2, 'Maladie Enfant');
+INSERT INTO day_type (id, kind) VALUES (3, 'Absence Enfant');
+INSERT INTO day_type (id, kind) VALUES (4, 'CP Enfant');
+INSERT INTO day_type (id, kind) VALUES (5, 'CP Enfant exceptionnel');
+INSERT INTO day_type (id, kind) VALUES (6, 'Maladie Nounou');
+INSERT INTO day_type (id, kind) VALUES (7, 'CP Nounou');
+INSERT INTO day_type (id, kind) VALUES (8, 'CP Nounou exceptionnel');
 
 /***********************************************************
 * contracts
@@ -49,7 +49,7 @@ INSERT INTO contracts (id, weeks, weekdays, hours, price_hour_standard, price_ho
 * working_days
 ************************************************************/
 
-INSERT INTO working_days (id, day, creation_date, contractid, absenceid) 
+INSERT INTO working_days (id, day, creation_date, contractid, daytypeid) 
     VALUES (1, "2020-01-05", datetime('now'), 1, 3);
-INSERT INTO working_days (id, day, creation_date, contractid, absenceid) 
+INSERT INTO working_days (id, day, creation_date, contractid, daytypeid) 
     VALUES (2, "2020-01-05", datetime('now'), 2, 4);

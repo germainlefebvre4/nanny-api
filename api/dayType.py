@@ -11,16 +11,19 @@ import sqlite3
 
 from api.db import get_db
 
-bp = Blueprint("absenceType", __name__, url_prefix="/api")
+bp = Blueprint("dayType", __name__, url_prefix="/api")
 
 # To delete in the future
-@bp.route("/absencetype", methods=["GET"])
+@bp.route("/daytype", methods=["GET"])
 def getDaysOffAll():
     data = []
 
     db = get_db()
     cur = db.cursor()
-    rows = cur.execute("SELECT ab.id as id, ab.kind as name FROM absence_type AS ab").fetchall()
+    rows = cur.execute("\
+            SELECT dt.id as id, dt.kind as name \
+                FROM day_type AS dt"
+        ).fetchall()
     db.close()
 
     for row in rows:

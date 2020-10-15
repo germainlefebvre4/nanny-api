@@ -31,7 +31,7 @@
       <ForeignKey Name="FK_CONTRACT_USERS" Prefix="" Comment="Référence users" Reference="1" IsNull="False" IsPrimary="False" OnUpdate="NO ACTION" OnDelete="NO ACTION" />
       <ForeignKey Name="FK_CONTRACT_NANNY" Prefix="" Comment="Référence nanny" Reference="2" IsNull="False" IsPrimary="False" OnUpdate="NO ACTION" OnDelete="NO ACTION" />
     </Table>
-    <Table X="563" Y="503" Width="160" Height="84" Id="5" Name="absence_type" Comment="">
+    <Table X="563" Y="503" Width="160" Height="84" Id="5" Name="day_type" Comment="">
       <Key Name="id" Comment="" Size="11" Type="Integer" IsNull="False" IsIndex="False" IsUnique="False" IsPrimary="True" AutoIncrement="False" DefaultValue="" />
       <Key Name="kind" Comment="" Size="255" Type="Text" IsNull="True" IsIndex="False" IsUnique="True" IsPrimary="False" AutoIncrement="False" DefaultValue="" />
     </Table>
@@ -40,7 +40,7 @@
       <Key Name="day" Comment="" Size="0" Type="DateTime" IsNull="True" IsIndex="False" IsUnique="False" IsPrimary="False" AutoIncrement="False" DefaultValue="" />
       <Key Name="creation_date" Comment="" Size="0" Type="DateTime" IsNull="True" IsIndex="False" IsUnique="False" IsPrimary="False" AutoIncrement="False" DefaultValue="" />
       <ForeignKey Name="FK_WORKING_DAYS_CONTRACT" Prefix="" Comment="Référence contract" Reference="4" IsNull="False" IsPrimary="False" OnUpdate="NO ACTION" OnDelete="NO ACTION" />
-      <ForeignKey Name="FK_WORKING_DAYS_ABSENCE_TYPE" Prefix="" Comment="Référence absence_type" Reference="5" IsNull="False" IsPrimary="False" OnUpdate="NO ACTION" OnDelete="NO ACTION" />
+      <ForeignKey Name="FK_WORKING_DAYS_DAY_TYPE" Prefix="" Comment="Référence day_type" Reference="5" IsNull="False" IsPrimary="False" OnUpdate="NO ACTION" OnDelete="NO ACTION" />
     </Table>
   </Package>
 </Project>
