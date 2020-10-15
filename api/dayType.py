@@ -22,7 +22,8 @@ def getDaysOffAll():
     cur = db.cursor()
     rows = cur.execute("\
             SELECT dt.id as id, dt.kind as name \
-                FROM day_type AS dt"
+            FROM day_type AS dt \
+            WHERE id < 50"
         ).fetchall()
     db.close()
 

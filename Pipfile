@@ -15,6 +15,7 @@ flask-api = "*"
 flask-cors = "*"
 pytest = "*"
 pytest-cov = "*"
+pandas = "*"
 
 [requires]
 python_version = "3.8"

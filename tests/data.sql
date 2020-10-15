@@ -4,7 +4,7 @@
 DELETE FROM configuration;
 DELETE FROM working_days;
 DELETE FROM users;
-DELETE FROM day_type;
+-- DELETE FROM day_type;
 DELETE FROM nannies;
 DELETE FROM contracts;
 
@@ -27,23 +27,26 @@ INSERT INTO nannies (id, email, firstname) VALUES (2, 'tata@nanny.fr', 'Tata');
 * day_type
 ************************************************************/
 
-INSERT INTO day_type (id, kind) VALUES (1, 'Présence enfant');
-INSERT INTO day_type (id, kind) VALUES (2, 'Maladie Enfant');
-INSERT INTO day_type (id, kind) VALUES (3, 'Absence Enfant');
-INSERT INTO day_type (id, kind) VALUES (4, 'CP Enfant');
-INSERT INTO day_type (id, kind) VALUES (5, 'CP Enfant exceptionnel');
-INSERT INTO day_type (id, kind) VALUES (6, 'Maladie Nounou');
-INSERT INTO day_type (id, kind) VALUES (7, 'CP Nounou');
-INSERT INTO day_type (id, kind) VALUES (8, 'CP Nounou exceptionnel');
+-- INSERT INTO day_type (id, kind) VALUES (1, 'Présence enfant');
+-- INSERT INTO day_type (id, kind) VALUES (2, 'Maladie enfant');
+-- INSERT INTO day_type (id, kind) VALUES (3, 'Absence enfant');
+-- INSERT INTO day_type (id, kind) VALUES (4, 'CP enfant');
+-- INSERT INTO day_type (id, kind) VALUES (5, 'CP enfant exceptionnel');
+-- INSERT INTO day_type (id, kind) VALUES (6, 'Maladie nounou');
+-- INSERT INTO day_type (id, kind) VALUES (7, 'CP nounou');
+-- INSERT INTO day_type (id, kind) VALUES (8, 'CP nounou exceptionnel');
+-- INSERT INTO day_type (id, kind) VALUES (49, 'Exclu du contrat');
+-- INSERT INTO day_type (id, kind) VALUES (50, 'Hérité du contrat');
+-- INSERT INTO day_type (id, kind) VALUES (51, 'Jour férié');
 
 /***********************************************************
 * contracts
 ************************************************************/
 
 INSERT INTO contracts (id, weeks, weekdays, hours, price_hour_standard, price_hour_additional, price_hour_extra, price_fees, price_meals, start_date, end_date, creation_date, userid, nannyid) 
-    VALUES (1, 52, "1,2,3,4,5", 8.5, 3.5, NULL, 3.8, 3.08, 4, datetime('now'), datetime('now'), datetime('now'), 1, 1);
+    VALUES (1, 52, "1,1,1,1,1,0,0", 8.5, 3.5, NULL, 3.8, 3.08, 4, datetime('now'), datetime('now'), datetime('now'), 1, 1);
 INSERT INTO contracts (id, weeks, weekdays, hours, price_hour_standard, price_hour_additional, price_hour_extra, price_fees, start_date, end_date, creation_date, userid, nannyid) 
-    VALUES (2, 44, "1,2,3,4,5", 10, 3.5, 3.5, 4.0, 3.08, datetime('now'), datetime('now'), datetime('now'), 2, 2);
+    VALUES (2, 44, "1,1,1,1,1,0,0", 10, 3.5, 3.5, 4.0, 3.08, datetime('now'), datetime('now'), datetime('now'), 2, 2);
 
 /***********************************************************
 * working_days

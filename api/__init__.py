@@ -41,5 +41,7 @@ def create_app(test_config=None):
     app.register_blueprint(dayType.bp)
     from . import contracts
     app.register_blueprint(contracts.bp)
+    from . import workingDays
+    app.register_blueprint(workingDays.bp)
 
     return app
