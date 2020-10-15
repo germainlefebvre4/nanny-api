@@ -29,8 +29,8 @@ def getContractWorkingDays(contractId):
     cur = db.cursor()
     rows = cur.execute("\
             SELECT \
-                wd.id,wd.daytypeid,wd.day, \
-                co.userid,co.nannyid,\
+                wd.id, wd.daytypeid as daytype_id, wd.day, \
+                co.userid, co.nannyid,\
                 dt.kind \
             FROM working_days as wd \
             JOIN contracts as co ON co.id = wd.contractid \
@@ -57,7 +57,7 @@ def getContractWorkingDaysById(contractId, workingdaysId):
         cur = db.cursor()
         row = cur.execute("\
                 SELECT \
-                    wd.id,wd.daytypeid,wd.day,\
+                    wd.id, wd.daytypeid as daytype_id, wd.day,\
                     co.userid,\
                     dt.kind \
                 FROM working_days as wd \
@@ -108,19 +108,19 @@ def getContractWorkingDaysByRangeDate(contractId):
         cur = db.cursor()
         rows = cur.execute("\
                 SELECT \
-                    wd.id,wd.daytypeid,wd.day,\
+                    wd.id, wd.daytypeid as daytype_id, wd.day,\
                     us.firstname,\
-                    dt.kind, \
-                    co.userid \
+                    dt.kind,\
+                    co.userid\
                 FROM working_days as wd \
                 JOIN contracts as co ON co.id = wd.contractid \
                 JOIN users AS us ON us.id = co.userid \
                 JOIN day_type AS dt ON dt.id = wd.daytypeid \
                 WHERE wd.contractid = ? \
                     AND co.userid = ? \
-                    AND dt.id < 50 \
                     AND wd.day >= ? \
-                    AND wd.day <= ?", 
+                    AND wd.day <= ? \
+                    AND dt.id < 50",
                 [contractId, userId, startDay, endDay]
             ).fetchall()
         db.close()
@@ -138,38 +138,25 @@ def getContractWorkingDaysByRangeDate(contractId):
 
         business_days_pandas = pandas.bdate_range(start=startDay, end=endDay, freq="C", weekmask="Mon Tue Wed Thu Fri", holidays=holidays_fra).format()
         business_days_inherited_pandas = pandas.bdate_range(start=startDay, end=endDay, freq="C", weekmask="Mon Tue Wed Thu Fri", holidays=holidays_fra+workingdays_list).format()
-        # business_days_count = len(business_days_pandas)
-        # business_days_inherited_count = len(business_days_inherited_pandas)
-        print([x[0] for x in holidays.FRA(years=year).items() if datetime.strftime(x[0], "%m") == "{:02}".format(month)])
-
-        # holidays_fra = [
-        #     dict(daytypeid=0, kind="Jour férié", day=dt.datetime.strftime(x[0], "%Y-%m-%d")) 
-        #     for x in holidays.FRA(years=year).items() 
-        #     if dt.datetime.strftime(x[0], "%m") == "{:02}".format(month)
-        # ]
-
-        # print(holidays_fra)
-        # print(business_days_pandas)
-        # print(business_days_inherited_pandas)
         
         data =  [
             dict(
                 day=x["day"],
-                daytypeid=x["daytypeid"],
+                daytype_id=x["daytype_id"],
                 kind=x["kind"]
             )
             for x in workingdays
         ] + [
             dict(
                 day=x,
-                daytypeid=51,
+                daytype_id=51,
                 kind="Jour férié"
             )
             for x in holidays_fra
         ] + [
             dict(
                 day=x,
-                daytypeid=50,
+                daytype_id=50,
                 kind="Hérité du contrat",
             )
             for x in business_days_inherited_pandas
@@ -178,76 +165,112 @@ def getContractWorkingDaysByRangeDate(contractId):
         
         return jsonify(data)
 
-    # elif year and month and day:
-    #     startDay = "{:04d}-{:02d}-{:02d}".format(year, month, day)
+    elif year and month and day:
+        startDay = "{:04d}-{:02d}-{:02d}".format(year, month, day)
+        endDay = "{:04d}-{:02d}-{:02d}".format(year, month, day)
 
-    #     db = get_db()
-    #     cur = db.cursor()
-    #     row = cur.execute("\
-    #             SELECT \
-    #                 wd.id,wd.daytypeid,wd.day,\
-    #                 us.firstname,\
-    #                 dt.kind, \
-    #                 co.userid \
-    #             FROM working_days as wd \
-    #             JOIN contracts as co ON co.id = wd.contractid \
-    #             JOIN users AS us ON us.id = co.userid \
-    #             JOIN day_type AS dt ON dt.id = wd.daytypeid \
-    #             WHERE wd.day = ?",
-    #             [startDay]
-    #         ).fetchone()
-    #     db.close()
+        db = get_db()
+        cur = db.cursor()
+        row = cur.execute("\
+                SELECT \
+                    wd.id, wd.daytypeid as daytype_id, wd.day,\
+                    us.firstname,\
+                    dt.kind, \
+                    co.userid as user_id \
+                FROM working_days as wd \
+                JOIN contracts as co ON co.id = wd.contractid \
+                JOIN users AS us ON us.id = co.userid \
+                JOIN day_type AS dt ON dt.id = wd.daytypeid \
+                WHERE wd.contractid = ? \
+                    AND co.userid = ? \
+                    AND wd.day >= ? \
+                    AND wd.day <= ? \
+                    AND dt.id < 50",
+                [contractId, userId, startDay, endDay]
+            ).fetchone()
+        db.close()
 
-    #     data = []
-    #     if not row:
-    #         data = []
-    #     else:
-    #         data = [dict(row)]
+        workingdays = []
+        if row:
+            workingdays.append(dict(row))
+        
+        holidays_fra = [datetime.strftime(x[0], "%Y-%m-%d")
+            for x in holidays.FRA(years=year).items() 
+            if datetime.strftime(x[0], "%m-%d") == "{:02}-{:02}".format(month, day)
+        ]
+        workingdays_list = [x["day"] for x in workingdays]
+        weekmask_list = [int(x) for x in contract_info.get("weekdays").split(",")]
 
-    #     return jsonify(data)
+        business_days_pandas = pandas.bdate_range(start=startDay, end=endDay, freq="C", weekmask="Mon Tue Wed Thu Fri", holidays=holidays_fra).format()
+        business_days_inherited_pandas = pandas.bdate_range(start=startDay, end=endDay, freq="C", weekmask="Mon Tue Wed Thu Fri", holidays=holidays_fra+workingdays_list).format()
+        
+        data =  [
+            dict(
+                day=x["day"],
+                daytype_id=x["daytype_id"],
+                kind=x["kind"]
+            )
+            for x in workingdays
+        ] + [
+            dict(
+                day=x,
+                daytype_id=51,
+                kind="Jour férié"
+            )
+            for x in holidays_fra
+        ] + [
+            dict(
+                day=x,
+                daytype_id=50,
+                kind="Hérité du contrat",
+            )
+            for x in business_days_inherited_pandas
+        ]
+        data.sort(key=lambda x: x["day"])
+        
+        return jsonify(data)
     else:
         return jsonify(msg='Please select a year, month and day value.'), 422
 
 
-@bp.route("/workingdays", methods=["POST"])
-def addWorkingDays():
+@bp.route("/contracts/<int:contractId>/workingdays", methods=["POST"])
+def addContractWorkingDays(contractId):
+    userId = 1
+
     creation_date = dt.datetime.now()
     day = request.get_json().get("day")
-    day_type = request.get_json().get("day_type")
+    dayTypeId = request.get_json().get("daytype_id")
 
-    if day and day_type:
-
-        userId = 1
-        daytypeid = "{}".format(day_type)
-        day = "{}".format(day)
+    if day and dayTypeId:
 
         db = get_db()
         cur = db.cursor()
         rows = cur.execute("\
-                SELECT day, userId, daytypeid \
+                SELECT \
+                    wd.day, wd.daytypeid as daytype_id, \
+                    co.userId \
                 FROM working_days as wd \
                 JOIN contracts as co ON co.id = wd.contractid \
-                JOIN users AS us ON us.id = co.userid \
                 WHERE wd.day = ? \
                     AND co.userId = ? \
                     AND wd.daytypeid = ?",
-                [day, userId, daytypeid]
+                [day, userId, dayTypeId]
             ).fetchall()
         if len(rows) > 0:
             db.close()
-            current_app.logger.info("Day {} daytypeid {} already exists.".format(day, day_type))
-            return { "msg": "Day {} daytypeid {} already exists.".format(day, day_type) }, status.HTTP_409_CONFLICT
+            current_app.logger.info("Day {} daytypeid {} already exists.".format(day, dayTypeId))
+            return { "msg": "Day {} daytypeid {} already exists.".format(day, dayTypeId) }, status.HTTP_409_CONFLICT
 
         cur = db.cursor()
         cur.execute("\
-                INSERT INTO working_days(userid, daytypeid, day, creation_date) \
+                INSERT INTO working_days(contractid, daytypeid, day, creation_date) \
                 VALUES (?, ?, ?, ?)", 
-                (userId, daytypeid, day, creation_date)
+                (contractId, dayTypeId, day, creation_date)
             )
         db.commit()
         db.close()
 
-        return { "msg": "Day {} daytypeid {} added to day exceptions.".format(day, day_type) }, status.HTTP_201_CREATED
+        return { "msg": "Day {} daytypeid {} added to day exceptions.".format(day, dayTypeId) }, status.HTTP_201_CREATED
     else:
         return jsonify(msg='Please give data.'), 422
 

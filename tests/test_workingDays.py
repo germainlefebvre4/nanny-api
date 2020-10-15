@@ -17,7 +17,7 @@ def test_getWorkingDaysById(client):
 
     assert res.status_code == status.HTTP_200_OK
     assert isinstance(json_data, dict)
-    dict_keys = ["id", "userid", "daytypeid", "day", "kind"]
+    dict_keys = ["id", "userid", "daytype_id", "day", "kind"]
     assert Counter(dict_keys) == Counter(list(json_data.keys()))
 
 def test_getWorkingDaysByRangeDate_byYear(client):
@@ -38,36 +38,51 @@ def test_getContractWorkingDaysByRangeDate_byMonth(client):
     assert isinstance(json_data, list)
     assert len(json_data) == 24
     # Inerited from contract
-    assert len([x for x in json_data if x["daytypeid"] == 50]) == 22
+    assert len([x for x in json_data if x["daytype_id"] == 50]) == 22
     # Excluded from contract
-    assert len([x for x in json_data if x["daytypeid"] == 49]) == 0
+    assert len([x for x in json_data if x["daytype_id"] == 49]) == 0
     # Days off
-    assert len([x for x in json_data if x["daytypeid"] == 51]) == 1
+    assert len([x for x in json_data if x["daytype_id"] == 51]) == 1
 
     
-# def test_getWorkingDaysByRangeDate_byDay(client):
-#     # Year, month and day
-#     res = client.get('/api/workingdays/search?year=2020&month=01&day=01')
-#     json_data = res.get_json()
+def test_getWorkingDaysByRangeDate_byDay(client):
+    # Year, month and day
+    res = client.get('/api/contracts/1/workingdays/search?year=2020&month=01&day=01')
+    json_data = res.get_json()
 
-#     assert res.status_code == status.HTTP_200_OK
-#     assert isinstance(json_data, list)
+    assert res.status_code == status.HTTP_200_OK
+    assert isinstance(json_data, list)
+    assert len(json_data) == 1
+    assert json_data[0]["daytype_id"] == 51
 
-# def test_getWorkingDaysByRangeDate_missingParams(client):
-#     res = client.get('/api/workingdays/search')
-#     json_data = res.get_json()
+    for day in range(11, 13):
+        res = client.get(f'/api/contracts/1/workingdays/search?year=2020&month=01&day={day}')
+        json_data = res.get_json()
+        assert res.status_code == status.HTTP_200_OK
+        assert len(json_data) == 0
+    
+    for day in range(7, 11):
+        res = client.get(f'/api/contracts/1/workingdays/search?year=2020&month=01&day={day}')
+        json_data = res.get_json()
+        assert res.status_code == status.HTTP_200_OK
+        assert len(json_data) == 1
+        assert json_data[0]["daytype_id"] == 50
 
-#     assert res.status_code == 422
-#     assert isinstance(json_data, dict)
-#     assert "msg" in json_data.keys()
+def test_getWorkingDaysByRangeDate_missingParams(client):
+    res = client.get('/api/contracts/1/workingdays/search')
+    json_data = res.get_json()
 
-# def test_addWorkingDays(client):
+    assert res.status_code == 422
+    assert isinstance(json_data, dict)
+    assert "msg" in json_data.keys()
+
+# def test_addContractWorkingDays(client):
 #     data = {
 #         "day": "2020-02-04",
-#         "absence": 4
+#         "daytype_id": 4
 #     }
 #     res = client.post(
-#         '/api/workingdays',
+#         '/api/contracts/1/workingdays',
 #         data=json.dumps(data),
 #         content_type='application/json'
 #     )
@@ -77,7 +92,7 @@ def test_getContractWorkingDaysByRangeDate_byMonth(client):
 #     assert isinstance(json_data, dict)
 #     assert "msg" in json_data.keys()
 
-#     res = client.get('/api/workingdays/search?year=2020&month=02&day=04')
+#     res = client.get('/api/contracts/1/workingdays/search?year=2020&month=02&day=04')
 #     json_data = res.get_json()
 
 #     assert res.status_code == status.HTTP_200_OK
