@@ -30,7 +30,7 @@ def test_getWorkingDaysByRangeDate_byYear(client):
     assert "msg" in json_data.keys()
 
 def test_getContractWorkingDaysByRangeDate_byMonth(client):
-    # January 2020
+    # Year and month
     res = client.get('/api/contracts/1/workingdays/search?year=2020&month=01')
     json_data = res.get_json()
 
@@ -75,95 +75,97 @@ def test_getWorkingDaysByRangeDate_missingParams(client):
     assert isinstance(json_data, dict)
     assert "msg" in json_data.keys()
 
-# def test_addContractWorkingDays(client):
-#     data = {
-#         "day": "2020-02-04",
-#         "daytype_id": 4
-#     }
-#     res = client.post(
-#         '/api/contracts/1/workingdays',
-#         data=json.dumps(data),
-#         content_type='application/json'
-#     )
-#     json_data = res.get_json()
+def test_addContractWorkingDays(client):
+    data = {
+        "day": "2020-02-04",
+        "daytype_id": 4
+    }
+    res = client.post(
+        '/api/contracts/1/workingdays',
+        data=json.dumps(data),
+        content_type='application/json'
+    )
+    json_data = res.get_json()
     
-#     assert res.status_code == status.HTTP_201_CREATED
-#     assert isinstance(json_data, dict)
-#     assert "msg" in json_data.keys()
+    assert res.status_code == status.HTTP_201_CREATED
+    assert isinstance(json_data, dict)
+    assert "msg" in json_data.keys()
 
-#     res = client.get('/api/contracts/1/workingdays/search?year=2020&month=02&day=04')
-#     json_data = res.get_json()
+    res = client.get('/api/contracts/1/workingdays/search?year=2020&month=02&day=04')
+    json_data = res.get_json()
 
-#     assert res.status_code == status.HTTP_200_OK
-#     assert isinstance(json_data, list)
-#     assert len(json_data) > 0
-#     assert json_data[0].get("day") == "2020-02-04"
+    assert res.status_code == status.HTTP_200_OK
+    assert isinstance(json_data, list)
+    assert len(json_data) > 0
+    assert json_data[0].get("day") == "2020-02-04"
 
-# def test_addWorkingDays_missingParams(client):
-#     data = {}
-#     res = client.post(
-#         '/api/workingdays',
-#         data=json.dumps(data),
-#         content_type='application/json'
-#     )
-#     json_data = res.get_json()
+def test_addWorkingDays_missingParams(client):
+    data = {}
+    res = client.post(
+        '/api/contracts/1/workingdays',
+        data=json.dumps(data),
+        content_type='application/json'
+    )
+    json_data = res.get_json()
     
-#     assert res.status_code == 422
-#     assert isinstance(json_data, dict)
-#     assert "msg" in json_data.keys()
+    assert res.status_code == 422
+    assert isinstance(json_data, dict)
+    assert "msg" in json_data.keys()
 
 
-# def test_delWorkingDays(client):
-#     data = {
-#         "day": "2020-02-01",
-#         "absence": 4
-#     }
-#     res = client.post(
-#         '/api/workingdays',
-#         data=json.dumps(data),
-#         content_type='application/json'
-#     )
-#     json_data = res.get_json()
+def test_delWorkingDays(client):
+    data = {
+        "day": "2020-03-04",
+        "daytype_id": 4
+    }
+    res = client.post(
+        '/api/contracts/1/workingdays',
+        data=json.dumps(data),
+        content_type='application/json'
+    )
+    json_data = res.get_json()
     
-#     assert res.status_code == status.HTTP_201_CREATED
-#     assert isinstance(json_data, dict)
-#     assert "msg" in json_data.keys()
+    assert res.status_code == status.HTTP_201_CREATED
+    assert isinstance(json_data, dict)
+    assert "msg" in json_data.keys()
 
-#     res = client.get('/api/workingdays/search?year=2020&month=02&day=01')
-#     json_data = res.get_json()
+    res = client.get('/api/contracts/1/workingdays/search?year=2020&month=03&day=04')
+    json_data = res.get_json()
 
-#     assert res.status_code == status.HTTP_200_OK
-#     assert isinstance(json_data, list)
-#     assert len(json_data) > 0
-#     assert json_data[0].get("day") == "2020-02-01"
+    assert res.status_code == status.HTTP_200_OK
+    assert isinstance(json_data, list)
+    assert len(json_data) > 0
+    assert json_data[0].get("day") == "2020-03-04"
 
-#     workingDayId = json_data[0].get("id")
+    print(json_data)
+    workingDayId = json_data[0].get("id")
+    print(workingDayId)
 
 
-#     res = client.delete(
-#         f'/api/workingdays/{workingDayId}',
-#         data=json.dumps(data),
-#         content_type='application/json'
-#     )
-#     json_data = res.get_json()
+    res = client.delete(
+        f'/api/contracts/1/workingdays/{workingDayId}',
+        data=json.dumps(data),
+        content_type='application/json'
+    )
+    json_data = res.get_json()
     
-#     assert res.status_code == status.HTTP_200_OK
-#     assert isinstance(json_data, dict)
-#     assert "msg" in json_data.keys()
+    assert res.status_code == status.HTTP_200_OK
+    assert isinstance(json_data, dict)
+    assert "msg" in json_data.keys()
 
-# def test_delWorkingDays_wrongParams(client):
-#     res = client.delete(
-#         '/api/workingdays/1',
-#     )
-#     json_data = res.get_json()
+def test_delWorkingDays_wrongParams(client):
+    res = client.delete(
+        '/api/contracts/1/workingdays/1',
+    )
+    json_data = res.get_json()
     
-#     assert res.status_code == status.HTTP_200_OK
-#     assert isinstance(json_data, dict)
-#     assert "msg" in json_data.keys()
+    assert res.status_code == status.HTTP_200_OK
+    assert isinstance(json_data, dict)
+    assert "msg" in json_data.keys()
 
-# def test_delWorkingDays_missingParams(client):
-#     res = client.delete(
-#         '/api/workingdays',
-#     )
+def test_delWorkingDays_missingParams(client):
+    res = client.delete(
+        '/api/contracts/1/workingdays',
+    )
     
-#     assert res.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
+    assert res.status_code == status.HTTP_405_METHOD_NOT_ALLOWED

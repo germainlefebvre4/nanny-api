@@ -212,6 +212,7 @@ def getContractWorkingDaysByRangeDate(contractId):
         
         data =  [
             dict(
+                id=x["id"],
                 day=x["day"],
                 daytype_id=x["daytype_id"],
                 kind=x["kind"]
@@ -280,12 +281,16 @@ def addContractWorkingDays(contractId):
     else:
         return jsonify(msg='Please give data.'), 422
 
-@bp.route("/workingdays/<int:workingdaysId>", methods=["DELETE"])
-def delWorkingDays(workingdaysId):
-    if workingdaysId:
+@bp.route("/contracts/<int:contractId>/workingdays/<int:workingdaysId>", methods=["DELETE"])
+def delWorkingDays(contractId, workingdaysId):
+    print(contractId, workingdaysId)
+    if contractId and workingdaysId:
         db = get_db()
         cur = db.cursor()
-        cur.execute('DELETE FROM working_days WHERE id = ?', [workingdaysId])
+        cur.execute("\
+            DELETE FROM working_days \
+            WHERE id = ?",
+            [workingdaysId])
         db.commit()
         db.close()
         return { "msg": "Day  {} removed from day exceptions.".format(workingdaysId) }, status.HTTP_200_OK
