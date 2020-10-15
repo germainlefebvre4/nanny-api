@@ -63,10 +63,17 @@ def addContracts():
     
     userId = request.get_json().get("user_id")
     nannyId = request.get_json().get("nanny_id")
+    weeks = request.get_json().get("weeks")
     weekdays_tmp = request.get_json().get("weekdays")
+    hours = request.get_json().get("hours")
+    price_hour_standard = request.get_json().get("price_hour_standard")
+    price_hour_additional = request.get_json().get("price_hour_additional", None)
+    price_hour_extra = request.get_json().get("price_hour_extra")
+    price_fees = request.get_json().get("price_fees")
+    price_meals = request.get_json().get("price_meals", None)
     creation_date = datetime.now()
 
-    if not (userId and nannyId and weekdays_tmp and isinstance(userId, int) and isinstance(nannyId, int)):
+    if not (userId and nannyId and weeks and weekdays_tmp and hours and price_hour_standard and price_hour_extra and price_fees and isinstance(userId, int) and isinstance(nannyId, int)):
         return jsonify(msg='Please give data.'), 422
     
     weekdays = ",".join(map(str, weekdays_tmp))
@@ -87,9 +94,9 @@ def addContracts():
 
     cur = db.cursor()
     cur.execute("\
-            INSERT INTO contracts(userid, nannyid, weekdays, creation_date) \
-            VALUES (?, ?, ?, ?)", 
-            [userId, nannyId, weekdays, creation_date]
+            INSERT INTO contracts(userid, nannyid, weeks, weekdays, hours, price_hour_standard, price_hour_additional, price_hour_extra, price_fees, price_meals, creation_date) \
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+            [userId, nannyId, weeks, weekdays, hours, price_hour_standard, price_hour_additional, price_hour_extra, price_fees, price_meals, creation_date]
         )
     db.commit()
 
@@ -111,10 +118,17 @@ def addContracts():
 def updateContracts(contractId):
     userId = 1
     
-    updated_date = datetime.now()
+    weeks = request.get_json().get("weeks")
     weekdays_tmp = request.get_json().get("weekdays")
+    hours = request.get_json().get("hours")
+    price_hour_standard = request.get_json().get("price_hour_standard")
+    price_hour_additional = request.get_json().get("price_hour_additional", None)
+    price_hour_extra = request.get_json().get("price_hour_extra")
+    price_fees = request.get_json().get("price_fees")
+    price_meals = request.get_json().get("price_meals", None)
     start_date = datetime.strptime(request.get_json().get("start_date"), "%Y-%m-%d")
     end_date = datetime.strptime(request.get_json().get("end_date"), "%Y-%m-%d")
+    updated_date = datetime.now()
 
     if not (weekdays_tmp and start_date and end_date):
         return jsonify(msg='Please give data.'), 422
@@ -140,13 +154,20 @@ def updateContracts(contractId):
     cur.execute("\
             UPDATE contracts \
             SET \
+                weeks = ? ,\
                 weekdays = ? ,\
+                hours = ? ,\
+                price_hour_standard = ? ,\
+                price_hour_additional = ? ,\
+                price_hour_extra = ? ,\
+                price_fees = ? ,\
+                price_meals = ? ,\
                 start_date = ? ,\
                 end_date = ? ,\
                 updated_date = ? \
             WHERE id = ? \
                 AND userid = ?", 
-            [weekdays, start_date, end_date, updated_date, contractId, userId]
+            [weeks, weekdays, hours, price_hour_standard, price_hour_additional, price_hour_extra, price_fees, price_meals, start_date, end_date, updated_date, contractId, userId]
         )
     db.commit()
     db.close()

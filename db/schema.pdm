@@ -16,11 +16,16 @@
       <Key Name="key" Comment="" Size="255" Type="Text" IsNull="True" IsIndex="False" IsUnique="True" IsPrimary="False" AutoIncrement="False" DefaultValue="" />
       <Key Name="value" Comment="" Size="255" Type="Text" IsNull="True" IsIndex="False" IsUnique="False" IsPrimary="False" AutoIncrement="False" DefaultValue="" />
     </Table>
-    <Table X="260" Y="411" Width="160" Height="148" Id="4" Name="contract" Comment="">
+    <Table X="260" Y="411" Width="160" Height="228" Id="4" Name="contract" Comment="">
       <Key Name="id" Comment="" Size="0" Type="Integer" IsNull="False" IsIndex="False" IsUnique="False" IsPrimary="True" AutoIncrement="False" DefaultValue="" />
-      <Key Name="weekdays" Comment="" Size="255" Type="Text" IsNull="False" IsIndex="False" IsUnique="False" IsPrimary="False" AutoIncrement="False" DefaultValue="" />
-      <Key Name="start_date" Comment="" Size="0" Type="DateTime" IsNull="False" IsIndex="False" IsUnique="False" IsPrimary="False" AutoIncrement="False" DefaultValue="" />
-      <Key Name="end_date" Comment="" Size="0" Type="DateTime" IsNull="False" IsIndex="False" IsUnique="False" IsPrimary="False" AutoIncrement="False" DefaultValue="" />
+      <Key Name="weeks" Comment="Nombre de semaines par an" Size="1" Type="Integer" IsNull="True" IsIndex="False" IsUnique="False" IsPrimary="False" AutoIncrement="False" DefaultValue="" />
+      <Key Name="weekdays" Comment="Jours de présence en semaine" Size="255" Type="Text" IsNull="False" IsIndex="False" IsUnique="False" IsPrimary="False" AutoIncrement="False" DefaultValue="" />
+      <Key Name="hours" Comment="Nombre d'heures par jour" Size="11" Type="Decimal" IsNull="True" IsIndex="False" IsUnique="False" IsPrimary="False" AutoIncrement="False" DefaultValue="" />
+      <Key Name="price_hour_standard" Comment="Prix d'une heure normale" Size="11" Type="Decimal" IsNull="False" IsIndex="False" IsUnique="False" IsPrimary="False" AutoIncrement="False" DefaultValue="" />
+      <Key Name="price_hour_additional" Comment="Prix d'une heure complémentaire" Size="11" Type="Decimal" IsNull="True" IsIndex="False" IsUnique="False" IsPrimary="False" AutoIncrement="False" DefaultValue="" />
+      <Key Name="price_hour_extra" Comment="Prix d'une heure supplémentaire" Size="11" Type="Decimal" IsNull="False" IsIndex="False" IsUnique="False" IsPrimary="False" AutoIncrement="False" DefaultValue="" />
+      <Key Name="start_date" Comment="Date de début du contrat" Size="0" Type="DateTime" IsNull="False" IsIndex="False" IsUnique="False" IsPrimary="False" AutoIncrement="False" DefaultValue="" />
+      <Key Name="end_date" Comment="Date de fin du contrat" Size="0" Type="DateTime" IsNull="False" IsIndex="False" IsUnique="False" IsPrimary="False" AutoIncrement="False" DefaultValue="" />
       <Key Name="creation_date" Comment="" Size="0" Type="DateTime" IsNull="False" IsIndex="False" IsUnique="False" IsPrimary="False" AutoIncrement="False" DefaultValue="" />
       <Key Name="updated_date" Comment="" Size="0" Type="DateTime" IsNull="True" IsIndex="False" IsUnique="False" IsPrimary="False" AutoIncrement="False" DefaultValue="" />
       <ForeignKey Name="FK_CONTRACT_USERS" Prefix="" Comment="Référence users" Reference="1" IsNull="False" IsPrimary="False" OnUpdate="NO ACTION" OnDelete="NO ACTION" />

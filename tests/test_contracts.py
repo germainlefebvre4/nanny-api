@@ -25,7 +25,12 @@ def test_addContracts(client):
     data = {
         "user_id": 1,
         "nanny_id": 2,
-        "weekdays": [1,2,3,4,5]
+        "weeks": 45,
+        "hours": 9.5,
+        "weekdays": [1,2,3,4,5],
+        "price_hour_standard": 3.5,
+        "price_hour_extra": 3.8,
+        "price_fees": 3.08
     }
     res = client.post(
         '/api/contracts',
@@ -65,7 +70,12 @@ def test_addContracts_missingParams(client):
 
 def test_updateContracts(client):
     data = {
+        "weeks": 40,
         "weekdays": [1,2,4,5],
+        "hours": 5,
+        "price_hour_standard": 4,
+        "price_hour_extra": 4.5,
+        "price_fees": 3.5,
         "start_date": "2019-09-01",
         "end_date": "2020-08-31"
     }
