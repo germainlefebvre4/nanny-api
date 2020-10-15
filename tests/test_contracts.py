@@ -27,7 +27,7 @@ def test_addContracts(client):
         "nanny_id": 2,
         "weeks": 45,
         "hours": 9.5,
-        "weekdays": [1,1,1,1,1,0,0],
+        "weekdays": [True,True,True,True,True,"",""],
         "price_hour_standard": 3.5,
         "price_hour_extra": 3.8,
         "price_fees": 3.08
@@ -71,7 +71,7 @@ def test_addContracts_missingParams(client):
 def test_updateContracts(client):
     data = {
         "weeks": 40,
-        "weekdays": [1,1,0,1,1,0,0],
+        "weekdays": [True,True,False,True,True,"",""],
         "hours": 5,
         "price_hour_standard": 4,
         "price_hour_extra": 4.5,

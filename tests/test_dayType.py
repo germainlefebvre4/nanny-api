@@ -8,4 +8,4 @@ def test_getDayType(client):
 
     assert res.status_code == status.HTTP_200_OK
     assert isinstance(json_data, list)
-    assert len(json_data) == 8
+    assert len(json_data) == 9

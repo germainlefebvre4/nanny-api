@@ -43,7 +43,6 @@ def test_getContractWorkingDaysByRangeDate_byMonth(client):
     assert len([x for x in json_data if x["daytype_id"] == 49]) == 0
     # Days off
     assert len([x for x in json_data if x["daytype_id"] == 51]) == 1
-
     
 def test_getWorkingDaysByRangeDate_byDay(client):
     # Year, month and day

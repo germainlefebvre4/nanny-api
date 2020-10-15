@@ -20,6 +20,8 @@ from api.db import get_db
 bp = Blueprint("workingdays", __name__, url_prefix="/api")
 
 
+WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+
 # To delete in the future
 @bp.route("/contracts/<int:contractId>/workingdays", methods=["GET"])
 def getContractWorkingDays(contractId):
@@ -133,10 +135,12 @@ def getContractWorkingDaysByRangeDate(contractId):
             for x in holidays.FRA(years=year).items() 
             if datetime.strftime(x[0], "%m") == "{:02}".format(month)
         ]
+        
         workingdays_list = [x["day"] for x in workingdays]
-        weekmask_list = [int(x) for x in contract_info.get("weekdays").split(",")]
+        weekmask_user = [bool(x) for x in contract_info.get("weekdays").split(",")]
+        weekmask_list = [a and b for a, b in zip(weekmask_user, WEEKDAYS)]
 
-        business_days_pandas = pandas.bdate_range(start=startDay, end=endDay, freq="C", weekmask="Mon Tue Wed Thu Fri", holidays=holidays_fra).format()
+        # business_days_pandas = pandas.bdate_range(start=startDay, end=endDay, freq="C", weekmask="Mon Tue Wed Thu Fri", holidays=holidays_fra).format()
         business_days_inherited_pandas = pandas.bdate_range(start=startDay, end=endDay, freq="C", weekmask="Mon Tue Wed Thu Fri", holidays=holidays_fra+workingdays_list).format()
         
         data =  [
@@ -198,10 +202,12 @@ def getContractWorkingDaysByRangeDate(contractId):
             for x in holidays.FRA(years=year).items() 
             if datetime.strftime(x[0], "%m-%d") == "{:02}-{:02}".format(month, day)
         ]
-        workingdays_list = [x["day"] for x in workingdays]
-        weekmask_list = [int(x) for x in contract_info.get("weekdays").split(",")]
 
-        business_days_pandas = pandas.bdate_range(start=startDay, end=endDay, freq="C", weekmask="Mon Tue Wed Thu Fri", holidays=holidays_fra).format()
+        workingdays_list = [x["day"] for x in workingdays]
+        weekmask_user = [bool(x) for x in contract_info.get("weekdays").split(",")]
+        weekmask_list = [a and b for a, b in zip(weekmask_user, WEEKDAYS)]
+
+        # business_days_pandas = pandas.bdate_range(start=startDay, end=endDay, freq="C", weekmask="Mon Tue Wed Thu Fri", holidays=holidays_fra).format()
         business_days_inherited_pandas = pandas.bdate_range(start=startDay, end=endDay, freq="C", weekmask="Mon Tue Wed Thu Fri", holidays=holidays_fra+workingdays_list).format()
         
         data =  [
