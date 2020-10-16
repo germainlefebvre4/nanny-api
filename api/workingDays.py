@@ -36,7 +36,7 @@ def getContractWorkingDays(contractId):
                 dt.kind \
             FROM working_days as wd \
             JOIN contracts as co ON co.id = wd.contractid \
-            JOIN day_type AS dt ON dt.id = wd.daytypeid \
+            JOIN day_types AS dt ON dt.id = wd.daytypeid \
             WHERE wd.contractid = ? \
                 AND co.userid = ?",
             [contractId, userId]
@@ -64,7 +64,7 @@ def getContractWorkingDaysById(contractId, workingdaysId):
                     dt.kind \
                 FROM working_days as wd \
                 JOIN contracts as co ON co.id = wd.contractid \
-                JOIN day_type AS dt ON dt.id = wd.daytypeid \
+                JOIN day_types AS dt ON dt.id = wd.daytypeid \
                 WHERE wd.contractid = ? \
                     AND co.userid = ? \
                     AND wd.id = ?",
@@ -117,7 +117,7 @@ def getContractWorkingDaysByRangeDate(contractId):
                 FROM working_days as wd \
                 JOIN contracts as co ON co.id = wd.contractid \
                 JOIN users AS us ON us.id = co.userid \
-                JOIN day_type AS dt ON dt.id = wd.daytypeid \
+                JOIN day_types AS dt ON dt.id = wd.daytypeid \
                 WHERE wd.contractid = ? \
                     AND co.userid = ? \
                     AND wd.day >= ? \
@@ -184,7 +184,7 @@ def getContractWorkingDaysByRangeDate(contractId):
                 FROM working_days as wd \
                 JOIN contracts as co ON co.id = wd.contractid \
                 JOIN users AS us ON us.id = co.userid \
-                JOIN day_type AS dt ON dt.id = wd.daytypeid \
+                JOIN day_types AS dt ON dt.id = wd.daytypeid \
                 WHERE wd.contractid = ? \
                     AND co.userid = ? \
                     AND wd.day >= ? \

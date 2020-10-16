@@ -17,7 +17,7 @@ ALTER TABLE working_days
 DROP TABLE IF EXISTS configuration;
 DROP TABLE IF EXISTS working_days;
 DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS day_type;
+DROP TABLE IF EXISTS day_types;
 DROP TABLE IF EXISTS nannies;
 DROP TABLE IF EXISTS contracts;
 
@@ -36,10 +36,10 @@ CREATE TABLE configuration (
 );
 
 /***********************************************************
-* day_type
+* day_types
 ************************************************************/
 
-CREATE TABLE day_type (
+CREATE TABLE day_types (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     kind TEXT NOT NULL
 );
@@ -105,7 +105,7 @@ CREATE TABLE working_days (
     FOREIGN KEY (contractid)
         REFERENCES contracts (id),
     FOREIGN KEY (daytypeid)
-       REFERENCES day_type (id)
+       REFERENCES day_types (id)
 );
 
 
@@ -127,17 +127,17 @@ INSERT INTO users (id, email, firstname) VALUES (2, 'toto@biclo.fr', 'Toto');
 INSERT INTO nannies (id, email, firstname) VALUES (1, 'claudie@nanny.fr', 'Claudie');
 INSERT INTO nannies (id, email, firstname) VALUES (2, 'tata@nanny.fr', 'Tata');
 
-INSERT INTO day_type (id, kind) VALUES (1, 'Présence enfant');
-INSERT INTO day_type (id, kind) VALUES (2, 'Maladie enfant');
-INSERT INTO day_type (id, kind) VALUES (3, 'Absence enfant');
-INSERT INTO day_type (id, kind) VALUES (4, 'CP enfant');
-INSERT INTO day_type (id, kind) VALUES (5, 'CP enfant exceptionnel');
-INSERT INTO day_type (id, kind) VALUES (6, 'Maladie nounou');
-INSERT INTO day_type (id, kind) VALUES (7, 'CP nounou');
-INSERT INTO day_type (id, kind) VALUES (8, 'CP nounou exceptionnel');
-INSERT INTO day_type (id, kind) VALUES (49, 'Exclu du contrat');
-INSERT INTO day_type (id, kind) VALUES (50, 'Hérité du contrat');
-INSERT INTO day_type (id, kind) VALUES (51, 'Jour férié');
+INSERT INTO day_types (id, kind) VALUES (1, 'Présence enfant');
+INSERT INTO day_types (id, kind) VALUES (2, 'Maladie enfant');
+INSERT INTO day_types (id, kind) VALUES (3, 'Absence enfant');
+INSERT INTO day_types (id, kind) VALUES (4, 'CP enfant');
+INSERT INTO day_types (id, kind) VALUES (5, 'CP enfant exceptionnel');
+INSERT INTO day_types (id, kind) VALUES (6, 'Maladie nounou');
+INSERT INTO day_types (id, kind) VALUES (7, 'CP nounou');
+INSERT INTO day_types (id, kind) VALUES (8, 'CP nounou exceptionnel');
+INSERT INTO day_types (id, kind) VALUES (49, 'Exclu du contrat');
+INSERT INTO day_types (id, kind) VALUES (50, 'Hérité du contrat');
+INSERT INTO day_types (id, kind) VALUES (51, 'Jour férié');
 
 INSERT INTO contracts (id, weeks, weekdays, hours, price_hour_standard, price_hour_additional, price_hour_extra, price_fees, price_meals, start_date, end_date, creation_date, userid, nannyid) 
     VALUES (1, 52, "True,True,True,True,True,,", 8.5, 3.5, NULL, 3.8, 3.08, 4, datetime('now'), datetime('now'), datetime('now'), 1, 1);

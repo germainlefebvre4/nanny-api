@@ -4,7 +4,7 @@
 DELETE FROM configuration;
 DELETE FROM working_days;
 DELETE FROM users;
--- DELETE FROM day_type;
+-- DELETE FROM day_types;
 DELETE FROM nannies;
 DELETE FROM contracts;
 
@@ -24,20 +24,20 @@ INSERT INTO nannies (id, email, firstname) VALUES (1, 'claudie@nanny.fr', 'Claud
 INSERT INTO nannies (id, email, firstname) VALUES (2, 'tata@nanny.fr', 'Tata');
 
 /***********************************************************
-* day_type
+* day_types
 ************************************************************/
 
--- INSERT INTO day_type (id, kind) VALUES (1, 'Présence enfant');
--- INSERT INTO day_type (id, kind) VALUES (2, 'Maladie enfant');
--- INSERT INTO day_type (id, kind) VALUES (3, 'Absence enfant');
--- INSERT INTO day_type (id, kind) VALUES (4, 'CP enfant');
--- INSERT INTO day_type (id, kind) VALUES (5, 'CP enfant exceptionnel');
--- INSERT INTO day_type (id, kind) VALUES (6, 'Maladie nounou');
--- INSERT INTO day_type (id, kind) VALUES (7, 'CP nounou');
--- INSERT INTO day_type (id, kind) VALUES (8, 'CP nounou exceptionnel');
--- INSERT INTO day_type (id, kind) VALUES (49, 'Exclu du contrat');
--- INSERT INTO day_type (id, kind) VALUES (50, 'Hérité du contrat');
--- INSERT INTO day_type (id, kind) VALUES (51, 'Jour férié');
+-- INSERT INTO day_types (id, kind) VALUES (1, 'Présence enfant');
+-- INSERT INTO day_types (id, kind) VALUES (2, 'Maladie enfant');
+-- INSERT INTO day_types (id, kind) VALUES (3, 'Absence enfant');
+-- INSERT INTO day_types (id, kind) VALUES (4, 'CP enfant');
+-- INSERT INTO day_types (id, kind) VALUES (5, 'CP enfant exceptionnel');
+-- INSERT INTO day_types (id, kind) VALUES (6, 'Maladie nounou');
+-- INSERT INTO day_types (id, kind) VALUES (7, 'CP nounou');
+-- INSERT INTO day_types (id, kind) VALUES (8, 'CP nounou exceptionnel');
+-- INSERT INTO day_types (id, kind) VALUES (49, 'Exclu du contrat');
+-- INSERT INTO day_types (id, kind) VALUES (50, 'Hérité du contrat');
+-- INSERT INTO day_types (id, kind) VALUES (51, 'Jour férié');
 
 /***********************************************************
 * contracts

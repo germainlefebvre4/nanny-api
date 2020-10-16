@@ -3,7 +3,7 @@ from flask_api import status
 import json
 
 def test_getDayType(client):
-    res = client.get('/api/daytype')
+    res = client.get('/api/daytypes')
     json_data = res.get_json()
 
     assert res.status_code == status.HTTP_200_OK

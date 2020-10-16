@@ -37,8 +37,8 @@ def create_app(test_config=None):
     from . import db
     db.init_app(app)
 
-    from . import dayType
-    app.register_blueprint(dayType.bp)
+    from . import dayTypes
+    app.register_blueprint(dayTypes.bp)
     from . import contracts
     app.register_blueprint(contracts.bp)
     from . import workingDays
