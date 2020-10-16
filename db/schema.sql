@@ -97,9 +97,11 @@ CREATE TABLE contracts (
 
 CREATE TABLE working_days (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    day TEXT NOT NULL,
     contractid INTEGER NOT NULL,
     daytypeid INTEGER NOT NULL,
+    day TEXT NOT NULL,
+    start REAL,
+    end REAL,
     creation_date DATETIME NOT NULL,
     UNIQUE (contractid, day)
     FOREIGN KEY (contractid)
