@@ -14,7 +14,7 @@ def create_app(test_config=None):
     )
 
     app.config['CORS_HEADERS'] = 'Content-Type'
-    cors = CORS(app, resources={r"/.*": {"origins": "http://localhost"}})
+    cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
     if test_config is None:
         # load the instance config, if it exists, when not testing

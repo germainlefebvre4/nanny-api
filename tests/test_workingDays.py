@@ -44,6 +44,13 @@ def test_getContractWorkingDaysByRangeDate_byMonth(client):
     # Days off
     assert len([x for x in json_data if x["daytype_id"] == 51]) == 1
     
+    res = client.get('/api/contracts/1/workingdays/search?year=2020&month=9')
+    json_data = res.get_json()
+
+    assert res.status_code == status.HTTP_200_OK
+    assert isinstance(json_data, list)
+
+
 def test_getWorkingDaysByRangeDate_byDay(client):
     # Year, month and day
     res = client.get('/api/contracts/1/workingdays/search?year=2020&month=01&day=01')

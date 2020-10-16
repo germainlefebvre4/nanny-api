@@ -12,6 +12,7 @@ import sqlite3
 import numpy
 from datetime import datetime, date
 from datedelta import datedelta
+import calendar
 import pandas
 
 
@@ -88,7 +89,7 @@ def getContractWorkingDaysByRangeDate(contractId):
     year = request.args.get('year', default=None, type=int)
     month = request.args.get('month', default=None, type=int)
     day = request.args.get('day', default=None, type=int)
-
+    
     db = get_db()
     cur = db.cursor()
     row = cur.execute("\
@@ -103,8 +104,12 @@ def getContractWorkingDaysByRangeDate(contractId):
     # del(db)
     
     if year and month and not day:
+        if int(year) < 1970 or int(month) < 1 or int(month) > 12:
+            return jsonify(msg='Please select a year, month and day value.'), 422
+        # Year and month
+        lastDayOfTheMonth = calendar.monthrange(year, month)[1]
         startDay = "{:04d}-{:02d}-{:02d}".format(year, month, 1)
-        endDay = "{:04d}-{:02d}-{:02d}".format(year, month, 31)
+        endDay = "{:04d}-{:02d}-{:02d}".format(year, month, lastDayOfTheMonth)
         
         db = get_db()
         cur = db.cursor()
@@ -141,6 +146,7 @@ def getContractWorkingDaysByRangeDate(contractId):
         weekmask_list = [a and b for a, b in zip(weekmask_user, WEEKDAYS)]
 
         # business_days_pandas = pandas.bdate_range(start=startDay, end=endDay, freq="C", weekmask="Mon Tue Wed Thu Fri", holidays=holidays_fra).format()
+        business_days_inherited_pandas = pandas.bdate_range(start=startDay, end=endDay, freq="C", weekmask="Mon Tue Wed Thu Fri", holidays=holidays_fra+workingdays_list)
         business_days_inherited_pandas = pandas.bdate_range(start=startDay, end=endDay, freq="C", weekmask="Mon Tue Wed Thu Fri", holidays=holidays_fra+workingdays_list).format()
         
         data =  [
@@ -170,6 +176,11 @@ def getContractWorkingDaysByRangeDate(contractId):
         return jsonify(data)
 
     elif year and month and day:
+        if int(year) < 1970 or int(month) < 1 or int(month) > 12 or int(day) < 1 or int(day) > calendar.monthrange(year, month)[1]:
+            return jsonify(msg='Please select a year, month and day value.'), 422
+
+        # Year, month and day
+        lastDayOfTheMonth = calendar.monthrange(year, month)[1]
         startDay = "{:04d}-{:02d}-{:02d}".format(year, month, day)
         endDay = "{:04d}-{:02d}-{:02d}".format(year, month, day)
 
