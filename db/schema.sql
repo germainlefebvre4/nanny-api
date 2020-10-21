@@ -142,9 +142,9 @@ INSERT INTO day_types (id, kind) VALUES (50, 'Hérité du contrat');
 INSERT INTO day_types (id, kind) VALUES (51, 'Jour férié');
 
 INSERT INTO contracts (id, weeks, weekdays, hours, price_hour_standard, price_hour_additional, price_hour_extra, price_fees, price_meals, start_date, end_date, creation_date, userid, nannyid) 
-    VALUES (1, 52, "True,True,True,True,True,,", 8.5, 3.5, NULL, 3.8, 3.08, 4, datetime('now'), datetime('now'), datetime('now'), 1, 1);
+    VALUES (1, 52, "Mon Tue Thu Fri", 8.5, 3.5, NULL, 3.8, 3.08, 4, datetime('now'), datetime('now'), datetime('now'), 1, 1);
 INSERT INTO contracts (id, weeks, weekdays, hours, price_hour_standard, price_hour_additional, price_hour_extra, price_fees, start_date, end_date, creation_date, userid, nannyid) 
-    VALUES (2, 44, "True,True,True,True,True,,", 10, 3.5, 3.5, 4.0, 3.08, datetime('now'), datetime('now'), datetime('now'), 2, 2);
+    VALUES (2, 44, "Mon Tue Wed Thu Fri", 10, 3.5, 3.5, 4.0, 3.08, datetime('now'), datetime('now'), datetime('now'), 2, 2);
 
 INSERT INTO working_days (id, day, creation_date, contractid, daytypeid) 
     VALUES (1, "2020-01-05", datetime('now'), 1, 3);

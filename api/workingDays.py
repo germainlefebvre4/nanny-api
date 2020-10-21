@@ -21,8 +21,6 @@ from api.db import get_db
 bp = Blueprint("workingdays", __name__, url_prefix="/api")
 
 
-WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-
 # To delete in the future
 @bp.route("/contracts/<int:contractId>/workingdays", methods=["GET"])
 def getContractWorkingDays(contractId):
@@ -100,10 +98,11 @@ def getContractWorkingDaysByRangeDate(contractId):
             [contractId, userId]
         ).fetchone()
     contract_info = dict(row)
-    # db.close()
-    # del(db)
+
+    if day == 0:
+        day = -1
     
-    if year and month and not day:
+    if year and month and not bool(day):
         if int(year) < 1970 or int(month) < 1 or int(month) > 12:
             return jsonify(msg='Please select a year, month and day value.'), 422
         # Year and month
@@ -142,12 +141,10 @@ def getContractWorkingDaysByRangeDate(contractId):
         ]
         
         workingdays_list = [x["day"] for x in workingdays]
-        weekmask_user = [bool(x) for x in contract_info.get("weekdays").split(",")]
-        weekmask_list = [a and b for a, b in zip(weekmask_user, WEEKDAYS)]
+        weekmask = contract_info.get("weekdays")
 
-        # business_days_pandas = pandas.bdate_range(start=startDay, end=endDay, freq="C", weekmask="Mon Tue Wed Thu Fri", holidays=holidays_fra).format()
-        business_days_inherited_pandas = pandas.bdate_range(start=startDay, end=endDay, freq="C", weekmask="Mon Tue Wed Thu Fri", holidays=holidays_fra+workingdays_list)
-        business_days_inherited_pandas = pandas.bdate_range(start=startDay, end=endDay, freq="C", weekmask="Mon Tue Wed Thu Fri", holidays=holidays_fra+workingdays_list).format()
+        # business_days_pandas = pandas.bdate_range(start=startDay, end=endDay, freq="C", weekmask=weekmask, holidays=holidays_fra).format()
+        business_days_inherited_pandas = pandas.bdate_range(start=startDay, end=endDay, freq="C", weekmask=weekmask, holidays=holidays_fra+workingdays_list).format()
         
         data =  [
             dict(
@@ -215,11 +212,10 @@ def getContractWorkingDaysByRangeDate(contractId):
         ]
 
         workingdays_list = [x["day"] for x in workingdays]
-        weekmask_user = [bool(x) for x in contract_info.get("weekdays").split(",")]
-        weekmask_list = [a and b for a, b in zip(weekmask_user, WEEKDAYS)]
+        weekmask = contract_info.get("weekdays")
 
-        # business_days_pandas = pandas.bdate_range(start=startDay, end=endDay, freq="C", weekmask="Mon Tue Wed Thu Fri", holidays=holidays_fra).format()
-        business_days_inherited_pandas = pandas.bdate_range(start=startDay, end=endDay, freq="C", weekmask="Mon Tue Wed Thu Fri", holidays=holidays_fra+workingdays_list).format()
+        # business_days_pandas = pandas.bdate_range(start=startDay, end=endDay, freq="C", weekmask=weekmask, holidays=holidays_fra).format()
+        business_days_inherited_pandas = pandas.bdate_range(start=startDay, end=endDay, freq="C", weekmask=weekmask, holidays=holidays_fra+workingdays_list).format()
         
         data =  [
             dict(
@@ -294,7 +290,6 @@ def addContractWorkingDays(contractId):
 
 @bp.route("/contracts/<int:contractId>/workingdays/<int:workingdaysId>", methods=["DELETE"])
 def delWorkingDays(contractId, workingdaysId):
-    print(contractId, workingdaysId)
     if contractId and workingdaysId:
         db = get_db()
         cur = db.cursor()
