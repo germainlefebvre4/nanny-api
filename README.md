@@ -1,46 +1,70 @@
-# Nanny Salary
+# Nanny API
 
-## Prerequisite
-Python versions covered:
-* `Python 3.6`
-* `Python 3.7`
+API to run inside Nanny project.
+
 
 ## Getting started
-### Init database
-```sh
-pipenv run flask init-db
-```
-### Run the app
-```sh
-pipenv run flask run --host=0.0.0.0 --port=8080
-```
-Browse the app on localhost port 8080.
 
-## Pipenv
-### Prepare
+```bash
+sudo apt update
+sudo apt install python3-pip python3-dev
+pip install pipenv
 ```
+
+```bash
 pipenv update
+pipenv run alembic upgrade head
+pipenv run uvicorn api.main:app --port=8080 --reload
 ```
 
-### Runtime
-```
-pipenv run python main.py
+Run the application on the browser `http://localhost:8080`.
+
+
+## Development
+
+### Prerequisites
+**Python version**
+* `3.8`
+```bash
+sudo apt install python3.8
 ```
 
-### Systemd service
+**System packages**
+* `pip`
+* `python3-dev`
 ```
-[Unit]
-Description=Nanny API Service
-After=multi-user.target
+sudo apt install python3-pip python3-dev
+# sudo apt install python3.8-pip python3.8-dev
+```
 
-[Service]
-User=root
-WorkingDirectory=/opt/python/nanny-api
-Restart=always
-Type=simple
-ExecStart=/usr/local/bin/pipenv run python main.py
-StandardInput=tty-force
+**Python modules**
+* `pipenv`
+```bash
+pip install pipenv
+```
 
-[Install]
-WantedBy=multi-user.target
+### Prepare environment
+```bash
+pipenv update --dev
+```
+
+### Running local
+```bash
+pipenv run alembic upgrade head
+pipenv run uvicorn api.main:app --port=8080 --reload
+```
+
+### Running tests
+```bash
+pipenv run pytest api/tests/test_*
+```
+
+
+## Documentation
+
+### Draw database entity-relation schema
+```bash
+sudo apt update
+sudo apt install libgraphviz-dev
+pipenv run python docs/generate_database_graph.py
 ```
