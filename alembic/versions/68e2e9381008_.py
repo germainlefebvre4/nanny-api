@@ -28,7 +28,7 @@ def upgrade():
         Column('id', Integer, primary_key=True, index=True),
         Column('email', String, unique=True, index=True),
         Column('firstname', String),
-        Column('hashed_password', String),
+        Column('password', String),
         Column('is_active', Boolean, default=True),
         Column('is_user', Boolean, default=True),
         Column('is_nanny', Boolean, default=False),

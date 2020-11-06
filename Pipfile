@@ -16,6 +16,9 @@ alembic = "*"
 python-dotenv = "*"
 requests = "*"
 python-dateutil = "*"
+python-jose = {extras = ["cryptography"], version = "*"}
+passlib = {extras = ["bcrypt"], version = "*"}
+python-multipart = "*"
 
 [requires]
 python_version = "3.8"

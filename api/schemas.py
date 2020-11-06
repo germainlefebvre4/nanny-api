@@ -4,24 +4,6 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 
-# class ItemBase(BaseModel):
-#     title: str
-#     description: Optional[str] = None
-
-
-# class ItemCreate(ItemBase):
-#     pass
-
-
-# class Item(ItemBase):
-#     id: int
-#     owner_id: int
-
-#     class Config:
-#         orm_mode = True
-
-
-
 """
     Day Type
 """
@@ -46,11 +28,29 @@ class Status(BaseModel):
 
 
 """
+    Token
+"""
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    email: Optional[str] = None
+
+"""
     User
 """
 class UserBase(BaseModel):
     email: str
     firstname: str
+    is_user: Optional[bool] = True
+    is_nanny: Optional[bool] = False
+    # username: str
+    # full_name: Optional[str] = None
+    # disabled: Optional[bool] = None
+    # email: Optional[str] = None
+    pass
 
 class UserCreate(UserBase):
     password: str
@@ -58,12 +58,9 @@ class UserCreate(UserBase):
 
 class User(UserBase):
     id: int
-    hashed_password: str
     is_active: bool
-    is_user: bool
-    is_nanny: bool
-    is_admin: bool
-    
+    is_admin: Optional[bool] = False
+
     class Config:
         orm_mode = True
 

@@ -2,9 +2,12 @@ from datetime import datetime
 
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, or_
+from passlib.context import CryptContext
 
 from . import models, schemas
 
+# Authentication Crypt
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 """
     Day Type
@@ -44,8 +47,8 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.User).offset(skip).limit(limit).all()
 
 def create_user(db: Session, user: schemas.UserCreate):
-    fake_hashed_password = user.password + "notreallyhashed"
-    db_user = models.User(email=user.email, firstname=user.firstname, hashed_password=fake_hashed_password)
+    hashed_password = pwd_context.hash(user.password)
+    db_user = models.User(email=user.email, firstname=user.firstname, password=hashed_password, is_user=user.is_user, is_nanny=user.is_nanny)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)

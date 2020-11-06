@@ -24,7 +24,7 @@ def test_read_user_badParam():
     assert res.status_code == status.HTTP_404_NOT_FOUND
     assert isinstance(res.json(), dict)
 
-def test_create_user():
+def test_create_user_defaultParams():
     user_email = "".join(random.choice(string.ascii_lowercase) for i in range(10))
     user_firstname = "".join(random.choice(string.ascii_lowercase) for i in range(10))
     user_password = "".join(random.choice(string.ascii_lowercase) for i in range(10))
@@ -38,6 +38,49 @@ def test_create_user():
     assert isinstance(res.json(), dict)
     assert res.json()["email"] == user_email
     assert res.json()["firstname"] == user_firstname
+
+def test_create_user_user():
+    user_email = "".join(random.choice(string.ascii_lowercase) for i in range(10))
+    user_firstname = "".join(random.choice(string.ascii_lowercase) for i in range(10))
+    user_password = "".join(random.choice(string.ascii_lowercase) for i in range(10))
+    data = {
+        "email": user_email,
+        "firstname": user_firstname,
+        "password": user_password,
+        "is_user": True,
+        "is_nanny": False
+    }
+    res = client.post("/users/",json=data)
+    assert res.status_code == status.HTTP_201_CREATED
+    assert isinstance(res.json(), dict)
+    assert res.json()["email"] == user_email
+    assert res.json()["firstname"] == user_firstname
+    assert res.json()["is_user"] == True
+    assert res.json()["is_nanny"] == False
+    assert res.json()["is_admin"] == False
+    assert "password" not in list(res.json().keys())
+
+def test_create_user_nanny():
+    user_email = "".join(random.choice(string.ascii_lowercase) for i in range(10))
+    user_firstname = "".join(random.choice(string.ascii_lowercase) for i in range(10))
+    user_password = "".join(random.choice(string.ascii_lowercase) for i in range(10))
+    data = {
+        "email": user_email,
+        "firstname": user_firstname,
+        "password": user_password,
+        "is_user": False,
+        "is_nanny": True
+    }
+    res = client.post("/users/",json=data)
+    print(res.json())
+    assert res.status_code == status.HTTP_201_CREATED
+    assert isinstance(res.json(), dict)
+    assert res.json()["email"] == user_email
+    assert res.json()["firstname"] == user_firstname
+    assert res.json()["is_user"] == False
+    assert res.json()["is_nanny"] == True
+    assert res.json()["is_admin"] == False
+    assert "password" not in list(res.json().keys())
 
 def test_create_user_alreadyExist():
     user_email = "".join(random.choice(string.ascii_lowercase) for i in range(10))
@@ -101,6 +144,7 @@ def test_delete_user():
     assert res.json().get("message") == f"Deleted User {user_id}"
 
 
+# ===================
 
 # def test_getUserProfile_badUser():
 #     res = client.get("/api/users/profile")
