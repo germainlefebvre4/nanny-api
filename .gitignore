@@ -1,1 +1,3 @@
-instance/nanny.sqlite
+.mypy_cache
+.coverage
+htmlcov
