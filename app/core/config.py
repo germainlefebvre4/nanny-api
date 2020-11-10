@@ -1,3 +1,4 @@
+import os
 import secrets
 from typing import Any, Dict, List, Optional, Union
 
@@ -33,14 +34,16 @@ class Settings(BaseSettings):
             return None
         return v
 
-    POSTGRES_SERVER: str = "localhost"
-    POSTGRES_USER: str = "nanny"
-    POSTGRES_PASSWORD: str = "nanny"
-    POSTGRES_DB: str = "nanny"
+    # POSTGRES_SERVER: str = "localhost"
+    # POSTGRES_USER: str = "nanny"
+    # POSTGRES_PASSWORD: str = "nanny"
+    # POSTGRES_DB: str = "nanny"
+    POSTGRES_SERVER: str = os.getenv("POSTGRES_USER", "localhost")
+    POSTGRES_PORT: str = os.getenv("POSTGRES_PORT", "5432")
+    POSTGRES_USER: str = os.getenv("POSTGRES_USER", "nanny")
+    POSTGRES_PASSWORD: str = os.getenv("POSTGRES_USER", "nanny")
+    POSTGRES_DB: str = os.getenv("POSTGRES_USER", "nanny")
     SQLALCHEMY_DATABASE_URI: Optional[PostgresDsn] = None
-
-    TEST_POSTGRES_DB: str = "nanny_test"
-    TEST_SQLALCHEMY_DATABASE_URI: Optional[PostgresDsn] = None
 
     @validator("SQLALCHEMY_DATABASE_URI", pre=True)
     def assemble_db_connection(cls, v: Optional[str], values: Dict[str, Any]) -> Any:
@@ -51,19 +54,8 @@ class Settings(BaseSettings):
             user=values.get("POSTGRES_USER"),
             password=values.get("POSTGRES_PASSWORD"),
             host=values.get("POSTGRES_SERVER"),
+            port=values.get("POSTGRES_PORT"),
             path=f"/{values.get('POSTGRES_DB') or ''}",
-        )
-
-    @validator("TEST_SQLALCHEMY_DATABASE_URI", pre=True)
-    def assemble_db_connection_test(cls, v: Optional[str], values: Dict[str, Any]) -> Any:
-        if isinstance(v, str):
-            return v
-        return PostgresDsn.build(
-            scheme="postgresql",
-            user=values.get("POSTGRES_USER"),
-            password=values.get("POSTGRES_PASSWORD"),
-            host=values.get("POSTGRES_SERVER"),
-            path=f"/{values.get('TEST_POSTGRES_DB') or ''}",
         )
 
     SMTP_TLS: bool = True

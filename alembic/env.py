@@ -25,7 +25,7 @@ if config.attributes.get('configure_logger', True):
 # target_metadata = mymodel.Base.metadata
 # target_metadata = None
 
-from app.db.base import Base  # noqa
+from app.db.base import Base
 
 target_metadata = Base.metadata
 
@@ -40,7 +40,8 @@ def get_url():
     password = os.getenv("POSTGRES_PASSWORD", "")
     server = os.getenv("POSTGRES_SERVER", "db")
     db = os.getenv("POSTGRES_DB", "app")
-    return f"postgresql://{user}:{password}@{server}/{db}"
+    port = os.getenv("POSTGRES_PORT", "5432")
+    return f"postgresql://{user}:{password}@{server}:{port}/{db}"
 
 
 def run_migrations_offline():

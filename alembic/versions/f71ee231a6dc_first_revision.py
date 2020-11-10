@@ -75,14 +75,14 @@ def upgrade():
 
 
 def downgrade():
+    op.drop_index("ix_user_id", table_name="user")
+    op.drop_index("ix_user_full_name", table_name="user")
+    op.drop_index("ix_user_email", table_name="user")
     op.drop_constraint("fk_working_day_day_type_id", "working_days", type_="foreignkey")
     op.drop_constraint("fk_working_day_contract_id", "working_days", type_="foreignkey")
-    op.drop_table("working_days")
     op.drop_constraint("fk_contract_nanny_id", "contracts", type_="foreignkey")
     op.drop_constraint("fk_contract_user_id", "contracts", type_="foreignkey")
+    op.drop_table("working_days")
     op.drop_table("contracts")
-    op.drop_index(op.f("ix_user_id"), table_name="user")
-    op.drop_index(op.f("ix_user_full_name"), table_name="user")
-    op.drop_index(op.f("ix_user_email"), table_name="user")
     op.drop_table("users")
     op.drop_table("day_types")

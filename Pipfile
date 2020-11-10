@@ -9,6 +9,7 @@ eralchemy = "*"
 sqlalchemy-stubs = "*"
 flake8 = "*"
 pytest-cov = "*"
+pytest-dotenv = "*"
 
 [packages]
 fastapi = "*"

@@ -9,16 +9,17 @@ import alembic.config
 import alembic.command
 
 from app.core.config import settings
+# from app.tests.db.session import SessionLocal
 from app.db.session import SessionLocal
 from app.main import app
 from app.tests.utils.user import authentication_token_from_email
 from app.tests.utils.utils import get_superuser_token_headers
-from app.tests.db.session import engine
-# from app.db.session import engine
+# from app.tests.db.session import engine, TEST_SQLALCHEMY_DATABASE_URI
+from app.db.session import engine
 from app.db.base import Base
 
 from app.initial_data import main as initial_data
-
+# from app.tests.db.init_db import init_db
 
 logging.getLogger('alembic').setLevel(logging.CRITICAL)
 
@@ -39,8 +40,6 @@ def database_initialization(db):
     # Before running tests
     alembic_cfg = alembic.config.Config('alembic.ini')
     alembic_cfg.attributes['configure_logger'] = False
-    # Database clean
-    alembic.command.downgrade(alembic_cfg, '6e523d653806')
     # Database upgrade
     alembic.command.upgrade(alembic_cfg, 'head')
     initial_data()
@@ -57,7 +56,6 @@ def superuser_token_headers(client: TestClient) -> Dict[str, str]:
 
 @pytest.fixture(scope="module")
 def normal_user_token_headers(client: TestClient, db: Session) -> Dict[str, str]:
-    # return get_normal_user_token_headers(client)
     return authentication_token_from_email(
         client=client, email=settings.USER_TEST_EMAIL, db=db
     )
