@@ -9,16 +9,17 @@ import alembic.config
 import alembic.command
 
 from app.core.config import settings
-# from app.tests.db.session import SessionLocal
-from app.db.session import SessionLocal
+# from app.db.session import engine
+from app.tests.db.session import engine
+# from app.db.session import SessionLocal
+from app.tests.db.session import SessionLocal
+from app.db.base import Base
 from app.main import app
 from app.tests.utils.user import authentication_token_from_email
 from app.tests.utils.utils import get_superuser_token_headers
-# from app.tests.db.session import engine, TEST_SQLALCHEMY_DATABASE_URI
-from app.db.session import engine
-from app.db.base import Base
 
 from app.initial_data import main as initial_data
+from app.db.init_db import init_db
 # from app.tests.db.init_db import init_db
 
 logging.getLogger('alembic').setLevel(logging.CRITICAL)
@@ -42,10 +43,13 @@ def database_initialization(db):
     alembic_cfg.attributes['configure_logger'] = False
     # Database upgrade
     alembic.command.upgrade(alembic_cfg, 'head')
-    initial_data()
+    init_db(db)
     yield
     # After running tests
+    db.commit()
     db.close()
+    engine.dispose()
+    # Base.metadata.drop_all(bind=engine)
     alembic.command.downgrade(alembic_cfg, '6e523d653806')
 
 

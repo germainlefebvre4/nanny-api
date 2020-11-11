@@ -24,7 +24,7 @@ def init_db(db: Session) -> None:
             is_superuser=True,
         )
         user = crud.user.create(db, obj_in=user_in)
-
+    
     user = crud.user.get_by_email(db, email=settings.USER_TEST_EMAIL)
     if not user:
         user_in = schemas.UserCreate(

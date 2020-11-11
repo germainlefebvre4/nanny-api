@@ -13,8 +13,8 @@ class WorkingDay(Base):
     created_on = Column(DateTime)
     updated_on = Column(DateTime)
 
-    contract_id = Column(Integer, ForeignKey("contracts.id"))
-    day_type_id = Column(Integer, ForeignKey("day_types.id"))
+    contract_id = Column(Integer, ForeignKey("contracts.id", ondelete='CASCADE'), nullable=False)
+    day_type_id = Column(Integer, ForeignKey("day_types.id", ondelete='CASCADE'), nullable=False)
 
     contract = relationship("Contract", back_populates="working_days")
     day_type = relationship("DayType", back_populates="working_days")

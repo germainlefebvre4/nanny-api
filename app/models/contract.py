@@ -20,8 +20,8 @@ class Contract(Base):
     created_on = Column(DateTime)
     updated_on = Column(DateTime)
 
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    nanny_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete='CASCADE'), nullable=False)
+    nanny_id = Column(Integer, ForeignKey("users.id", ondelete='CASCADE'), nullable=False)
 
     user = relationship("User", foreign_keys=[user_id])
     nanny = relationship("User", foreign_keys=[nanny_id])

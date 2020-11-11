@@ -19,10 +19,9 @@ def read_day_types(
     """
     Retrieve day_types.
     """
-    if crud.user.is_superuser(current_user):
-        day_types = crud.day_type.get_multi(db, skip=skip, limit=limit)
-    else:
+    if not crud.user.is_superuser(current_user):
         raise HTTPException(status_code=400, detail="Not enough permissions")
+    day_types = crud.day_type.get_multi(db, skip=skip, limit=limit)
     return day_types
 
 
@@ -36,6 +35,8 @@ def create_day_type(
     """
     Create new day_type.
     """
+    if not crud.user.is_superuser(current_user):
+        raise HTTPException(status_code=400, detail="Not enough permissions")
     day_type = crud.day_type.create(db=db, obj_in=day_type_in)
     return day_type
 
@@ -51,6 +52,8 @@ def update_day_type(
     """
     Update an day_type.
     """
+    if not crud.user.is_superuser(current_user):
+        raise HTTPException(status_code=400, detail="Not enough permissions")
     day_type = crud.day_type.get(db=db, id=id)
     if not day_type:
         raise HTTPException(status_code=404, detail="DayType not found")
@@ -70,6 +73,8 @@ def read_day_type(
     """
     Get day_type by ID.
     """
+    if not crud.user.is_superuser(current_user):
+        raise HTTPException(status_code=400, detail="Not enough permissions")
     day_type = crud.day_type.get(db=db, id=id)
     if not day_type:
         raise HTTPException(status_code=404, detail="DayType not found")
@@ -88,6 +93,8 @@ def delete_day_type(
     """
     Delete an day_type.
     """
+    if not crud.user.is_superuser(current_user):
+        raise HTTPException(status_code=400, detail="Not enough permissions")
     day_type = crud.day_type.get(db=db, id=id)
     if not day_type:
         raise HTTPException(status_code=404, detail="DayType not found")

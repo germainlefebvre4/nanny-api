@@ -27,16 +27,15 @@ def upgrade():
         'users',
         Column('id', Integer, primary_key=True, index=True),
         Column('email', String, unique=True, index=True),
-        Column('firstname', String),
+        Column('firstname', String, index=True),
         Column('hashed_password', String),
         Column('is_active', Boolean, default=True),
         Column('is_user', Boolean, default=True),
         Column('is_nanny', Boolean, default=False),
         Column('is_superuser', Boolean, default=False),
     )
-    op.create_index(op.f("ix_user_email"), "users", ["email"], unique=True)
-    op.create_index(op.f("ix_user_full_name"), "users", ["firstname"], unique=False)
-    op.create_index(op.f("ix_user_id"), "users", ["id"], unique=False)
+    # op.create_index(op.f("ix_user_email"), "users", ["email"], unique=False)
+    # op.create_index(op.f("ix_user_firstname"), "users", ["firstname"], unique=False)
 
 
     op.create_table(
@@ -54,9 +53,9 @@ def upgrade():
         Column('created_on', DateTime),
         Column('updated_on', DateTime),
         Column('user_id', Integer,
-            ForeignKey('users.id', name='fk_contract_user_id')),
+            ForeignKey('users.id', name='fk_contract_user_id', ondelete='CASCADE'), nullable=False),
         Column('nanny_id', Integer,
-            ForeignKey('users.id', name='fk_contract_nanny_id')),    )
+            ForeignKey('users.id', name='fk_contract_nanny_id', ondelete='CASCADE'), nullable=False),    )
 
     op.create_table(
         'working_days',
@@ -67,22 +66,30 @@ def upgrade():
         Column('created_on', DateTime),
         Column('updated_on', DateTime),
         Column('contract_id', Integer,
-            ForeignKey('contracts.id', name='fk_working_day_contract_id')),
+            ForeignKey('contracts.id', name='fk_working_day_contract_id', ondelete='CASCADE'), nullable=False),
         Column('day_type_id', Integer,
-            ForeignKey('day_types.id', name='fk_working_day_day_type_id'))
+            ForeignKey('day_types.id', name='fk_working_day_day_type_id', ondelete='CASCADE'), nullable=False)
     )
 
 
 
 def downgrade():
-    op.drop_index("ix_user_id", table_name="user")
-    op.drop_index("ix_user_full_name", table_name="user")
-    op.drop_index("ix_user_email", table_name="user")
+    # print("")
+    # op.drop_index("ix_user_firstname", table_name="users")
+    # op.drop_index("ix_user_email", table_name="users")
+    # print(1)
     op.drop_constraint("fk_working_day_day_type_id", "working_days", type_="foreignkey")
+    # print(2)
     op.drop_constraint("fk_working_day_contract_id", "working_days", type_="foreignkey")
+    # print(3)
     op.drop_constraint("fk_contract_nanny_id", "contracts", type_="foreignkey")
+    # print(4)
     op.drop_constraint("fk_contract_user_id", "contracts", type_="foreignkey")
+    # print(5)
     op.drop_table("working_days")
-    op.drop_table("contracts")
-    op.drop_table("users")
+    # print(8)
     op.drop_table("day_types")
+    # print(6)
+    op.drop_table("contracts")
+    # print(7)
+    op.drop_table("users")
