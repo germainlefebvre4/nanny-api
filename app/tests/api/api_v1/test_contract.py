@@ -1,7 +1,7 @@
-from datetime import date, datetime, timedelta
+from datetime import date
 from dateutil.relativedelta import relativedelta
 
-from fastapi import status
+# from fastapi import status
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
@@ -28,10 +28,10 @@ def test_create_contract_by_admin(
         "end": str(date_today + relativedelta(months=+12, days=-1))
     }
     response = client.post(
-        f"{settings.API_V1_STR}/contracts/" + \
-            f"?user_id={user.id}&nanny_id={nanny.id}",
-        headers=superuser_token_headers, json=data,
-    )
+        f"{settings.API_V1_STR}/contracts/" +
+        f"?user_id={user.id}&nanny_id={nanny.id}",
+        headers=superuser_token_headers,
+        json=data)
     assert response.status_code == 200
     content = response.json()
     assert "id" in content
@@ -67,8 +67,8 @@ def test_create_contract_by_user(
         "end": str(date_today + relativedelta(months=+12, days=-1))
     }
     response = client.post(
-        f"{settings.API_V1_STR}/contracts/" + \
-            f"?user_id={user_id}&nanny_id={nanny.id}",
+        f"{settings.API_V1_STR}/contracts/" +
+        f"?user_id={user_id}&nanny_id={nanny.id}",
         headers=normal_user_token_headers, json=data,
     )
     assert response.status_code == 200
@@ -105,8 +105,8 @@ def test_create_contract_for_another_user_by_user(
         "end": str(date_today + relativedelta(months=+12, days=-1))
     }
     response = client.post(
-        f"{settings.API_V1_STR}/contracts/" + \
-            f"?user_id={user.id}&nanny_id={nanny.id}",
+        f"{settings.API_V1_STR}/contracts/" +
+        f"?user_id={user.id}&nanny_id={nanny.id}",
         headers=normal_user_token_headers, json=data,
     )
     assert response.status_code == 400
@@ -117,55 +117,8 @@ def test_read_contract_by_admin(
 ) -> None:
     contract = create_random_contract(db)
     response = client.get(
-        f"{settings.API_V1_STR}/contracts/{contract.id}", headers=superuser_token_headers,
-    )
-    assert response.status_code == 200
-    content = response.json()
-    assert "id" in content
-    assert "user_id" in content
-    assert "nanny_id" in content
-    assert content["weekdays"] == contract.weekdays
-    assert content["weeks"] == contract.weeks
-    assert content["hours"] == contract.hours
-    assert content["price_hour_standard"] == contract.price_hour_standard
-    assert content["price_hour_extra"] == contract.price_hour_extra
-    assert content["price_fees"] == contract.price_fees
-    assert content["price_meals"] == contract.price_meals
-    assert content["start"] == str(contract.start)
-    assert content["end"] == str(contract.end)
-
-
-def test_read_contract_by_admin(
-    client: TestClient, superuser_token_headers: dict, db: Session
-) -> None:
-    contract = create_random_contract(db)
-    response = client.get(
-        f"{settings.API_V1_STR}/contracts/{contract.id}", headers=superuser_token_headers,
-    )
-    assert response.status_code == 200
-    content = response.json()
-    assert "id" in content
-    assert "user_id" in content
-    assert "nanny_id" in content
-    assert content["weekdays"] == contract.weekdays
-    assert content["weeks"] == contract.weeks
-    assert content["hours"] == contract.hours
-    assert content["price_hour_standard"] == contract.price_hour_standard
-    assert content["price_hour_extra"] == contract.price_hour_extra
-    assert content["price_fees"] == contract.price_fees
-    assert content["price_meals"] == contract.price_meals
-    assert content["start"] == str(contract.start)
-    assert content["end"] == str(contract.end)
-
-
-def test_create_contract_by_user(
-    client: TestClient, normal_user_token_headers: dict, db: Session
-) -> None:
-    r = client.get(f"{settings.API_V1_STR}/users/me", headers=normal_user_token_headers)
-    user_id = r.json()["id"]
-    contract = create_random_contract(db, user_id=user_id)
-    response = client.get(
-        f"{settings.API_V1_STR}/contracts/{contract.id}", headers=normal_user_token_headers,
+        f"{settings.API_V1_STR}/contracts/{contract.id}",
+        headers=superuser_token_headers,
     )
     assert response.status_code == 200
     content = response.json()
@@ -188,7 +141,8 @@ def test_read_contract_for_another_user_by_user(
 ) -> None:
     contract = create_random_contract(db)
     response = client.get(
-        f"{settings.API_V1_STR}/contracts/{contract.id}", headers=normal_user_token_headers,
+        f"{settings.API_V1_STR}/contracts/{contract.id}",
+        headers=normal_user_token_headers,
     )
     assert response.status_code == 400
 
@@ -210,7 +164,8 @@ def test_update_contract_by_admin(
         "end": str(date_today + relativedelta(months=+12, days=-1))
     }
     response = client.put(
-        f"{settings.API_V1_STR}/contracts/{contract.id}", headers=superuser_token_headers,
+        f"{settings.API_V1_STR}/contracts/{contract.id}",
+        headers=superuser_token_headers,
         json=data
     )
     assert response.status_code == 200
@@ -243,9 +198,10 @@ def test_update_contract_by_user(
         "price_meals": 4.0,
         "start": str(date_today),
         "end": str(date_today + relativedelta(months=+12, days=-1))
-    }    
+    }
     response = client.put(
-        f"{settings.API_V1_STR}/contracts/{contract.id}", headers=normal_user_token_headers,
+        f"{settings.API_V1_STR}/contracts/{contract.id}",
+        headers=normal_user_token_headers,
         json=data
     )
     assert response.status_code == 200
@@ -278,7 +234,8 @@ def test_update_contract_for_another_user_by_user(
         "end": str(date_today + relativedelta(months=+12, days=-1))
     }
     response = client.put(
-        f"{settings.API_V1_STR}/contracts/{contract.id}", headers=normal_user_token_headers,
+        f"{settings.API_V1_STR}/contracts/{contract.id}",
+        headers=normal_user_token_headers,
         json=data
     )
     assert response.status_code == 400
@@ -289,7 +246,8 @@ def test_delete_contract_by_admin(
 ) -> None:
     contract = create_random_contract(db)
     response = client.delete(
-        f"{settings.API_V1_STR}/contracts/{contract.id}", headers=superuser_token_headers,
+        f"{settings.API_V1_STR}/contracts/{contract.id}",
+        headers=superuser_token_headers,
     )
     assert response.status_code == 200
     content = response.json()
@@ -310,12 +268,14 @@ def test_delete_contract_by_admin(
 def test_delete_contract_by_user(
     client: TestClient, normal_user_token_headers: dict, db: Session
 ) -> None:
-    r = client.get(f"{settings.API_V1_STR}/users/me", headers=normal_user_token_headers)
+    r = client.get(
+        f"{settings.API_V1_STR}/users/me",
+        headers=normal_user_token_headers)
     user_id = r.json()["id"]
     contract = create_random_contract(db, user_id=user_id)
     response = client.delete(
-        f"{settings.API_V1_STR}/contracts/{contract.id}", headers=normal_user_token_headers,
-    )
+        f"{settings.API_V1_STR}/contracts/{contract.id}",
+        headers=normal_user_token_headers)
     assert response.status_code == 200
     content = response.json()
     assert "id" in content
@@ -331,11 +291,13 @@ def test_delete_contract_by_user(
     assert content["start"] == str(contract.start)
     assert content["end"] == str(contract.end)
 
+
 def test_delete_contract_another_user_by_user(
     client: TestClient, normal_user_token_headers: dict, db: Session
 ) -> None:
     contract = create_random_contract(db)
     response = client.delete(
-        f"{settings.API_V1_STR}/contracts/{contract.id}", headers=normal_user_token_headers,
+        f"{settings.API_V1_STR}/contracts/{contract.id}",
+        headers=normal_user_token_headers,
     )
     assert response.status_code == 400

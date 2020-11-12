@@ -1,4 +1,4 @@
-from fastapi import status
+# from fastapi import status
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
@@ -24,7 +24,9 @@ def test_create_day_type_by_user(
 ) -> None:
     data = {"name": "Foo2"}
     response = client.post(
-        f"{settings.API_V1_STR}/day_types/", headers=normal_user_token_headers, json=data,
+        f"{settings.API_V1_STR}/day_types/",
+        headers=normal_user_token_headers,
+        json=data,
     )
     assert response.status_code == 400
 
@@ -34,7 +36,8 @@ def test_read_day_type_by_admin(
 ) -> None:
     day_type = create_random_day_type(db)
     response = client.get(
-        f"{settings.API_V1_STR}/day_types/{day_type.id}", headers=superuser_token_headers,
+        f"{settings.API_V1_STR}/day_types/{day_type.id}",
+        headers=superuser_token_headers,
     )
     assert response.status_code == 200
     content = response.json()
@@ -47,7 +50,8 @@ def test_read_day_type_by_user(
 ) -> None:
     day_type = create_random_day_type(db)
     response = client.get(
-        f"{settings.API_V1_STR}/day_types/{day_type.id}", headers=normal_user_token_headers,
+        f"{settings.API_V1_STR}/day_types/{day_type.id}",
+        headers=normal_user_token_headers,
     )
     assert response.status_code == 200
     content = response.json()
@@ -61,7 +65,8 @@ def test_update_day_type_by_admin(
     day_type = create_random_day_type(db)
     data = {"name": "Foo3"}
     response = client.put(
-        f"{settings.API_V1_STR}/day_types/{day_type.id}", headers=superuser_token_headers,
+        f"{settings.API_V1_STR}/day_types/{day_type.id}",
+        headers=superuser_token_headers,
         json=data
     )
     assert response.status_code == 200
@@ -76,7 +81,8 @@ def test_update_day_type_by_user(
     day_type = create_random_day_type(db)
     data = {"name": "Foo4"}
     response = client.put(
-        f"{settings.API_V1_STR}/day_types/{day_type.id}", headers=normal_user_token_headers,
+        f"{settings.API_V1_STR}/day_types/{day_type.id}",
+        headers=normal_user_token_headers,
         json=data
     )
     assert response.status_code == 400
@@ -87,7 +93,8 @@ def test_delete_day_type_by_admin(
 ) -> None:
     day_type = create_random_day_type(db)
     response = client.delete(
-        f"{settings.API_V1_STR}/day_types/{day_type.id}", headers=superuser_token_headers,
+        f"{settings.API_V1_STR}/day_types/{day_type.id}",
+        headers=superuser_token_headers,
     )
     assert response.status_code == 200
     content = response.json()
@@ -100,6 +107,7 @@ def test_delete_day_type_by_user(
 ) -> None:
     day_type = create_random_day_type(db)
     response = client.delete(
-        f"{settings.API_V1_STR}/day_types/{day_type.id}", headers=normal_user_token_headers,
+        f"{settings.API_V1_STR}/day_types/{day_type.id}",
+        headers=normal_user_token_headers,
     )
     assert response.status_code == 400

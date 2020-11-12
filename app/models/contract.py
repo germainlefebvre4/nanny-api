@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, Float, String, Date, DateTime, Time
+from sqlalchemy import Column, ForeignKey, Integer, Float, Date, DateTime
 from sqlalchemy.orm import relationship
 
 from app.db.base_class import Base
@@ -6,7 +6,7 @@ from app.db.base_class import Base
 
 class Contract(Base):
     __tablename__ = "contracts"
-    
+
     id = Column(Integer, primary_key=True, index=True)
     weekdays = Column(Integer)
     weeks = Column(Integer)
@@ -20,8 +20,14 @@ class Contract(Base):
     created_on = Column(DateTime)
     updated_on = Column(DateTime)
 
-    user_id = Column(Integer, ForeignKey("users.id", ondelete='CASCADE'), nullable=False)
-    nanny_id = Column(Integer, ForeignKey("users.id", ondelete='CASCADE'), nullable=False)
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete='CASCADE'),
+        nullable=False)
+    nanny_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete='CASCADE'),
+        nullable=False)
 
     user = relationship("User", foreign_keys=[user_id])
     nanny = relationship("User", foreign_keys=[nanny_id])

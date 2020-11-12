@@ -6,7 +6,8 @@ Create Date: 2020-11-09 12:15:11.582850
 
 """
 from alembic import op
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, Float, String, DateTime, Date, Time
+from sqlalchemy import (
+    Boolean, Column, ForeignKey, Integer, Float, String, DateTime, Date, Time)
 
 
 # revision identifiers, used by Alembic.
@@ -34,9 +35,10 @@ def upgrade():
         Column('is_nanny', Boolean, default=False),
         Column('is_superuser', Boolean, default=False),
     )
-    # op.create_index(op.f("ix_user_email"), "users", ["email"], unique=False)
-    # op.create_index(op.f("ix_user_firstname"), "users", ["firstname"], unique=False)
-
+    op.create_index(
+      op.f("ix_user_email"), "users", ["email"], unique=False)
+    op.create_index(
+      op.f("ix_user_firstname"), "users", ["firstname"], unique=False)
 
     op.create_table(
         'contracts',
@@ -52,10 +54,18 @@ def upgrade():
         Column('end', Date),
         Column('created_on', DateTime),
         Column('updated_on', DateTime),
-        Column('user_id', Integer,
-            ForeignKey('users.id', name='fk_contract_user_id', ondelete='CASCADE'), nullable=False),
-        Column('nanny_id', Integer,
-            ForeignKey('users.id', name='fk_contract_nanny_id', ondelete='CASCADE'), nullable=False),    )
+        Column(
+            'user_id', Integer,
+            ForeignKey(
+                'users.id', name='fk_contract_user_id',
+                ondelete='CASCADE'),
+            nullable=False),
+        Column(
+            'nanny_id', Integer,
+            ForeignKey(
+                'users.id', name='fk_contract_nanny_id',
+                ondelete='CASCADE'),
+            nullable=False),)
 
     op.create_table(
         'working_days',
@@ -65,26 +75,37 @@ def upgrade():
         Column('end', Time),
         Column('created_on', DateTime),
         Column('updated_on', DateTime),
-        Column('contract_id', Integer,
-            ForeignKey('contracts.id', name='fk_working_day_contract_id', ondelete='CASCADE'), nullable=False),
-        Column('day_type_id', Integer,
-            ForeignKey('day_types.id', name='fk_working_day_day_type_id', ondelete='CASCADE'), nullable=False)
+        Column(
+            'contract_id', Integer,
+            ForeignKey(
+                'contracts.id',
+                name='fk_working_day_contract_id', ondelete='CASCADE'),
+            nullable=False),
+        Column(
+            'day_type_id', Integer,
+            ForeignKey(
+                'day_types.id',
+                name='fk_working_day_day_type_id', ondelete='CASCADE'),
+            nullable=False)
     )
-
 
 
 def downgrade():
     # print("")
-    # op.drop_index("ix_user_firstname", table_name="users")
-    # op.drop_index("ix_user_email", table_name="users")
+    op.drop_index("ix_user_firstname", table_name="users")
+    op.drop_index("ix_user_email", table_name="users")
     # print(1)
-    op.drop_constraint("fk_working_day_day_type_id", "working_days", type_="foreignkey")
+    op.drop_constraint(
+        "fk_working_day_day_type_id", "working_days", type_="foreignkey")
     # print(2)
-    op.drop_constraint("fk_working_day_contract_id", "working_days", type_="foreignkey")
+    op.drop_constraint(
+        "fk_working_day_contract_id", "working_days", type_="foreignkey")
     # print(3)
-    op.drop_constraint("fk_contract_nanny_id", "contracts", type_="foreignkey")
+    op.drop_constraint(
+        "fk_contract_nanny_id", "contracts", type_="foreignkey")
     # print(4)
-    op.drop_constraint("fk_contract_user_id", "contracts", type_="foreignkey")
+    op.drop_constraint(
+        "fk_contract_user_id", "contracts", type_="foreignkey")
     # print(5)
     op.drop_table("working_days")
     # print(8)

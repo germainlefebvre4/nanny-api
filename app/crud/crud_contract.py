@@ -28,7 +28,7 @@ class CRUDContract(CRUDBase[Contract, ContractCreate, ContractUpdate]):
             .limit(limit)
             .all()
         )
-        
+
     def get_multi_by_user(
         self, db: Session, *, user_id: int, skip: int = 0, limit: int = 100
     ) -> List[Contract]:
@@ -39,7 +39,7 @@ class CRUDContract(CRUDBase[Contract, ContractCreate, ContractUpdate]):
             .limit(limit)
             .all()
         )
-        
+
     def get_multi_by_nanny(
         self, db: Session, *, nanny_id: int, skip: int = 0, limit: int = 100
     ) -> List[Contract]:

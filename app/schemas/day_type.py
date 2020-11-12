@@ -1,5 +1,3 @@
-from typing import Optional
-
 from pydantic import BaseModel
 
 
@@ -18,7 +16,7 @@ class DayTypeUpdate(DayTypeBase):
 
 class DayTypeInDBBase(DayTypeBase):
     id: int
-    
+
     class Config:
         orm_mode = True
 

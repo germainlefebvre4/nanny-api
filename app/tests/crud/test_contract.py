@@ -1,21 +1,20 @@
-from datetime import date, datetime, timedelta
+from datetime import date
 from dateutil.relativedelta import relativedelta
 
 from sqlalchemy.orm import Session
 
 from app import crud
 from app.schemas.contract import ContractCreate, ContractUpdate
-from app.tests.utils.utils import (random_lower_string, random_int_range,
-    random_float_range)
+from app.tests.utils.utils import (
+    random_int_range, random_float_range)
 
 from app.tests.utils.user import create_random_user
-from app.tests.utils.contract import create_random_contract
 
 
 def test_create_contract(db: Session) -> None:
     user = create_random_user(db)
     nanny = create_random_user(db)
-    
+
     date_today = date.today()
     weekdays = random_int_range(1, 5)
     weeks = random_int_range(20, 47)
@@ -28,13 +27,14 @@ def test_create_contract(db: Session) -> None:
     start = str(start_date)
     end_date = date_today + relativedelta(months=+12, days=-1)
     end = str(end_date)
-    
+
     contract_in = ContractCreate(
-            weekdays=weekdays, weeks=weeks, hours=hours,
-            price_hour_standard=price_hour_standard, price_hour_extra=price_hour_extra,
-            price_fees=price_fees, price_meals=price_meals, start=start, end=end
-        )
-    contract = crud.contract.create_with_owner(db=db, obj_in=contract_in, user_id=user.id, nanny_id=nanny.id)
+        weekdays=weekdays, weeks=weeks, hours=hours,
+        price_hour_standard=price_hour_standard, price_fees=price_fees,
+        price_hour_extra=price_hour_extra, price_meals=price_meals,
+        start=start, end=end)
+    contract = crud.contract.create_with_owner(
+        db=db, obj_in=contract_in, user_id=user.id, nanny_id=nanny.id)
 
     assert contract.user_id == user.id
     assert contract.nanny_id == nanny.id
@@ -51,7 +51,7 @@ def test_create_contract(db: Session) -> None:
 def test_get_contract(db: Session) -> None:
     user = create_random_user(db)
     nanny = create_random_user(db)
-    
+
     date_today = date.today()
     weekdays = random_int_range(1, 5)
     weeks = random_int_range(20, 47)
@@ -62,13 +62,14 @@ def test_get_contract(db: Session) -> None:
     price_meals = random_float_range(2, 6, 1)
     start = str(date_today)
     end = str(date_today + relativedelta(months=+12, days=-1))
-    
+
     contract_in = ContractCreate(
-            weekdays=weekdays, weeks=weeks, hours=hours,
-            price_hour_standard=price_hour_standard, price_hour_extra=price_hour_extra,
-            price_fees=price_fees, price_meals=price_meals, start=start, end=end
-        )
-    contract = crud.contract.create_with_owner(db=db, obj_in=contract_in, user_id=user.id, nanny_id=nanny.id)
+        weekdays=weekdays, weeks=weeks, hours=hours,
+        price_hour_standard=price_hour_standard, price_fees=price_fees,
+        price_hour_extra=price_hour_extra, price_meals=price_meals,
+        start=start, end=end)
+    contract = crud.contract.create_with_owner(
+        db=db, obj_in=contract_in, user_id=user.id, nanny_id=nanny.id)
     stored_contract = crud.contract.get(db=db, id=contract.id)
 
     assert stored_contract
@@ -89,7 +90,7 @@ def test_get_contract(db: Session) -> None:
 def test_get_contract_by_user(db: Session) -> None:
     user = create_random_user(db)
     nanny = create_random_user(db)
-    
+
     date_today = date.today()
     weekdays = random_int_range(1, 5)
     weeks = random_int_range(20, 47)
@@ -100,13 +101,14 @@ def test_get_contract_by_user(db: Session) -> None:
     price_meals = random_float_range(2, 6, 1)
     start = str(date_today)
     end = str(date_today + relativedelta(months=+12, days=-1))
-    
+
     contract_in = ContractCreate(
-            weekdays=weekdays, weeks=weeks, hours=hours,
-            price_hour_standard=price_hour_standard, price_hour_extra=price_hour_extra,
-            price_fees=price_fees, price_meals=price_meals, start=start, end=end
-        )
-    contract = crud.contract.create_with_owner(db=db, obj_in=contract_in, user_id=user.id, nanny_id=nanny.id)
+        weekdays=weekdays, weeks=weeks, hours=hours,
+        price_hour_standard=price_hour_standard, price_fees=price_fees,
+        price_hour_extra=price_hour_extra, price_meals=price_meals,
+        start=start, end=end)
+    contract = crud.contract.create_with_owner(
+        db=db, obj_in=contract_in, user_id=user.id, nanny_id=nanny.id)
     stored_contracts = crud.contract.get_multi_by_user(db=db, user_id=contract.user_id)
     stored_contract = [x for x in stored_contracts if x.id == contract.id][0]
     assert isinstance(stored_contracts, list)
@@ -128,7 +130,7 @@ def test_get_contract_by_user(db: Session) -> None:
 def test_get_contract_by_nanny(db: Session) -> None:
     user = create_random_user(db)
     nanny = create_random_user(db)
-    
+
     date_today = date.today()
     weekdays = random_int_range(1, 5)
     weeks = random_int_range(20, 47)
@@ -139,14 +141,16 @@ def test_get_contract_by_nanny(db: Session) -> None:
     price_meals = random_float_range(2, 6, 1)
     start = str(date_today)
     end = str(date_today + relativedelta(months=+12, days=-1))
-    
-    contract_in = ContractCreate(user_id=user.id, nanny_id=nanny.id,
-            weekdays=weekdays, weeks=weeks, hours=hours,
-            price_hour_standard=price_hour_standard, price_hour_extra=price_hour_extra,
-            price_fees=price_fees, price_meals=price_meals, start=start, end=end
-        )
-    contract = crud.contract.create_with_owner(db=db, obj_in=contract_in, user_id=user.id, nanny_id=nanny.id)
-    stored_contracts = crud.contract.get_multi_by_nanny(db=db, nanny_id=contract.nanny_id)
+
+    contract_in = ContractCreate(
+        user_id=user.id, nanny_id=nanny.id, weekdays=weekdays,
+        weeks=weeks, hours=hours, price_hour_standard=price_hour_standard,
+        price_hour_extra=price_hour_extra, price_fees=price_fees,
+        price_meals=price_meals, start=start, end=end)
+    contract = crud.contract.create_with_owner(
+        db=db, obj_in=contract_in, user_id=user.id, nanny_id=nanny.id)
+    stored_contracts = crud.contract.get_multi_by_nanny(
+        db=db, nanny_id=contract.nanny_id)
     stored_contract = [x for x in stored_contracts if x.id == contract.id][0]
     assert isinstance(stored_contracts, list)
     assert stored_contract
@@ -167,7 +171,7 @@ def test_get_contract_by_nanny(db: Session) -> None:
 def test_update_contract(db: Session) -> None:
     user = create_random_user(db)
     nanny = create_random_user(db)
-    
+
     date_today = date.today()
     weekdays = random_int_range(1, 5)
     weeks = random_int_range(20, 47)
@@ -178,16 +182,18 @@ def test_update_contract(db: Session) -> None:
     price_meals = random_float_range(2, 6, 1)
     start = str(date_today)
     end = str(date_today + relativedelta(months=+12, days=-1))
-    
-    contract_in = ContractCreate(user_id=user.id, nanny_id=nanny.id,
-            weekdays=weekdays, weeks=weeks, hours=hours,
-            price_hour_standard=price_hour_standard, price_hour_extra=price_hour_extra,
-            price_fees=price_fees, price_meals=price_meals, start=start, end=end
-        )
-    contract = crud.contract.create_with_owner(db=db, obj_in=contract_in, user_id=user.id, nanny_id=nanny.id)
-    contract_update = ContractUpdate(weekdays=weekdays, weeks=weeks, hours=hours,
-            price_hour_standard=price_hour_standard, price_hour_extra=price_hour_extra,
-            price_fees=price_fees, price_meals=price_meals, start=start, end=end)
+
+    contract_in = ContractCreate(
+        user_id=user.id, nanny_id=nanny.id,
+        weekdays=weekdays, weeks=weeks, hours=hours,
+        price_hour_standard=price_hour_standard, price_hour_extra=price_hour_extra,
+        price_fees=price_fees, price_meals=price_meals, start=start, end=end)
+    contract = crud.contract.create_with_owner(
+        db=db, obj_in=contract_in, user_id=user.id, nanny_id=nanny.id)
+    contract_update = ContractUpdate(
+        weekdays=weekdays, weeks=weeks, hours=hours,
+        price_hour_standard=price_hour_standard, price_hour_extra=price_hour_extra,
+        price_fees=price_fees, price_meals=price_meals, start=start, end=end)
     contract2 = crud.contract.update(db=db, db_obj=contract, obj_in=contract_update)
     assert contract.id == contract2.id
     assert contract.user_id == contract2.user_id
@@ -206,7 +212,7 @@ def test_update_contract(db: Session) -> None:
 def test_delete_contract(db: Session) -> None:
     user = create_random_user(db)
     nanny = create_random_user(db)
-    
+
     date_today = date.today()
     weekdays = random_int_range(1, 5)
     weeks = random_int_range(20, 47)
@@ -217,13 +223,14 @@ def test_delete_contract(db: Session) -> None:
     price_meals = random_float_range(2, 6, 1)
     start = str(date_today)
     end = str(date_today + relativedelta(months=+12, days=-1))
-    
-    contract_in = ContractCreate(user_id=user.id, nanny_id=nanny.id,
-            weekdays=weekdays, weeks=weeks, hours=hours,
-            price_hour_standard=price_hour_standard, price_hour_extra=price_hour_extra,
-            price_fees=price_fees, price_meals=price_meals, start=start, end=end
-        )
-    contract = crud.contract.create_with_owner(db=db, obj_in=contract_in, user_id=user.id, nanny_id=nanny.id)
+
+    contract_in = ContractCreate(
+        user_id=user.id, nanny_id=nanny.id,
+        weekdays=weekdays, weeks=weeks, hours=hours,
+        price_hour_standard=price_hour_standard, price_hour_extra=price_hour_extra,
+        price_fees=price_fees, price_meals=price_meals, start=start, end=end)
+    contract = crud.contract.create_with_owner(
+        db=db, obj_in=contract_in, user_id=user.id, nanny_id=nanny.id)
     contract2 = crud.contract.remove(db=db, id=contract.id)
     contract3 = crud.contract.get(db=db, id=contract.id)
     assert contract3 is None

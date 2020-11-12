@@ -1,7 +1,7 @@
 from typing import List
 
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy import and_, or_
+from sqlalchemy import and_
 from sqlalchemy.orm import Session
 
 from app.crud.base import CRUDBase
@@ -16,7 +16,8 @@ class CRUDWorkingDay(CRUDBase[WorkingDay, WorkingDayCreate, WorkingDayUpdate]):
         day_type_id: int, contract_id: int,
     ) -> WorkingDay:
         obj_in_data = jsonable_encoder(obj_in)
-        db_obj = self.model(**obj_in_data, day_type_id=day_type_id, contract_id=contract_id)
+        db_obj = self.model(
+            **obj_in_data, day_type_id=day_type_id, contract_id=contract_id)
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)
@@ -70,9 +71,9 @@ class CRUDWorkingDay(CRUDBase[WorkingDay, WorkingDayCreate, WorkingDayUpdate]):
             .limit(limit)
             .all()
         )
-        
+
     def get_multi_by_user(
-        self, db: Session, *, 
+        self, db: Session, *,
         day_type_id: int, contract_id: int,
         skip: int = 0, limit: int = 100,
     ) -> List[WorkingDay]:
@@ -88,5 +89,6 @@ class CRUDWorkingDay(CRUDBase[WorkingDay, WorkingDayCreate, WorkingDayUpdate]):
             .limit(limit)
             .all()
         )
+
 
 working_day = CRUDWorkingDay(WorkingDay)

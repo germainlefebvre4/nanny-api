@@ -14,7 +14,7 @@ services:
       interval: 5s
       timeout: 2s
       retries: 10
-      
+
   db_test:
     image: postgres:12
     environment:

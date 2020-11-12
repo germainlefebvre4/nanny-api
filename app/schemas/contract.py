@@ -1,5 +1,5 @@
 from typing import Optional
-from datetime import date, time, datetime
+from datetime import date, datetime
 
 from pydantic import BaseModel
 
@@ -51,6 +51,7 @@ class ContractInDBBase(ContractBase):
 
 class Contract(ContractInDBBase):
     pass
+
 
 class ContractInDB(ContractInDBBase):
     pass

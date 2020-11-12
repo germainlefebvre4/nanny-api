@@ -1,7 +1,4 @@
-from typing import TYPE_CHECKING
-
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, Float, String, Date, DateTime, Time
-from sqlalchemy.orm import relationship
+from sqlalchemy import Boolean, Column, Integer, String
 
 from app.db.base_class import Base
 

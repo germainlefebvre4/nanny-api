@@ -87,7 +87,7 @@ class Settings(BaseSettings):
     USER_TEST_EMAIL: EmailStr = "test@nanny.fr"
     USER_TEST_FIRSTNAME: str = "Test"
     USER_TEST_PASSWORD: str = "test"
-    
+
     USER_ADMIN_EMAIL: EmailStr = "admin@nanny.fr"
     USER_ADMIN_FIRSTNAME: str = "Admin"
     USER_ADMIN_PASSWORD: str = "admin"

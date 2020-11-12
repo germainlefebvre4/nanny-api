@@ -24,8 +24,8 @@ def read_working_days(
         working_days = crud.working_day.get_multi(db, skip=skip, limit=limit)
     else:
         working_days = crud.working_day.get_multi_by_user(
-            db=db, day_type_id=day_type_id, contract_id=current_user.id, skip=skip, limit=limit
-        )
+            db=db, day_type_id=day_type_id, contract_id=current_user.id,
+            skip=skip, limit=limit)
     return working_days
 
 
@@ -45,13 +45,16 @@ def create_working_day(
     if (int(current_user.id) == int(contract.user_id)) \
             or (int(current_user.id) == int(contract.nanny_id)) \
             or bool(current_user.is_superuser):
-        if crud.user.get(db, id=contract.user_id) and crud.user.get(db, id=contract.nanny_id):
+        if (crud.user.get(db, id=contract.user_id) and
+                crud.user.get(db, id=contract.nanny_id)):
             pass
         else:
             raise HTTPException(status_code=400, detail="User not found")
     else:
         raise HTTPException(status_code=400, detail="User not responsible")
-    working_day = crud.working_day.create_with_owner(db=db, obj_in=working_day_in, day_type_id=day_type_id, contract_id=contract_id)
+    working_day = crud.working_day.create_with_owner(
+        db=db, obj_in=working_day_in,
+        day_type_id=day_type_id, contract_id=contract_id)
     return working_day
 
 
@@ -70,9 +73,11 @@ def update_working_day(
     contract = crud.contract.get(db=db, id=working_day.contract_id)
     if not working_day:
         raise HTTPException(status_code=404, detail="WorkingDay not found")
-    if not crud.user.is_superuser(current_user) and (contract.user_id != current_user.id):
+    if (not crud.user.is_superuser(current_user) and
+            (contract.user_id != current_user.id)):
         raise HTTPException(status_code=400, detail="Not enough permissions")
-    working_day = crud.working_day.update(db=db, db_obj=working_day, obj_in=working_day_in)
+    working_day = crud.working_day.update(
+        db=db, db_obj=working_day, obj_in=working_day_in)
     return working_day
 
 
@@ -90,7 +95,8 @@ def read_working_day(
     contract = crud.contract.get(db=db, id=working_day.contract_id)
     if not working_day:
         raise HTTPException(status_code=404, detail="WorkingDay not found")
-    if not crud.user.is_superuser(current_user) and (contract.user_id != current_user.id):
+    if (not crud.user.is_superuser(current_user) and
+            (contract.user_id != current_user.id)):
         raise HTTPException(status_code=400, detail="Not enough permissions")
     return working_day
 
@@ -109,7 +115,8 @@ def delete_working_day(
     contract = crud.contract.get(db=db, id=working_day.contract_id)
     if not working_day:
         raise HTTPException(status_code=404, detail="WorkingDay not found")
-    if not crud.user.is_superuser(current_user) and (contract.user_id != current_user.id):
+    if (not crud.user.is_superuser(current_user) and
+            (contract.user_id != current_user.id)):
         raise HTTPException(status_code=400, detail="Not enough permissions")
     working_day = crud.working_day.remove(db=db, id=id)
     return working_day

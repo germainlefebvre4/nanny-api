@@ -9,18 +9,13 @@ import alembic.config
 import alembic.command
 
 from app.core.config import settings
-# from app.db.session import engine
 from app.tests.db.session import engine
-# from app.db.session import SessionLocal
 from app.tests.db.session import SessionLocal
-from app.db.base import Base
 from app.main import app
 from app.tests.utils.user import authentication_token_from_email
 from app.tests.utils.utils import get_superuser_token_headers
 
-from app.initial_data import main as initial_data
 from app.db.init_db import init_db
-# from app.tests.db.init_db import init_db
 
 logging.getLogger('alembic').setLevel(logging.CRITICAL)
 

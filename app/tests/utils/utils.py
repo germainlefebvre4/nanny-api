@@ -12,11 +12,14 @@ from app.core.config import settings
 def random_lower_string() -> str:
     return "".join(random.choices(string.ascii_lowercase, k=32))
 
+
 def random_int_range(start, end) -> int:
     return random.randint(start, end)
 
-def random_float_range(start, end, precision = 2) -> float:
+
+def random_float_range(start, end, precision=2) -> float:
     return round(random.uniform(start, end), precision)
+
 
 def random_date_range(start, end) -> date:
     d1 = datetime.strptime(f"{start}", "%Y-%d-%m")
@@ -27,10 +30,12 @@ def random_date_range(start, end) -> date:
     random_datetime = d1 + timedelta(seconds=random_second)
     return random_datetime.date()
 
+
 def random_time_range(start, end) -> time:
     hour = random.randint(start, end)
     minute = random.randint(0, 59)
     return datetime.strptime(f"{hour}:{minute}", "%H:%M").time()
+
 
 def random_email() -> str:
     return f"{random_lower_string()}@{random_lower_string()}.com"

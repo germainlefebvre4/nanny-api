@@ -47,9 +47,9 @@ def test_create_user_new_email_by_admin(
     user = crud.user.get_by_email(db, email=email)
     assert user
     assert created_user["email"] == user.email
-    assert created_user["is_user"] == True
-    assert created_user["is_nanny"] == False
-    assert created_user["is_superuser"] == False
+    assert created_user["is_user"] is True
+    assert created_user["is_nanny"] is False
+    assert created_user["is_superuser"] is False
 
 
 def test_create_user_new_email_by_user(
@@ -126,6 +126,7 @@ def test_create_user_existing_email_by_user(
     )
     assert r.status_code == 400
 
+
 def test_retrieve_users_by_admin(
     client: TestClient, superuser_token_headers: dict, db: Session
 ) -> None:
@@ -151,7 +152,7 @@ def test_retrieve_users_by_user(
     client: TestClient, normal_user_token_headers: dict, db: Session
 ) -> None:
     r = client.get(f"{settings.API_V1_STR}/users/", headers=normal_user_token_headers)
-    
+
     assert r.status_code == 400
 
 
@@ -169,7 +170,6 @@ def test_create_nanny_by_admin(
     user = crud.user.get_by_email(db, email=email)
     assert user
     assert created_user["email"] == user.email
-    assert created_user["is_user"] == False
-    assert created_user["is_nanny"] == True
-    assert created_user["is_superuser"] == False
-
+    assert created_user["is_user"] is False
+    assert created_user["is_nanny"] is True
+    assert created_user["is_superuser"] is False
