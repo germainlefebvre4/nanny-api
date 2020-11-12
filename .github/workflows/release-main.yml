@@ -1,0 +1,38 @@
+name: Release Management
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  semantic-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Semantic Release Config
+        run: |
+          echo '{
+                   "tagFormat":"${version}",
+                   "plugins": [
+                      "@semantic-release/commit-analyzer",
+                      "@semantic-release/release-notes-generator",
+                      "@semantic-release/changelog",
+                      "@semantic-release/github"
+                   ]
+                }
+          '> .releaserc
+      - name: Semantic Release
+        uses: cycjimmy/semantic-release-action@v2
+        id: semantic
+        with:
+          branches: 'main'
+          semantic_version: 17.2.2
+          extra_plugins: |
+            @semantic-release/commit-analyzer@8.0.1
+            @semantic-release/release-notes-generator@9.0.0
+            @semantic-release/changelog@5.0.0
+            @semantic-release/github@7.0.7
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
