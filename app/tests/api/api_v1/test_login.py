@@ -5,13 +5,6 @@ from fastapi.testclient import TestClient
 from app.core.config import settings
 
 
-# def test_dummy(
-#     client: TestClient,
-#     dbtransaction
-# ) -> None:
-#     assert True
-    
-
 def test_get_access_token(client: TestClient) -> None:
     login_data = {
         "username": settings.USER_ADMIN_EMAIL,
