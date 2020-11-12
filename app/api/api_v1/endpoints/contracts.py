@@ -84,9 +84,6 @@ def read_contract(
     Get contract by ID.
     """
     contract = crud.contract.get(db=db, id=id)
-    # print(contract.user_id)
-    # print(current_user.id)
-    # print(crud.user.is_superuser(current_user))
     if not contract:
         raise HTTPException(status_code=404, detail="Contract not found")
     if not crud.user.is_superuser(current_user) and (contract.user_id != current_user.id):

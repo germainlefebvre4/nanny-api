@@ -261,7 +261,7 @@ def test_update_contract_by_user(
     assert content["end"] == data["end"]
 
 
-def test_update_contract_by_admin(
+def test_update_contract_for_another_user_by_user(
     client: TestClient, normal_user_token_headers: dict, db: Session
 ) -> None:
     contract = create_random_contract(db)
