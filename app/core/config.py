@@ -12,10 +12,8 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
     SERVER_NAME: str = "localhost"
     SERVER_HOST: AnyHttpUrl = "http://localhost:8080"
-    # BACKEND_CORS_ORIGINS is a JSON-formatted list of origins
-    # e.g: '["http://localhost", "http://localhost:4200", "http://localhost:3000", \
-    # "http://localhost:8080", "http://local.dockertoolbox.tiangolo.com"]'
-    BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
+    BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = ["http://localhost", "http://localhost:8080", "http://localhost:8081", "http://localhost:4200", "http://localhost:3000"]
+    # BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:
