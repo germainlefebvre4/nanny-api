@@ -49,7 +49,10 @@ def test_read_day_type_by_user(
     response = client.get(
         f"{settings.API_V1_STR}/day_types/{day_type.id}", headers=normal_user_token_headers,
     )
-    assert response.status_code == 400
+    assert response.status_code == 200
+    content = response.json()
+    assert content["id"] == day_type.id
+    assert content["name"] == day_type.name
 
 
 def test_update_day_type_by_admin(

@@ -19,8 +19,6 @@ def read_day_types(
     """
     Retrieve day_types.
     """
-    if not crud.user.is_superuser(current_user):
-        raise HTTPException(status_code=400, detail="Not enough permissions")
     day_types = crud.day_type.get_multi(db, skip=skip, limit=limit)
     return day_types
 
@@ -73,13 +71,9 @@ def read_day_type(
     """
     Get day_type by ID.
     """
-    if not crud.user.is_superuser(current_user):
-        raise HTTPException(status_code=400, detail="Not enough permissions")
     day_type = crud.day_type.get(db=db, id=id)
     if not day_type:
         raise HTTPException(status_code=404, detail="DayType not found")
-    if not crud.user.is_superuser(current_user):
-        raise HTTPException(status_code=400, detail="Not enough permissions")
     return day_type
 
 
