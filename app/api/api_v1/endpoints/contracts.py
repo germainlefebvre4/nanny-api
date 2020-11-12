@@ -22,8 +22,8 @@ def read_contracts(
     if crud.user.is_superuser(current_user):
         contracts = crud.contract.get_multi(db, skip=skip, limit=limit)
     else:
-        contracts = crud.contract.get_multi_by_owner(
-            db=db, owner_id=current_user.id, skip=skip, limit=limit
+        contracts = crud.contract.get_multi_by_user(
+            db=db, user_id=current_user.id, skip=skip, limit=limit
         )
     return contracts
 
@@ -34,11 +34,22 @@ def create_contract(
     db: Session = Depends(deps.get_db),
     contract_in: schemas.ContractCreate,
     current_user: models.User = Depends(deps.get_current_active_user),
+    user_id: str,
+    nanny_id: str,
 ) -> Any:
     """
     Create new contract.
     """
-    contract = crud.contract.create_with_owner(db=db, obj_in=contract_in, owner_id=current_user.id)
+    if (int(current_user.id) == int(user_id)) \
+            or (int(current_user.id) == int(nanny_id)) \
+            or bool(current_user.is_superuser):
+        if crud.user.get(db, id=user_id) and crud.user.get(db, id=nanny_id):
+            pass
+        else:
+            raise HTTPException(status_code=400, detail="User not found")
+    else:
+        raise HTTPException(status_code=400, detail="User not responsible")
+    contract = crud.contract.create_with_owner(db=db, obj_in=contract_in, user_id=user_id, nanny_id=nanny_id)
     return contract
 
 
@@ -56,7 +67,7 @@ def update_contract(
     contract = crud.contract.get(db=db, id=id)
     if not contract:
         raise HTTPException(status_code=404, detail="Contract not found")
-    if not crud.user.is_superuser(current_user) and (contract.owner_id != current_user.id):
+    if not crud.user.is_superuser(current_user) and (contract.user_id != current_user.id):
         raise HTTPException(status_code=400, detail="Not enough permissions")
     contract = crud.contract.update(db=db, db_obj=contract, obj_in=contract_in)
     return contract
@@ -73,9 +84,12 @@ def read_contract(
     Get contract by ID.
     """
     contract = crud.contract.get(db=db, id=id)
+    # print(contract.user_id)
+    # print(current_user.id)
+    # print(crud.user.is_superuser(current_user))
     if not contract:
         raise HTTPException(status_code=404, detail="Contract not found")
-    if not crud.user.is_superuser(current_user) and (contract.owner_id != current_user.id):
+    if not crud.user.is_superuser(current_user) and (contract.user_id != current_user.id):
         raise HTTPException(status_code=400, detail="Not enough permissions")
     return contract
 
@@ -93,7 +107,7 @@ def delete_contract(
     contract = crud.contract.get(db=db, id=id)
     if not contract:
         raise HTTPException(status_code=404, detail="Contract not found")
-    if not crud.user.is_superuser(current_user) and (contract.owner_id != current_user.id):
+    if not crud.user.is_superuser(current_user) and (contract.user_id != current_user.id):
         raise HTTPException(status_code=400, detail="Not enough permissions")
     contract = crud.contract.remove(db=db, id=id)
     return contract
