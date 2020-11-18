@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 
-from typing import List
+from typing import List, Union, Dict, Any
 
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import and_, or_
@@ -19,8 +19,10 @@ class CRUDWorkingDay(CRUDBase[WorkingDay, WorkingDayCreate, WorkingDayUpdate]):
         day_type_id: int, contract_id: int,
     ) -> WorkingDay:
         obj_in_data = jsonable_encoder(obj_in)
+        created_on = datetime.now()
         db_obj = self.model(
-            **obj_in_data, day_type_id=day_type_id, contract_id=contract_id)
+            **obj_in_data, day_type_id=day_type_id, contract_id=contract_id,
+            created_on=created_on)
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)
@@ -138,6 +140,28 @@ class CRUDWorkingDay(CRUDBase[WorkingDay, WorkingDayCreate, WorkingDayUpdate]):
             .limit(limit)
             .all()
         )
+
+    def update(
+        self,
+        db: Session,
+        *,
+        db_obj: WorkingDay,
+        obj_in: Union[WorkingDayUpdate, Dict[str, Any]]
+    ) -> WorkingDay:
+        obj_data = jsonable_encoder(db_obj)
+        updated_on = datetime.now()
+        if isinstance(obj_in, dict):
+            update_data = obj_in
+        else:
+            update_data = obj_in.dict(exclude_unset=True)
+        update_data = {**update_data, **dict(updated_on=updated_on)}
+        for field in obj_data:
+            if field in update_data:
+                setattr(db_obj, field, update_data[field])
+        db.add(db_obj)
+        db.commit()
+        db.refresh(db_obj)
+        return db_obj
 
 
 working_day = CRUDWorkingDay(WorkingDay)

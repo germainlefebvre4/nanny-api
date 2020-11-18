@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 import random
 
@@ -28,6 +28,7 @@ def test_create_contract(db: Session) -> None:
     start = str(start_date)
     end_date = date_today + relativedelta(months=+12, days=-1)
     end = str(end_date)
+    created_on = datetime.now()
 
     contract_in = ContractCreate(
         weekdays=weekdays, weeks=weeks, hours=hours,
@@ -47,6 +48,8 @@ def test_create_contract(db: Session) -> None:
     assert contract.price_fees == price_fees
     assert contract.start == start_date
     assert contract.end == end_date
+    assert isinstance(contract.created_on, datetime)
+    assert contract.updated_on == None
 
 
 def test_get_contract(db: Session) -> None:
@@ -86,6 +89,8 @@ def test_get_contract(db: Session) -> None:
     assert contract.price_meals == stored_contract.price_meals
     assert contract.start == stored_contract.start
     assert contract.end == stored_contract.end
+    assert isinstance(stored_contract.created_on, datetime)
+    assert stored_contract.updated_on == None
 
 
 def test_get_contract_by_user(db: Session) -> None:
@@ -183,6 +188,8 @@ def test_update_contract(db: Session) -> None:
     price_meals = random_float_range(2, 6, 1)
     start = str(date_today)
     end = str(date_today + relativedelta(months=+12, days=-1))
+    created_on = datetime.now()
+    updated_on = datetime.now()
 
     contract_in = ContractCreate(
         user_id=user.id, nanny_id=nanny.id,
@@ -208,6 +215,8 @@ def test_update_contract(db: Session) -> None:
     assert contract.price_meals == contract2.price_meals
     assert contract.start == contract2.start
     assert contract.end == contract2.end
+    assert isinstance(contract2.created_on, datetime)
+    assert isinstance(contract2.updated_on, datetime)
 
 
 def test_delete_contract(db: Session) -> None:
