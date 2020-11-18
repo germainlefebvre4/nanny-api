@@ -32,10 +32,6 @@ class Settings(BaseSettings):
             return None
         return v
 
-    # POSTGRES_SERVER: str = "localhost"
-    # POSTGRES_USER: str = "nanny"
-    # POSTGRES_PASSWORD: str = "nanny"
-    # POSTGRES_DB: str = "nanny"
     POSTGRES_SERVER: str = os.getenv("POSTGRES_USER", "localhost")
     POSTGRES_PORT: str = os.getenv("POSTGRES_PORT", "5432")
     POSTGRES_USER: str = os.getenv("POSTGRES_USER", "nanny")

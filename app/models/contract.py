@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, Float, Date, DateTime
+from sqlalchemy import Column, ForeignKey, Integer, Float, Date, DateTime, String
 from sqlalchemy.orm import relationship
 
 from app.db.base_class import Base
@@ -8,7 +8,7 @@ class Contract(Base):
     __tablename__ = "contracts"
 
     id = Column(Integer, primary_key=True, index=True)
-    weekdays = Column(Integer)
+    weekdays = Column(String)
     weeks = Column(Integer)
     hours = Column(Float)
     price_hour_standard = Column(Float)

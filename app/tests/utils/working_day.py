@@ -16,6 +16,7 @@ def create_random_working_day(
         nanny_id: int = None,
         day_type_id: int = None,
         contract_id: int = None,
+        day: str = None,
         ) -> models.WorkingDay:
     if not user_id:
         user = create_random_user(db)
@@ -31,8 +32,9 @@ def create_random_working_day(
         contract = crud.contract.get(db, id=contract_id)
     else:
         contract = create_random_contract(db, user_id=user.id, nanny_id=nanny.id)
+    if not day:
+        day = random_date_range(contract.start, contract.end)
 
-    day = random_date_range(contract.start, contract.end)
     start_time = random_time_range(8, 12)
     start = str(start_time)
     end_time = random_time_range(14, 19)

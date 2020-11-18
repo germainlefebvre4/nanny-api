@@ -1,7 +1,10 @@
+from datetime import date, datetime
+from dateutil.relativedelta import relativedelta
+
 from typing import List
 
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy import and_
+from sqlalchemy import and_, or_
 from sqlalchemy.orm import Session
 
 from app.crud.base import CRUDBase
@@ -23,21 +26,21 @@ class CRUDWorkingDay(CRUDBase[WorkingDay, WorkingDayCreate, WorkingDayUpdate]):
         db.refresh(db_obj)
         return db_obj
 
-    def get_by_user(
-        self, db: Session, *,
-        id: int, user_id: int,
-        skip: int = 0, limit: int = 100,
-    ) -> List[WorkingDay]:
-        return (
-            db.query(self.model)
-            .join(WorkingDay.contract)
-            .filter(
-                Contract.user_id == user_id
-            )
-            .offset(skip)
-            .limit(limit)
-            .all()
-        )
+    # def get_by_user(
+    #     self, db: Session, *,
+    #     id: int, user_id: int,
+    #     skip: int = 0, limit: int = 100,
+    # ) -> List[WorkingDay]:
+    #     return (
+    #         db.query(self.model)
+    #         .join(WorkingDay.contract)
+    #         .filter(
+    #             Contract.user_id == user_id
+    #         )
+    #         .offset(skip)
+    #         .limit(limit)
+    #         .all()
+    #     )
 
     def get_multi_by_contract(
         self, db: Session, *,
@@ -48,7 +51,29 @@ class CRUDWorkingDay(CRUDBase[WorkingDay, WorkingDayCreate, WorkingDayUpdate]):
             db.query(self.model)
             .join(WorkingDay.contract)
             .filter(
-                WorkingDay.contract_id == contract_id
+                Contract.id == contract_id
+            )
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
+
+    def get_multi_by_contract_by_date(
+        self, db: Session, *,
+        contract_id: int,
+        start: date,
+        end: date,
+        skip: int = 0, limit: int = 100,
+    ) -> List[WorkingDay]:
+        return (
+            db.query(self.model)
+            .join(WorkingDay.contract)
+            .filter(
+                and_(
+                    Contract.id == contract_id,
+                    start <= WorkingDay.day,
+                    WorkingDay.day <= end,
+                )
             )
             .offset(skip)
             .limit(limit)
@@ -74,7 +99,8 @@ class CRUDWorkingDay(CRUDBase[WorkingDay, WorkingDayCreate, WorkingDayUpdate]):
 
     def get_multi_by_user(
         self, db: Session, *,
-        day_type_id: int, contract_id: int,
+        day_type_id: int,
+        contract_id: int,
         skip: int = 0, limit: int = 100,
     ) -> List[WorkingDay]:
         return (
@@ -85,6 +111,29 @@ class CRUDWorkingDay(CRUDBase[WorkingDay, WorkingDayCreate, WorkingDayUpdate]):
                 WorkingDay.contract_id == contract_id
             ))
             # .filter(Contract.user_id == user_id)
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
+
+    def get_multi_by_month_by_contract(
+        self, db: Session, *,
+        month: str,
+        contract_id: int,
+        skip: int = 0, limit: int = 100,
+    ) -> List[WorkingDay]:
+        month_start = datetime.strptime(month+"-01", "%Y-%m-%d")
+        month_start_str = str(month_start)
+        month_end = (month_start + relativedelta(months=+1))
+        month_end_str = str(month_end)
+        return (
+            db.query(self.model)
+            .join(WorkingDay.contract)
+            .filter(and_(
+                WorkingDay.contract_id == contract_id,
+                WorkingDay.day >= month_start_str,
+                WorkingDay.day < month_end_str,
+            ))
             .offset(skip)
             .limit(limit)
             .all()

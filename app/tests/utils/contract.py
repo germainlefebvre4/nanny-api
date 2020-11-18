@@ -1,5 +1,6 @@
-from datetime import date
+from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
+import random
 
 from sqlalchemy.orm import Session
 
@@ -23,16 +24,19 @@ def create_random_contract(
         nanny = create_random_user(db)
         nanny_id = nanny.id
 
-    date_today = date.today()
-    weekdays = random_int_range(1, 5)
+    today_date = date.today()
+    first_day_previous_month_date = datetime.strptime(str(today_date)[:7]+"-01", "%Y-%m-%d").date() + relativedelta(months=-1)
+    
+    weekdays_list = ["Mon", "Tue", "Wed", "Thu", "Fri"]
+    weekdays = " ".join(random.choices(weekdays_list, k=random_int_range(1, 5)))
     weeks = random_int_range(20, 47)
     hours = random_int_range(10, 50)
     price_hour_standard = random_float_range(2.5, 4, 1)
     price_hour_extra = random_float_range(2.5, 4, 1)
     price_fees = random_float_range(3.08, 5, 2)
     price_meals = random_float_range(2, 6, 1)
-    start = str(date_today)
-    end = str(date_today + relativedelta(months=+12, days=-1))
+    start = str(first_day_previous_month_date)
+    end = str(first_day_previous_month_date + relativedelta(months=+12, days=-1))
 
     contract_in = ContractCreate(
             weekdays=weekdays, weeks=weeks, hours=hours,

@@ -1,12 +1,13 @@
 from datetime import date
 from dateutil.relativedelta import relativedelta
+import random
 
 from sqlalchemy.orm import Session
 
 from app import crud
 from app.schemas.contract import ContractCreate, ContractUpdate
 from app.tests.utils.utils import (
-    random_int_range, random_float_range)
+    random_int_range, random_float_range, random_weekdays)
 
 from app.tests.utils.user import create_random_user
 
@@ -16,7 +17,7 @@ def test_create_contract(db: Session) -> None:
     nanny = create_random_user(db)
 
     date_today = date.today()
-    weekdays = random_int_range(1, 5)
+    weekdays = random_weekdays()
     weeks = random_int_range(20, 47)
     hours = random_int_range(10, 50)
     price_hour_standard = random_float_range(2.5, 4, 1)
@@ -53,7 +54,7 @@ def test_get_contract(db: Session) -> None:
     nanny = create_random_user(db)
 
     date_today = date.today()
-    weekdays = random_int_range(1, 5)
+    weekdays = random_weekdays()
     weeks = random_int_range(20, 47)
     hours = random_int_range(10, 50)
     price_hour_standard = random_float_range(2.5, 4, 1)
@@ -92,7 +93,7 @@ def test_get_contract_by_user(db: Session) -> None:
     nanny = create_random_user(db)
 
     date_today = date.today()
-    weekdays = random_int_range(1, 5)
+    weekdays = random_weekdays()
     weeks = random_int_range(20, 47)
     hours = random_int_range(10, 50)
     price_hour_standard = random_float_range(2.5, 4, 1)
@@ -132,7 +133,7 @@ def test_get_contract_by_nanny(db: Session) -> None:
     nanny = create_random_user(db)
 
     date_today = date.today()
-    weekdays = random_int_range(1, 5)
+    weekdays = random_weekdays()
     weeks = random_int_range(20, 47)
     hours = random_int_range(10, 50)
     price_hour_standard = random_float_range(2.5, 4, 1)
@@ -173,7 +174,7 @@ def test_update_contract(db: Session) -> None:
     nanny = create_random_user(db)
 
     date_today = date.today()
-    weekdays = random_int_range(1, 5)
+    weekdays = random_weekdays()
     weeks = random_int_range(20, 47)
     hours = random_int_range(10, 50)
     price_hour_standard = random_float_range(2.5, 4, 1)
@@ -214,7 +215,7 @@ def test_delete_contract(db: Session) -> None:
     nanny = create_random_user(db)
 
     date_today = date.today()
-    weekdays = random_int_range(1, 5)
+    weekdays = random_weekdays()
     weeks = random_int_range(20, 47)
     hours = random_int_range(10, 50)
     price_hour_standard = random_float_range(2.5, 4, 1)

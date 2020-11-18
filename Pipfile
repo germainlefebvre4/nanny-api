@@ -27,6 +27,8 @@ psycopg2 = "*"
 emails = "*"
 email-validator = "*"
 psycopg2-binary = "*"
+pandas = "*"
+holidays = "*"
 
 [requires]
 python_version = "3.8"

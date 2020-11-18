@@ -6,6 +6,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
+from app.tests.utils.utils import random_weekdays
 from app.tests.utils.user import create_random_user
 from app.tests.utils.contract import create_random_contract
 
@@ -17,7 +18,7 @@ def test_create_contract_by_admin(
     nanny = create_random_user(db)
     date_today = date.today()
     data = {
-        "weekdays": 5,
+        "weekdays": random_weekdays(),
         "weeks": 44,
         "hours": 40.0,
         "price_hour_standard": 3.5,
@@ -56,7 +57,7 @@ def test_create_contract_by_user(
     nanny = create_random_user(db)
     date_today = date.today()
     data = {
-        "weekdays": 5,
+        "weekdays": random_weekdays(),
         "weeks": 44,
         "hours": 40.0,
         "price_hour_standard": 3.5,
@@ -94,7 +95,7 @@ def test_create_contract_for_another_user_by_user(
     nanny = create_random_user(db)
     date_today = date.today()
     data = {
-        "weekdays": 5,
+        "weekdays": random_weekdays(),
         "weeks": 44,
         "hours": 40.0,
         "price_hour_standard": 3.5,
@@ -136,6 +137,32 @@ def test_read_contract_by_admin(
     assert content["end"] == str(contract.end)
 
 
+def test_read_contract_by_user(
+    client: TestClient, normal_user_token_headers: dict, db: Session
+) -> None:
+    r = client.get(f"{settings.API_V1_STR}/users/me", headers=normal_user_token_headers)
+    user_id = r.json()["id"]
+    contract = create_random_contract(db, user_id=user_id)
+    response = client.get(
+        f"{settings.API_V1_STR}/contracts/{contract.id}",
+        headers=normal_user_token_headers,
+    )
+    assert response.status_code == 200
+    content = response.json()
+    assert "id" in content
+    assert "user_id" in content
+    assert "nanny_id" in content
+    assert content["weekdays"] == contract.weekdays
+    assert content["weeks"] == contract.weeks
+    assert content["hours"] == contract.hours
+    assert content["price_hour_standard"] == contract.price_hour_standard
+    assert content["price_hour_extra"] == contract.price_hour_extra
+    assert content["price_fees"] == contract.price_fees
+    assert content["price_meals"] == contract.price_meals
+    assert content["start"] == str(contract.start)
+    assert content["end"] == str(contract.end)
+
+
 def test_read_contract_for_another_user_by_user(
     client: TestClient, normal_user_token_headers: dict, db: Session
 ) -> None:
@@ -153,7 +180,7 @@ def test_update_contract_by_admin(
     contract = create_random_contract(db)
     date_today = date.today()
     data = {
-        "weekdays": 5,
+        "weekdays": random_weekdays(),
         "weeks": 44,
         "hours": 40.0,
         "price_hour_standard": 3.5,
@@ -189,7 +216,7 @@ def test_update_contract_by_user(
     contract = create_random_contract(db, user_id=user_id)
     date_today = date.today()
     data = {
-        "weekdays": 5,
+        "weekdays": random_weekdays(),
         "weeks": 44,
         "hours": 40.0,
         "price_hour_standard": 3.5,
@@ -223,7 +250,7 @@ def test_update_contract_for_another_user_by_user(
     contract = create_random_contract(db)
     date_today = date.today()
     data = {
-        "weekdays": 5,
+        "weekdays": random_weekdays(),
         "weeks": 44,
         "hours": 40.0,
         "price_hour_standard": 3.5,
@@ -301,3 +328,7 @@ def test_delete_contract_another_user_by_user(
         headers=normal_user_token_headers,
     )
     assert response.status_code == 400
+
+
+
+

@@ -20,7 +20,7 @@ class CRUDContract(CRUDBase[Contract, ContractCreate, ContractUpdate]):
         return db_obj
 
     def get_multi(
-        self, db: Session, *, owner_id: int, skip: int = 0, limit: int = 100
+        self, db: Session, *, skip: int = 0, limit: int = 100
     ) -> List[Contract]:
         return (
             db.query(self.model)

@@ -23,9 +23,8 @@ def read_working_days(
     if crud.user.is_superuser(current_user):
         working_days = crud.working_day.get_multi(db, skip=skip, limit=limit)
     else:
-        working_days = crud.working_day.get_multi_by_user(
-            db=db, day_type_id=day_type_id, contract_id=current_user.id,
-            skip=skip, limit=limit)
+        raise HTTPException(status_code=400, detail="Not enough permissions")
+
     return working_days
 
 

@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 
 class ContractBase(BaseModel):
-    weekdays: int
+    weekdays: str
     weeks: int
     hours: float
     price_hour_standard: float
@@ -17,7 +17,7 @@ class ContractBase(BaseModel):
 
 
 class ContractCreate(ContractBase):
-    weekdays: int
+    weekdays: str
     weeks: int
     hours: float
     price_hour_standard: float
@@ -27,7 +27,7 @@ class ContractCreate(ContractBase):
 
 
 class ContractUpdate(ContractBase):
-    weekdays: int
+    weekdays: str
     weeks: int
     hours: float
     price_hour_standard: float
