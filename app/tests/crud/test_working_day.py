@@ -177,7 +177,6 @@ def test_get_multi_by_month_by_contract(db: Session) -> None:
     )
     
     month_str = str(day)[:7]
-    print(month_str)
     working_day2 = crud.working_day.get_multi_by_month_by_contract(
         db=db, month=month_str, contract_id=contract.id
     )

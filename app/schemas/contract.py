@@ -24,6 +24,8 @@ class ContractCreate(ContractBase):
     price_hour_extra: Optional[float] = None
     price_fees: float
     price_meals: Optional[float] = None
+    start: Optional[date] = None
+    end: Optional[date] = None
 
 
 class ContractUpdate(ContractBase):
@@ -34,14 +36,14 @@ class ContractUpdate(ContractBase):
     price_hour_extra: Optional[float] = None
     price_fees: float
     price_meals: Optional[float] = None
-    start: date
-    end: date
+    start: Optional[date] = None
+    end: Optional[date] = None
 
 
 class ContractInDBBase(ContractBase):
     id: int
     user_id: int
-    nanny_id: int
+    nanny_id: Optional[int] = None
     created_on: Optional[datetime]
     updated_on: Optional[datetime]
 

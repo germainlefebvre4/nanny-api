@@ -71,7 +71,7 @@ def test_create_working_day_by_user(
     assert content["end"] == data["end"]
 
 
-def test_create_working_day_for_another_user_by_user(
+def test_create_working_day_by_another_user(
     client: TestClient, normal_user_token_headers: dict, db: Session
 ) -> None:
     user = create_random_user(db)
@@ -133,7 +133,7 @@ def test_read_working_day_by_user(
     assert content["end"] == str(working_day.end)
 
 
-def test_read_working_day_for_another_user_by_user(
+def test_read_working_day_by_another_user(
     client: TestClient, normal_user_token_headers: dict, db: Session
 ) -> None:
     working_day = create_random_working_day(db)
@@ -200,7 +200,7 @@ def test_update_working_day_by_user(
     assert content["end"] == data["end"]
 
 
-def test_update_working_day_for_another_user_by_user(
+def test_update_working_day_by_another_user(
     client: TestClient, normal_user_token_headers: dict, db: Session
 ) -> None:
     contract = create_random_contract(db)

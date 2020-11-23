@@ -77,4 +77,16 @@ class CRUDContract(CRUDBase[Contract, ContractCreate, ContractUpdate]):
         db.refresh(db_obj)
         return db_obj
 
+    def update_nanny_id(
+        self,
+        db: Session,
+        *,
+        contract_id: int,
+        nanny_id: int
+    ) -> Contract:
+        db.query(self.model).filter(Contract.id == contract_id).update({"nanny_id": nanny_id})
+        db_obj = db.query(self.model).get(contract_id)
+        db.commit()
+        return db_obj
+
 contract = CRUDContract(Contract)

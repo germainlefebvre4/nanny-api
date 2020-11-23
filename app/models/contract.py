@@ -27,7 +27,7 @@ class Contract(Base):
     nanny_id = Column(
         Integer,
         ForeignKey("users.id", ondelete='CASCADE'),
-        nullable=False)
+        nullable=True)
 
     user = relationship("User", foreign_keys=[user_id])
     nanny = relationship("User", foreign_keys=[nanny_id])

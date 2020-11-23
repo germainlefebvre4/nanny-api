@@ -16,11 +16,15 @@ def create_random_contract(
         db: Session,
         user_id: int = None,
         nanny_id: int = None,
+        has_nanny: bool = True
         ) -> models.Contract:
     if not user_id:
         user = create_random_user(db)
         user_id = user.id
-    if not nanny_id:
+    
+    if not has_nanny:
+        nanny_id = None
+    if has_nanny and not nanny_id:
         nanny = create_random_user(db)
         nanny_id = nanny.id
 

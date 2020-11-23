@@ -3,9 +3,9 @@ from dateutil.relativedelta import relativedelta
 import holidays
 import pandas
 
-from typing import Any, List
+from typing import Any, List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
 from sqlalchemy.orm import Session
 
 from app import crud, models, schemas
@@ -40,15 +40,16 @@ def create_contract(
     contract_in: schemas.ContractCreate,
     current_user: models.User = Depends(deps.get_current_active_user),
     user_id: str,
-    nanny_id: str,
+    nanny_id: Optional[str] = None,
 ) -> Any:
     """
     Create new contract.
     """
     if (int(current_user.id) == int(user_id)) \
-            or (int(current_user.id) == int(nanny_id)) \
+            or (int(current_user.id) == int(bool(nanny_id))) \
             or bool(current_user.is_superuser):
-        if crud.user.get(db, id=user_id) and crud.user.get(db, id=nanny_id):
+        if crud.user.get(db, id=user_id) and not nanny_id \
+                or crud.user.get(db, id=user_id) and crud.user.get(db, id=nanny_id):
             pass
         else:
             raise HTTPException(status_code=400, detail="User not found")
@@ -77,6 +78,30 @@ def update_contract(
             (contract.user_id != current_user.id)):
         raise HTTPException(status_code=400, detail="Not enough permissions")
     contract = crud.contract.update(db=db, db_obj=contract, obj_in=contract_in)
+    return contract
+
+
+@router.put("/{id}/nanny_id", response_model=schemas.Contract)
+async def update_contract_with_nanny_id(
+    *,
+    db: Session = Depends(deps.get_db),
+    id: int,
+    current_user: models.User = Depends(deps.get_current_active_user),
+    request: Request,
+) -> Any:
+    """
+    Patch a contract with nanny user
+    """
+    nanny_id = int(await request.json())
+    contract = crud.contract.get(db=db, id=id)
+    
+    if not contract:
+        raise HTTPException(status_code=404, detail="Contract not found")
+    if (not crud.user.is_superuser(current_user) and
+            (contract.user_id != current_user.id)):
+        raise HTTPException(status_code=400, detail="Not enough permissions")
+    contract_patch = crud.contract.update_nanny_id(db=db, contract_id=id, nanny_id=nanny_id)
+    contract = crud.contract.get(db=db, id=id)
     return contract
 
 

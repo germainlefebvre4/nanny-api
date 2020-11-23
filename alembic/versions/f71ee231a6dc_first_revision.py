@@ -65,7 +65,7 @@ def upgrade():
             ForeignKey(
                 'users.id', name='fk_contract_nanny_id',
                 ondelete='CASCADE'),
-            nullable=False),)
+            nullable=True),)
 
     op.create_table(
         'working_days',
