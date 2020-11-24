@@ -88,6 +88,20 @@ def read_user_me(
     return current_user
 
 
+@router.get("/nanny/_search", response_model=schemas.User)
+def read_nanny_with_email(
+    db: Session = Depends(deps.get_db),
+    email: str = None,
+    current_user: models.User = Depends(deps.get_current_active_user),
+) -> Any:
+    """
+    Retrieve nanny with email.
+    """
+    # if current_user.is_user:
+    user = crud.user.get_nanny_by_email(db, email=email)
+    return user
+
+
 @router.post("/open", response_model=schemas.User)
 def create_user_open(
     *,

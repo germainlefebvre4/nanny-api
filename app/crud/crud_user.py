@@ -1,5 +1,6 @@
 from typing import Any, Dict, Optional, Union
 
+from sqlalchemy import and_
 from sqlalchemy.orm import Session
 
 from app.core.security import get_password_hash, verify_password
@@ -9,7 +10,20 @@ from app.schemas.user import UserCreate, UserUpdate
 
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
-    def get_by_email(self, db: Session, *, email: str) -> Optional[User]:
+    def get_nanny_by_email(
+        self, db: Session, *, email: str,
+    ) -> Optional[User]:
+        return db.query(User).filter(
+            and_(
+                User.email == email,
+                User.is_nanny == True
+            )
+        ).first()
+
+    def get_by_email(
+        self, db: Session, *, email: str,
+        is_user: bool = True, is_nanny: bool = False,
+    ) -> Optional[User]:
         return db.query(User).filter(User.email == email).first()
 
     def create(self, db: Session, *, obj_in: UserCreate) -> User:
