@@ -12,8 +12,8 @@ class ContractBase(BaseModel):
     price_hour_extra: Optional[float] = None
     price_fees: float
     price_meals: Optional[float] = None
-    start: date
-    end: date
+    start: Optional[date] = None
+    end: Optional[date] = None
 
 
 class ContractCreate(ContractBase):
