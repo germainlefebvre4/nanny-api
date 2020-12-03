@@ -88,7 +88,7 @@ def read_user_me(
     return current_user
 
 
-@router.get("/nanny/_search", response_model=schemas.User)
+@router.get("/nanny/_search", response_model=schemas.Nanny)
 def read_nanny_with_email(
     db: Session = Depends(deps.get_db),
     email: str = None,

@@ -4,3 +4,4 @@ from .working_day import WorkingDay, WorkingDayCreate, WorkingDayInDB, WorkingDa
 from .msg import Msg
 from .token import Token, TokenPayload
 from .user import User, UserCreate, UserInDB, UserUpdate
+from .user import Nanny, NannyInDB

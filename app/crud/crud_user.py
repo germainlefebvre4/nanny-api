@@ -13,7 +13,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     def get_nanny_by_email(
         self, db: Session, *, email: str,
     ) -> Optional[User]:
-        return db.query(User).filter(
+        return db.query(User.id, User.email, User.firstname).filter(
             and_(
                 User.email == email,
                 User.is_nanny == True

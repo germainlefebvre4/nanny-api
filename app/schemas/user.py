@@ -3,6 +3,26 @@ from typing import Optional
 from pydantic import BaseModel, EmailStr
 
 
+class NannyBase(BaseModel):
+    email: EmailStr
+    firstname: str
+
+
+class NannyInDBBase(NannyBase):
+    id: Optional[int] = None
+
+    class Config:
+        orm_mode = True
+
+
+class Nanny(NannyInDBBase):
+    pass
+
+
+class NannyInDB(NannyInDBBase):
+    pass
+
+
 class UserBase(BaseModel):
     email: Optional[EmailStr] = None
     firstname: Optional[str] = None

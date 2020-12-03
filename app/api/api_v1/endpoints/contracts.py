@@ -81,7 +81,7 @@ def update_contract(
     return contract
 
 
-@router.put("/{id}/nanny_id", response_model=schemas.Contract)
+@router.put("/{id}/nanny", response_model=schemas.Contract)
 async def update_contract_with_nanny_id(
     *,
     db: Session = Depends(deps.get_db),

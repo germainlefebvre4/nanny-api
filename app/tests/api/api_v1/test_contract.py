@@ -348,7 +348,7 @@ def test_update_contract_attach_nanny_by_admin(
 
     nanny = create_random_user(db)
     response = client.put(
-        f"{settings.API_V1_STR}/contracts/{contract.id}/nanny_id",
+        f"{settings.API_V1_STR}/contracts/{contract.id}/nanny",
         headers=superuser_token_headers,
         json=f"{nanny.id}"
     )
@@ -401,7 +401,7 @@ def test_update_contract_attach_nanny_by_user(
 
     nanny = create_random_user(db)
     response = client.put(
-        f"{settings.API_V1_STR}/contracts/{contract.id}/nanny_id",
+        f"{settings.API_V1_STR}/contracts/{contract.id}/nanny",
         headers=normal_user_token_headers,
         json=f"{nanny.id}"
     )
@@ -453,7 +453,7 @@ def test_update_contract_attach_nanny_by_another_user(
 
     nanny = create_random_user(db)
     response = client.put(
-        f"{settings.API_V1_STR}/contracts/{contract.id}/nanny_id",
+        f"{settings.API_V1_STR}/contracts/{contract.id}/nanny",
         headers=normal_user_token_headers,
         json=f"{nanny.id}"
     )
