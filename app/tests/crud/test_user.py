@@ -88,6 +88,9 @@ def test_get_user_with_email(db: Session) -> None:
     user_2 = crud.user.get_by_email(db, email=user.email)
     assert user_2
     assert user.email == user_2.email
+    assert user.firstname == user_2.firstname
+    # assert all(key in user_2.keys() for key in ["id", "firstname", "email", "is_nanny", "is_user", "is_active", "is_superuser", "hashed_password"])
+    # assert len(user_2.keys()) == len(["id", "firstname", "email", "is_nanny", "is_user", "is_active", "is_superuser", "hashed_password"])
     assert jsonable_encoder(user) == jsonable_encoder(user_2)
 
 
@@ -98,8 +101,11 @@ def test_get_nanny_with_email(db: Session) -> None:
     user = crud.user.create(db, obj_in=user_in)
     user_2 = crud.user.get_nanny_by_email(db, email=user.email)
     assert user_2
+    assert user.id == user_2.id
+    assert user.firstname == user_2.firstname
     assert user.email == user_2.email
-    assert jsonable_encoder(user) == jsonable_encoder(user_2)
+    assert all(key in user_2.keys() for key in ["id", "firstname", "email"])
+    assert len(user_2.keys()) == len(["id", "firstname", "email"])
 
 
 def test_update_user(db: Session) -> None:

@@ -39,7 +39,13 @@ def test_create_contract(db: Session) -> None:
         db=db, obj_in=contract_in, user_id=user.id, nanny_id=nanny.id)
 
     assert contract.user_id == user.id
+    assert contract.user.id == user.id
+    assert contract.user.firstname == user.firstname
+    assert contract.user.email == user.email
     assert contract.nanny_id == nanny.id
+    assert contract.nanny.id == nanny.id
+    assert contract.nanny.email == nanny.email
+    assert contract.nanny.firstname == nanny.firstname
     assert contract.weekdays == weekdays
     assert contract.weeks == weeks
     assert contract.hours == hours
@@ -79,7 +85,13 @@ def test_get_contract(db: Session) -> None:
     assert stored_contract
     assert contract.id == stored_contract.id
     assert contract.user_id == stored_contract.user_id
+    assert contract.user.id == stored_contract.user.id
+    assert contract.user.firstname == stored_contract.user.firstname
+    assert contract.user.email == stored_contract.user.email
     assert contract.nanny_id == stored_contract.nanny_id
+    assert contract.nanny.id == stored_contract.nanny.id
+    assert contract.nanny.email == stored_contract.nanny.email
+    assert contract.nanny.firstname == stored_contract.nanny.firstname
     assert contract.weekdays == stored_contract.weekdays
     assert contract.weeks == stored_contract.weeks
     assert contract.hours == stored_contract.hours
@@ -121,7 +133,13 @@ def test_get_contract_by_user(db: Session) -> None:
     assert stored_contract
     assert contract.id == stored_contract.id
     assert contract.user_id == stored_contract.user_id
+    assert contract.user.id == stored_contract.user.id
+    assert contract.user.firstname == stored_contract.user.firstname
+    assert contract.user.email == stored_contract.user.email
     assert contract.nanny_id == stored_contract.nanny_id
+    assert contract.nanny.id == stored_contract.nanny.id
+    assert contract.nanny.email == stored_contract.nanny.email
+    assert contract.nanny.firstname == stored_contract.nanny.firstname
     assert contract.weekdays == stored_contract.weekdays
     assert contract.weeks == stored_contract.weeks
     assert contract.hours == stored_contract.hours
@@ -162,7 +180,13 @@ def test_get_contract_by_nanny(db: Session) -> None:
     assert stored_contract
     assert contract.id == stored_contract.id
     assert contract.user_id == stored_contract.user_id
+    assert contract.user.id == stored_contract.user.id
+    assert contract.user.firstname == stored_contract.user.firstname
+    assert contract.user.email == stored_contract.user.email
     assert contract.nanny_id == stored_contract.nanny_id
+    assert contract.nanny.id == stored_contract.nanny.id
+    assert contract.nanny.email == stored_contract.nanny.email
+    assert contract.nanny.firstname == stored_contract.nanny.firstname
     assert contract.weekdays == stored_contract.weekdays
     assert contract.weeks == stored_contract.weeks
     assert contract.hours == stored_contract.hours
@@ -205,7 +229,13 @@ def test_update_contract(db: Session) -> None:
     contract2 = crud.contract.update(db=db, db_obj=contract, obj_in=contract_update)
     assert contract.id == contract2.id
     assert contract.user_id == contract2.user_id
+    assert contract.user.id == contract2.user.id
+    assert contract.user.firstname == contract2.user.firstname
+    assert contract.user.email == contract2.user.email
     assert contract.nanny_id == contract2.nanny_id
+    assert contract.nanny.id == contract2.nanny.id
+    assert contract.nanny.email == contract2.nanny.email
+    assert contract.nanny.firstname == contract2.nanny.firstname
     assert contract.weekdays == contract2.weekdays
     assert contract.weeks == contract2.weeks
     assert contract.hours == contract2.hours
@@ -246,7 +276,13 @@ def test_delete_contract(db: Session) -> None:
     assert contract3 is None
     assert contract.id == contract.id
     assert contract2.user_id == contract.user_id
+    assert contract2.user.id == contract.user.id
+    assert contract2.user.firstname == contract.user.firstname
+    assert contract2.user.email == contract.user.email
     assert contract2.nanny_id == contract.nanny_id
+    assert contract2.nanny.id == contract.nanny.id
+    assert contract2.nanny.email == contract.nanny.email
+    assert contract.nanny.firstname == contract.nanny.firstname
     assert contract2.weekdays == contract.weekdays
     assert contract2.weeks == contract.weeks
     assert contract2.hours == contract.hours
