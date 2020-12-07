@@ -1,46 +1,66 @@
-# Nanny Salary
+# Nanny API
 
-## Prerequisite
-Python versions covered:
-* `Python 3.6`
-* `Python 3.7`
+API to run inside Nanny project.
+
 
 ## Getting started
-### Init database
-```sh
-pipenv run flask init-db
+Install required packages:
+```bash
+sudo apt update
+sudo apt install python3-pip python3-dev
+pip install pipenv
 ```
-### Run the app
-```sh
-pipenv run flask run --host=0.0.0.0 --port=8080
-```
-Browse the app on localhost port 8080.
 
-## Pipenv
-### Prepare
+Setup the database:
+```bash
+docker-compose up -d
 ```
+
+Run the app:
+```bash
 pipenv update
+pipenv run alembic upgrade head
+pipenv run python app/initial_data.py
+pipenv run uvicorn app.main:app --port=8080 --reload
 ```
 
-### Runtime
-```
-pipenv run python main.py
+**Troubleshooting**
+
+Some distributions might miss some packages. These are some hints if needed:
+```bash
+# psycopg2
+sudo apt install python3-psycopg2 libpq-dev
+# numpy
+sudo apt install libatlas-base-dev
+# libxml package
+sudo apt install libxml2-dev libxslt-dev
+# cryptography/cffi
+sudo apt install build-essential libssl-dev libffi-dev
 ```
 
-### Systemd service
+
+## Development
+
+### Setup workspace
+```bash
+sudo apt update
+sudo apt install python3-pip python3-dev
+pip install pipenv
+pipenv update --dev
 ```
-[Unit]
-Description=Nanny API Service
-After=multi-user.target
 
-[Service]
-User=root
-WorkingDirectory=/opt/python/nanny-api
-Restart=always
-Type=simple
-ExecStart=/usr/local/bin/pipenv run python main.py
-StandardInput=tty-force
+### Run locally
+This section use docker database called `nanny`.
+```bash
+docker-compose up -d
+pipenv run alembic upgrade head
+pipenv run python app/initial_data.py
+pipenv run uvicorn app.main:app --port=8080 --reload
+```
 
-[Install]
-WantedBy=multi-user.target
+### Run tests
+This section use docker database called `nanny_test`.
+```bash
+docker-compose up -d
+pipenv run pytest -sv app/tests/
 ```
