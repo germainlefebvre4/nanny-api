@@ -4,16 +4,31 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+pytest = "*"
+eralchemy = "*"
+sqlalchemy-stubs = "*"
+flake8 = "*"
+pytest-cov = "*"
+pytest-dotenv = "*"
 
 [packages]
-flask = "*"
-datedelta = "*"
+fastapi = "*"
+uvicorn = "*"
+fastapi-sqlalchemy = "*"
+pydantic = {extras = ["email"], version = "*"}
+alembic = "*"
+python-dotenv = "*"
+requests = "*"
+python-dateutil = "*"
+python-jose = {extras = ["cryptography"], version = "*"}
+passlib = {extras = ["bcrypt"], version = "*"}
+python-multipart = "*"
+psycopg2 = "*"
+emails = "*"
+email-validator = "*"
+psycopg2-binary = "*"
+pandas = "*"
 holidays = "*"
-numpy = "*"
-flask-api = "*"
-flask-cors = "*"
-pytest = "*"
-pytest-cov = "*"
 
 [requires]
-python_version = "3"
+python_version = "3.8"

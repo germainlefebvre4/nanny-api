@@ -1,1 +1,5 @@
-instance/nanny.sqlite
+.mypy_cache
+.coverage
+htmlcov
+.pytest_cache/
+*.code-workspace
