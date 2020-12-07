@@ -21,7 +21,7 @@ Run the app:
 pipenv update
 pipenv run alembic upgrade head
 pipenv run python app/initial_data.py
-pipenv run uvicorn api.main:app --port=8080 --reload
+pipenv run uvicorn app.main:app --port=8080 --reload
 ```
 
 **Troubleshooting**
@@ -55,7 +55,7 @@ This section use docker database called `nanny`.
 docker-compose up -d
 pipenv run alembic upgrade head
 pipenv run python app/initial_data.py
-pipenv run uvicorn api.main:app --port=8080 --reload
+pipenv run uvicorn app.main:app --port=8080 --reload
 ```
 
 ### Run tests
