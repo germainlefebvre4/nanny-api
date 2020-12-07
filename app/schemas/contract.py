@@ -2,6 +2,7 @@ from typing import Optional
 from datetime import date, datetime
 
 from pydantic import BaseModel
+from app.schemas.user import User
 
 
 class ContractBase(BaseModel):
@@ -44,6 +45,8 @@ class ContractInDBBase(ContractBase):
     id: int
     user_id: int
     nanny_id: Optional[int] = None
+    user: User
+    nanny: Optional[User]
     created_on: Optional[datetime]
     updated_on: Optional[datetime]
 
