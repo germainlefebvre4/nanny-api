@@ -573,6 +573,7 @@ def test_read_contract_month_summary_by_user(
     assert "monthly_hours" in list(content.keys())
     assert "monthly_salary" in list(content.keys())
     assert "monthly_fees" in list(content.keys())
+    assert "price_hour_standard" in list(content.keys())
 
 
 def test_read_contract_month_summary_specific_by_user(
@@ -635,6 +636,7 @@ def test_read_contract_month_summary_specific_by_user(
     assert "monthly_hours" in list(content.keys())
     assert "monthly_salary" in list(content.keys())
     assert "monthly_fees" in list(content.keys())
+    assert "price_hour_standard" in list(content.keys())
 
     # assert content["business_days"] == 17
     assert content["working_days"] == 17
@@ -650,6 +652,7 @@ def test_read_contract_month_summary_specific_by_user(
     assert content["monthly_hours"] == 178.5
     assert content["monthly_salary"] == 624.75
     assert content["monthly_fees"] == 52.36
+    assert content["price_hour_standard"] == 3.50
 
     # Get day type
     # response = client.get(
@@ -704,6 +707,7 @@ def test_read_contract_month_summary_specific_by_user(
     assert content["monthly_hours"] == 189
     assert content["monthly_salary"] == 661.50
     assert content["monthly_fees"] == 55.44
+    assert content["price_hour_standard"] == 3.50
 
 
     ## CASE MALADIE ENFANT
@@ -748,3 +752,4 @@ def test_read_contract_month_summary_specific_by_user(
     assert content["monthly_hours"] == 178.5
     assert content["monthly_salary"] == 624.75
     assert content["monthly_fees"] == 52.36
+    assert content["price_hour_standard"] == 3.50

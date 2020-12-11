@@ -343,6 +343,7 @@ def read_contract_summary(
 
     monthly_salary = (hours_standard+hours_complementary)*contract.price_hour_standard + hours_extra*(contract.price_hour_extra)
     monthly_fees = working_days_count*contract.price_fees
+    price_hour_standard = contract.price_hour_standard
 
     summary = dict(
         business_days=business_days_count,
@@ -359,6 +360,7 @@ def read_contract_summary(
         monthly_hours=monthly_hours,
         monthly_salary=monthly_salary,
         monthly_fees=monthly_fees,
+        price_hour_standard=price_hour_standard,
     )
 
     return summary
