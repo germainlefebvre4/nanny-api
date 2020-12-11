@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app import crud, schemas
 from app.core.config import settings
 # from app.db import base
+from app.schemas.day_type import DayTypeCreate
 
 # make sure all SQL Alchemy models are imported (app.db.base) before initializing DB
 # otherwise, SQL Alchemy might fail to initialize relationships properly
@@ -34,3 +35,7 @@ def init_db(db: Session) -> None:
             is_superuser=False,
         )
         user = crud.user.create(db, obj_in=user_in)
+    
+    for day_type_name in ["Présence enfant", "Absence enfant", "Maladie enfant", "Maladie nounou", "CP enfant", "CP nounou"]:
+        day_type_in = DayTypeCreate(name=day_type_name)
+        crud.day_type.create(db=db, obj_in=day_type_in)

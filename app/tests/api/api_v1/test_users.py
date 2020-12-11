@@ -131,26 +131,32 @@ def test_get_nanny_with_email_by_admin(
     client: TestClient, superuser_token_headers: dict, db: Session
 ) -> None:
     email = random_email()
+    firstname = random_lower_string()
     password = random_lower_string()
-    user_in = UserCreate(email=email, password=password, is_user=False, is_nanny=True)
+    user_in = UserCreate(email=email, firstname=firstname, password=password, is_user=False, is_nanny=True)
     user = crud.user.create(db, obj_in=user_in)
     response = client.get(
         f"{settings.API_V1_STR}/users/nanny/_search?email={email}", headers=superuser_token_headers,
     )
     assert response.status_code == 200
     api_user = response.json()
+    assert api_user["email"] == email
+    assert api_user["firstname"] == firstname
     existing_user = crud.user.get_by_email(db, email=email)
     assert existing_user
     assert existing_user.email == api_user["email"]
     assert existing_user.email == email
+    assert existing_user.firstname == api_user["firstname"]
+    assert existing_user.firstname == firstname
 
 
 def test_get_nanny_with_email_by_user(
     client: TestClient, normal_user_token_headers: dict, db: Session
 ) -> None:
     email = random_email()
+    firstname = random_lower_string()
     password = random_lower_string()
-    user_in = UserCreate(email=email, password=password, is_user=False, is_nanny=True)
+    user_in = UserCreate(email=email, firstname=firstname, password=password, is_user=False, is_nanny=True)
     user = crud.user.create(db, obj_in=user_in)
     response = client.get(
         f"{settings.API_V1_STR}/users/nanny/_search?email={email}",
@@ -159,9 +165,12 @@ def test_get_nanny_with_email_by_user(
     assert response.status_code == 200
     api_user = response.json()
     assert api_user["email"] == email
+    assert api_user["firstname"] == firstname
     existing_user = crud.user.get_by_email(db, email=email)
     assert existing_user
     assert existing_user.email == email
+    assert existing_user.firstname == api_user["firstname"]
+    assert existing_user.firstname == firstname
 
 def test_get_users_by_admin(
     client: TestClient, superuser_token_headers: dict, db: Session

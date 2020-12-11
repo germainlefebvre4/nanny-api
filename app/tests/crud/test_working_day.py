@@ -67,6 +67,41 @@ def test_get_working_day(db: Session) -> None:
     assert isinstance(stored_working_day.created_on, datetime)
     assert stored_working_day.updated_on == None
 
+def test_get_working_day_by_day(db: Session) -> None:
+    day_type = create_random_day_type(db)
+    contract = create_random_contract(db)
+
+    day = random_date_range(contract.start, contract.end)
+    start_time = random_time_range(8, 12)
+    start = str(start_time)
+    end_time = random_time_range(14, 19)
+    end = str(end_time)
+
+    stored_working_day = crud.working_day.get_by_day(
+        db=db, day_type_id=day_type.id, contract_id=contract.id, day=day)
+    assert not stored_working_day
+    
+
+    working_day_in = WorkingDayCreate(
+        day=day, start=start, end=end,
+    )
+    working_day = crud.working_day.create_with_owner(
+        db=db, obj_in=working_day_in,
+        day_type_id=day_type.id, contract_id=contract.id,
+    )
+    stored_working_day = crud.working_day.get_by_day(
+        db=db, day_type_id=day_type.id, contract_id=contract.id, day=day)
+
+    assert stored_working_day
+    assert working_day.id == stored_working_day.id
+    assert working_day.day_type_id == stored_working_day.day_type_id
+    assert working_day.contract_id == stored_working_day.contract_id
+    assert working_day.day == stored_working_day.day
+    assert working_day.start == stored_working_day.start
+    assert working_day.end == stored_working_day.end
+    assert isinstance(stored_working_day.created_on, datetime)
+    assert stored_working_day.updated_on == None
+
 
 # def test_get_working_days(db: Session) -> None:
 #     day_type = create_random_day_type(db)
