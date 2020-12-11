@@ -235,10 +235,6 @@ def read_contract_summary(
 
     if input_date < contract_start or contract_end < input_date:
         raise HTTPException(status_code=400, detail="Date range not included in contract")
-    
-    
-
-
 
     contract = crud.contract.get(db=db, id=id)
     if not contract:
@@ -295,6 +291,7 @@ def read_contract_summary(
     ]
     result.sort(key=lambda x: x.day)
 
+    # Flat the list from Working Days objects
     result_dict = [x.__dict__ for x in result]
 
 
@@ -309,28 +306,35 @@ def read_contract_summary(
     
     # print(df.to_string())
 
+    # Day Types List:
+    #   1 : Presence child
+    #   2 : Absence child
+    #   3 : Disease child
+    #   4 : Disease nanny
+    #   5 : Dayoff child
+    #   6 : Dayoff nanny
     business_days_count = len(business_days_pandas)
-    working_days_count = len([x for x in result if x.day_type_id not in [51, 2]])
-    presence_child_days_count = len([x for x in result if x.day_type_id in [1, 50]])
+    # Working days = Business days - Disease child - Nanny disease - Child daysoff
+    working_days_count = len([x for x in result if x.day_type_id not in [51, 3, 4, 5]])
+    # Presence child days = Inherited presence + Forced presence
+    presence_child_days_count = len([x for x in result if x.day_type_id in [50, 1]])
     absence_child_days_count = len([x for x in result if x.day_type_id in [2]])
     disease_child_days_count = len([x for x in result if x.day_type_id in [3]])
     disease_nanny_days_count = len([x for x in result if x.day_type_id in [4]])
     daysoff_child_days_count = len([x for x in result if x.day_type_id in [5]])
     daysoff_nanny_days_count = len([x for x in result if x.day_type_id in [6]])
 
-    monthly_hours = 0
+    monthly_hours =+ hours_per_day * absence_child_days_count
     monthly_salary = 0
     monthly_fees = 0
 
-    hours_standard = 0
+    hours_standard =+ hours_per_day * absence_child_days_count
     hours_complementary = 0
     hours_extra = 0
 
+    # Group by week and sum for each week (date exposed is the last day of the related week)
     week_durations = df.groupby(pandas.Grouper(freq='W-SUN'))['day_duration'].sum()
-    # print(week_duration)
     for index, day_duration in week_durations.iteritems():
-        # print(day_duration)
-
         week_duration = day_duration.total_seconds()/3600
         week_hours_standard = min(week_duration, min(45, contract.hours))
         week_hours_complementary = min(max(0, week_duration-contract.hours), abs(45-week_duration))
@@ -340,10 +344,13 @@ def read_contract_summary(
         hours_standard += week_hours_standard
         hours_complementary += week_hours_complementary
         hours_extra += week_hours_extra
-
-    monthly_salary = (hours_standard+hours_complementary)*contract.price_hour_standard + hours_extra*(contract.price_hour_extra)
+    
+    # Salary = Hours standard * Price/hour + Hours compl. * Price/hour + Hours extra  Price/hour
+    monthly_salary = hours_standard * contract.price_hour_standard + \
+        hours_complementary * contract.price_hour_standard + \
+        hours_extra * (contract.price_hour_extra)
+    # Fees = Workings days * Price/hour
     monthly_fees = working_days_count*contract.price_fees
-    price_hour_standard = contract.price_hour_standard
 
     summary = dict(
         business_days=business_days_count,
@@ -360,7 +367,7 @@ def read_contract_summary(
         monthly_hours=monthly_hours,
         monthly_salary=monthly_salary,
         monthly_fees=monthly_fees,
-        price_hour_standard=price_hour_standard,
+        price_hour_standard=contract.price_hour_standard,
     )
 
     return summary

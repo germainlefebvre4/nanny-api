@@ -664,9 +664,9 @@ def test_read_contract_month_summary_specific_by_user(
     # print(content)
 
 
-    # CASE PRESENCE ENFANT
+    # CASE PRESENCE CHILD
     # Create working day
-    day_type_id = 1 # Présence enfant
+    day_type_id = 1 # Presence child
     data = {
         "day": "2020-10-09",
         "start": "08:00:00",
@@ -707,12 +707,12 @@ def test_read_contract_month_summary_specific_by_user(
     assert content["monthly_hours"] == 189
     assert content["monthly_salary"] == 661.50
     assert content["monthly_fees"] == 55.44
-    assert content["price_hour_standard"] == 3.50
+    assert content["price_hour_standard"] == contract["price_hour_standard"]
 
 
-    ## CASE MALADIE ENFANT
+    ## CASE DISEASE CHILD
     # Create working day
-    day_type_id = 2 # Maladie enfant
+    day_type_id = 3 # Disease child
     data = {
         "day": "2020-10-12",
         "start": "00:00:00",
@@ -741,8 +741,8 @@ def test_read_contract_month_summary_specific_by_user(
     assert content["business_days"] == 22
     assert content["working_days"] == 17
     assert content["presence_child"] == 17
-    assert content["absence_child"] == 1
-    assert content["disease_child"] == 0
+    assert content["absence_child"] == 0
+    assert content["disease_child"] == 1
     assert content["disease_nanny"] == 0
     assert content["daysoff_child"] == 0
     assert content["daysoff_nanny"] == 0
@@ -752,4 +752,50 @@ def test_read_contract_month_summary_specific_by_user(
     assert content["monthly_hours"] == 178.5
     assert content["monthly_salary"] == 624.75
     assert content["monthly_fees"] == 52.36
-    assert content["price_hour_standard"] == 3.50
+    assert content["price_hour_standard"] == contract["price_hour_standard"]
+
+
+    ## CASE ABSENCE CHILD
+    # Create working day
+    day_type_id = 2 # Absence child
+    data = {
+        "day": "2020-10-13",
+        "start": "00:00:00",
+        "end": "00:00:00"
+    }
+    response = client.post(
+        f"{settings.API_V1_STR}/working_days/" +
+        f"?day_type_id={day_type_id}&contract_id={contract['id']}",
+        headers=normal_user_token_headers, json=data,
+    )
+    print(response.json())
+    assert response.status_code == 200
+    content = response.json()
+
+    # Get contract summary
+    month = 10
+    year = 2020
+
+    response = client.get(
+        f"{settings.API_V1_STR}/contracts/{contract['id']}/summary/?year={year}&month={month}",
+        headers=normal_user_token_headers,
+    )
+    assert response.status_code == 200
+    content = response.json()
+    assert isinstance(content, dict)
+
+    assert content["business_days"] == 22
+    assert content["working_days"] == 17
+    assert content["presence_child"] == 16
+    assert content["absence_child"] == 1
+    assert content["disease_child"] == 1
+    assert content["disease_nanny"] == 0
+    assert content["daysoff_child"] == 0
+    assert content["daysoff_nanny"] == 0
+    assert content["hours_standard"] == 178.5
+    assert content["hours_complementary"] == 0
+    assert content["hours_extra"] == 0
+    assert content["monthly_hours"] == 178.5
+    assert content["monthly_salary"] == 624.75
+    assert content["monthly_fees"] == 52.36
+    assert content["price_hour_standard"] == contract["price_hour_standard"]
