@@ -1,5 +1,5 @@
 from .day_type import DayType, DayTypeCreate, DayTypeInDB, DayTypeUpdate
-from .contract import Contract, ContractCreate, ContractInDB, ContractUpdate
+from .contract import Contract, ContractCreate, ContractInDB, ContractUpdate, ContractDelete
 from .working_day import WorkingDay, WorkingDayCreate, WorkingDayInDB, WorkingDayUpdate
 from .msg import Msg
 from .token import Token, TokenPayload
