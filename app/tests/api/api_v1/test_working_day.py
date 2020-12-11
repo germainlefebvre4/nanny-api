@@ -418,32 +418,3 @@ def test_read_working_days_from_contract_by_month_by_user(
         assert "end" in dict(i).keys()
         assert "contract_id" in dict(i).keys()
         assert "day_type_id" in dict(i).keys()
-
-
-def test_create_working_day_from_contract_by_user(
-    client: TestClient, normal_user_token_headers: dict, db: Session
-) -> None:
-    r = client.get(
-        f"{settings.API_V1_STR}/users/me",
-        headers=normal_user_token_headers)
-    user_id = r.json()["id"]
-    contract = create_random_contract(db, user_id=user_id)
-    day_type = create_random_day_type(db)
-    data = {
-        "day": str(random_date_range(contract.start, contract.end)),
-        "start": str(random_time_range(8, 12)),
-        "end": str(random_time_range(14, 19))
-    }
-    response = client.post(
-        f"{settings.API_V1_STR}/working_days/" +
-        f"?day_type_id={day_type.id}&contract_id={contract.id}",
-        headers=normal_user_token_headers, json=data,
-    )
-    assert response.status_code == 200
-    content = response.json()
-    assert "id" in content
-    assert content["day_type_id"] == day_type.id
-    assert content["contract_id"] == contract.id
-    assert content["day"] == data["day"]
-    assert content["start"] == data["start"]
-    assert content["end"] == data["end"]

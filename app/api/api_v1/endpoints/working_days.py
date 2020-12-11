@@ -51,13 +51,6 @@ def create_working_day(
             raise HTTPException(status_code=400, detail="User not found")
     else:
         raise HTTPException(status_code=400, detail="User not responsible")
-
-    working_day_exists = crud.working_day.get_by_day(
-        db, day_type_id=day_type_id,
-        contract_id=contract_id, day=working_day_in.day)
-    if working_day_exists:
-        raise HTTPException(status_code=400, detail="Working day already exists")
-
     working_day = crud.working_day.create_with_owner(
         db=db, obj_in=working_day_in,
         day_type_id=day_type_id, contract_id=contract_id)

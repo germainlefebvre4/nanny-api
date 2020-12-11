@@ -32,7 +32,7 @@ def create_random_contract(
     first_day_previous_month_date = datetime.strptime(str(today_date)[:7]+"-01", "%Y-%m-%d").date() + relativedelta(months=-1)
     
     weekdays_list = ["Mon", "Tue", "Wed", "Thu", "Fri"]
-    weekdays = " ".join(random.sample(weekdays_list, k=random_int_range(2, 5)))
+    weekdays = " ".join(random.choices(weekdays_list, k=random_int_range(1, 5)))
     weeks = random_int_range(20, 47)
     hours = random_int_range(10, 50)
     price_hour_standard = random_float_range(2.5, 4, 1)
