@@ -7,7 +7,6 @@ from sqlalchemy.orm import Session
 
 from app.crud.base import CRUDBase
 from app.models.contract import Contract
-from app.models.user import User
 from app.schemas.contract import ContractCreate, ContractUpdate
 
 
@@ -37,10 +36,8 @@ class CRUDContract(CRUDBase[Contract, ContractCreate, ContractUpdate]):
     def get_multi_by_user(
         self, db: Session, *, user_id: int, skip: int = 0, limit: int = 100
     ) -> List[Contract]:
-        print("get_multi_by_user")
         return (
             db.query(self.model)
-            .join(Contract.user)
             .filter(Contract.user_id == user_id)
             .offset(skip)
             .limit(limit)
@@ -52,7 +49,6 @@ class CRUDContract(CRUDBase[Contract, ContractCreate, ContractUpdate]):
     ) -> List[Contract]:
         return (
             db.query(self.model)
-            .join(Contract.nanny)
             .filter(Contract.nanny_id == nanny_id)
             .offset(skip)
             .limit(limit)

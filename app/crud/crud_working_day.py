@@ -44,21 +44,20 @@ class CRUDWorkingDay(CRUDBase[WorkingDay, WorkingDayCreate, WorkingDayUpdate]):
     #         .all()
     #     )
 
-    def get_by_day(
+    def get_multi_by_contract(
         self, db: Session, *,
-        day_type_id: int,
         contract_id: int,
-        day: str,
+        skip: int = 0, limit: int = 100,
     ) -> List[WorkingDay]:
         return (
             db.query(self.model)
+            .join(WorkingDay.contract)
             .filter(
-                and_(
-                    Contract.id == contract_id,
-                    WorkingDay.day == day
-                )
+                Contract.id == contract_id
             )
-            .first()
+            .offset(skip)
+            .limit(limit)
+            .all()
         )
 
     def get_multi_by_contract_by_date(
