@@ -25,7 +25,6 @@ class WorkingDayUpdate(WorkingDayBase):
 
 class WorkingDayDelete(WorkingDayBase):
     id: int
-    day_type_id: int
     contract_id: int
     day: date
     start: time

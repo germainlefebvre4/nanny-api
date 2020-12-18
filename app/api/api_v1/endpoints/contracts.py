@@ -280,6 +280,10 @@ def read_contract_summary(
         schemas.WorkingDay(
             day=x,
             day_type_id=51,
+            day_type=schemas.DayType(
+                id=51,
+                name="Jour férié",
+            ),
             contract_id=contract.id,
             id=0,
             start=datetime.strptime(f"00:00:00", "%H:%M:%S").time(),
@@ -290,6 +294,10 @@ def read_contract_summary(
         schemas.WorkingDay(
             day=x,
             day_type_id=50,
+            day_type=schemas.DayType(
+                id=50,
+                name="Jour hérité du contrat",
+            ),
             contract_id=contract.id,
             id=0,
             start=datetime.strptime(f"08:00:00", "%H:%M:%S").time(),
