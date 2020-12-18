@@ -23,6 +23,19 @@ def read_day_types(
     return day_types
 
 
+@router.get("/_search", response_model=schemas.DayType)
+def read_day_type_with_email(
+    db: Session = Depends(deps.get_db),
+    name: str = None,
+    current_user: models.User = Depends(deps.get_current_active_user),
+) -> Any:
+    """
+    Retrieve day_type with name.
+    """
+    day_type = crud.day_type.get_by_name(db, name=name)
+    return day_type
+
+
 @router.post("/", response_model=schemas.DayType)
 def create_day_type(
     *,
