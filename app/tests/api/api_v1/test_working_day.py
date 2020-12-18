@@ -229,7 +229,6 @@ def test_delete_working_day_by_admin(
     assert response.status_code == 200
     content = response.json()
     assert "id" in content
-    assert "day_type_id" in content
     assert "contract_id" in content
     assert content["day"] == str(working_day.day)
     assert content["start"] == str(working_day.start)
@@ -254,7 +253,6 @@ def test_delete_working_day_by_user(
     assert response.status_code == 200
     content = response.json()
     assert "id" in content
-    assert "day_type_id" in content
     assert "contract_id" in content
     assert content["day"] == str(working_day.day)
     assert content["start"] == str(working_day.start)
