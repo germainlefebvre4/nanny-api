@@ -52,6 +52,7 @@ class CRUDWorkingDay(CRUDBase[WorkingDay, WorkingDayCreate, WorkingDayUpdate]):
     ) -> List[WorkingDay]:
         return (
             db.query(self.model)
+            .join(WorkingDay.day_type)
             .filter(
                 and_(
                     Contract.id == contract_id,
@@ -71,6 +72,7 @@ class CRUDWorkingDay(CRUDBase[WorkingDay, WorkingDayCreate, WorkingDayUpdate]):
         return (
             db.query(self.model)
             .join(WorkingDay.contract)
+            .join(WorkingDay.day_type)
             .filter(
                 and_(
                     Contract.id == contract_id,
@@ -91,6 +93,7 @@ class CRUDWorkingDay(CRUDBase[WorkingDay, WorkingDayCreate, WorkingDayUpdate]):
         return (
             db.query(self.model)
             .join(WorkingDay.contract)
+            .join(WorkingDay.day_type)
             .filter(and_(
                 WorkingDay.day_type_id == day_type_id,
                 WorkingDay.contract_id == contract_id

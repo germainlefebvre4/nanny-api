@@ -60,6 +60,9 @@ def test_get_working_day(db: Session) -> None:
     assert stored_working_day
     assert working_day.id == stored_working_day.id
     assert working_day.day_type_id == stored_working_day.day_type_id
+    assert stored_working_day.day_type
+    assert stored_working_day.day_type.id == day_type.id
+    assert stored_working_day.day_type.name == day_type.name
     assert working_day.contract_id == stored_working_day.contract_id
     assert working_day.day == stored_working_day.day
     assert working_day.start == stored_working_day.start

@@ -107,7 +107,7 @@ def read_working_day(
     return working_day
 
 
-@router.delete("/{id}", response_model=schemas.WorkingDay)
+@router.delete("/{id}", response_model=schemas.WorkingDayDelete)
 def delete_working_day(
     *,
     db: Session = Depends(deps.get_db),
