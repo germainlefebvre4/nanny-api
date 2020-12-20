@@ -1,6 +1,7 @@
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 import random
+import json
 
 from sqlalchemy.orm import Session
 
@@ -37,6 +38,7 @@ def test_create_contract(db: Session) -> None:
         price_hour_standard=price_hour_standard, price_fees=price_fees,
         price_hour_extra=price_hour_extra, price_meals=price_meals,
         start=start, end=end)
+    # contract_in.weekdays = json.dumps(contract_in.weekdays)
     contract = crud.contract.create_with_owner(
         db=db, obj_in=contract_in, user_id=user.id, nanny_id=nanny.id)
 
@@ -81,6 +83,7 @@ def test_get_contract(db: Session) -> None:
         price_hour_standard=price_hour_standard, price_fees=price_fees,
         price_hour_extra=price_hour_extra, price_meals=price_meals,
         start=start, end=end)
+    # contract_in.weekdays = json.dumps(contract_in.weekdays)
     contract = crud.contract.create_with_owner(
         db=db, obj_in=contract_in, user_id=user.id, nanny_id=nanny.id)
     stored_contract = crud.contract.get(db=db, id=contract.id)

@@ -1,13 +1,14 @@
 from typing import Optional
 from datetime import date, datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Json
 from app.schemas.user import User
+from app.schemas.weekdays import Weekdays
 
 
 class ContractBase(BaseModel):
     child: str
-    weekdays: str
+    weekdays: dict
     weeks: int
     hours: float
     price_hour_standard: float
@@ -20,7 +21,7 @@ class ContractBase(BaseModel):
 
 class ContractCreate(ContractBase):
     child: str
-    weekdays: str
+    weekdays: dict
     weeks: int
     hours: float
     price_hour_standard: float
@@ -33,7 +34,7 @@ class ContractCreate(ContractBase):
 
 class ContractUpdate(ContractBase):
     child: str
-    weekdays: str
+    weekdays: dict
     weeks: int
     hours: float
     price_hour_standard: float
@@ -49,7 +50,7 @@ class ContractDelete(ContractBase):
     user_id: int
     nanny_id: Optional[int] = None
     child: str
-    weekdays: str
+    weekdays: dict
     weeks: int
     hours: float
     price_hour_standard: float

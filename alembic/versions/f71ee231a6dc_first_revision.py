@@ -8,7 +8,7 @@ Create Date: 2020-11-09 12:15:11.582850
 from alembic import op
 from sqlalchemy import (
     Boolean, Column, ForeignKey, Integer, Float, String, DateTime, Date, Time)
-
+from sqlalchemy.dialects.postgresql import JSON
 
 # revision identifiers, used by Alembic.
 revision = 'f71ee231a6dc'
@@ -44,7 +44,7 @@ def upgrade():
         'contracts',
         Column('id', Integer, primary_key=True, index=True),
         Column('child', String),
-        Column('weekdays', String),
+        Column('weekdays', JSON),
         Column('weeks', Integer),
         Column('hours', Integer),
         Column('price_hour_standard', Float),
