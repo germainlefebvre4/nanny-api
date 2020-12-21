@@ -86,7 +86,7 @@ class Settings(BaseSettings):
     USER_ADMIN_FIRSTNAME: str = "Admin"
     USER_ADMIN_PASSWORD: str = "admin"
 
-    USERS_OPEN_REGISTRATION: bool = False
+    USERS_OPEN_REGISTRATION: bool = True
 
     class Config:
         case_sensitive = True
