@@ -405,8 +405,7 @@ def create_working_day(
     if (int(current_user.id) == int(contract.user_id)) \
             or (int(current_user.id) == int(contract.nanny_id)) \
             or bool(current_user.is_superuser):
-        if (crud.user.get(db, id=contract.user_id) and
-                crud.user.get(db, id=contract.nanny_id)):
+        if (crud.user.get(db, id=contract.user_id)): # crud.user.get(db, id=contract.nanny_id)
             pass
         else:
             raise HTTPException(status_code=400, detail="User not found")
