@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from app import crud, models
 from app.schemas.contract import ContractCreate
 from app.tests.utils.utils import (
-    random_int_range, random_float_range)
+    random_int_range, random_float_range, random_lower_string)
 
 from app.tests.utils.user import create_random_user
 
@@ -32,6 +32,7 @@ def create_random_contract(
     first_day_previous_month_date = datetime.strptime(str(today_date)[:7]+"-01", "%Y-%m-%d").date() + relativedelta(months=-1)
     
     weekdays_list = ["Mon", "Tue", "Wed", "Thu", "Fri"]
+    child = random_lower_string()
     weekdays = " ".join(random.sample(weekdays_list, k=random_int_range(2, 5)))
     weeks = random_int_range(20, 47)
     hours = random_int_range(10, 50)
@@ -43,7 +44,7 @@ def create_random_contract(
     end = str(first_day_previous_month_date + relativedelta(months=+12, days=-1))
 
     contract_in = ContractCreate(
-            weekdays=weekdays, weeks=weeks, hours=hours,
+            child=child, weekdays=weekdays, weeks=weeks, hours=hours,
             price_hour_standard=price_hour_standard, price_hour_extra=price_hour_extra,
             price_fees=price_fees, price_meals=price_meals, start=start, end=end,
         )

@@ -8,6 +8,7 @@ class Contract(Base):
     __tablename__ = "contracts"
 
     id = Column(Integer, primary_key=True, index=True)
+    child = Column(String)
     weekdays = Column(String)
     weeks = Column(Integer)
     hours = Column(Float)

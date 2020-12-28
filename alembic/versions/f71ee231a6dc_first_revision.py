@@ -43,6 +43,7 @@ def upgrade():
     op.create_table(
         'contracts',
         Column('id', Integer, primary_key=True, index=True),
+        Column('child', String),
         Column('weekdays', String),
         Column('weeks', Integer),
         Column('hours', Integer),
