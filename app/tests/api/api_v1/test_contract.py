@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
-from app.tests.utils.utils import random_weekdays
+from app.tests.utils.utils import random_lower_string, random_weekdays
 from app.tests.utils.user import create_random_user
 from app.tests.utils.contract import create_random_contract
 
@@ -18,6 +18,7 @@ def test_create_contract_by_admin(
     nanny = create_random_user(db)
     date_today = date.today()
     data = {
+        "child": random_lower_string(),
         "weekdays": random_weekdays(),
         "weeks": 44,
         "hours": 40.0,
@@ -37,7 +38,11 @@ def test_create_contract_by_admin(
     content = response.json()
     assert "id" in content
     assert content["user_id"] == user.id
+    assert isinstance(content["user"], dict)
+    assert content["user"]["id"] == user.id
+    assert content["user"]["firstname"] == user.firstname
     assert content["nanny_id"] == nanny.id
+    assert content["child"] == data["child"]
     assert content["weekdays"] == data["weekdays"]
     assert content["weeks"] == data["weeks"]
     assert content["hours"] == data["hours"]
@@ -57,6 +62,7 @@ def test_create_contract_by_user(
     nanny = create_random_user(db)
     date_today = date.today()
     data = {
+        "child": random_lower_string(),
         "weekdays": random_weekdays(),
         "weeks": 44,
         "hours": 40.0,
@@ -77,6 +83,7 @@ def test_create_contract_by_user(
     assert "id" in content
     assert content["user_id"] == user_id
     assert content["nanny_id"] == nanny.id
+    assert content["child"] == data["child"]
     assert content["weekdays"] == data["weekdays"]
     assert content["weeks"] == data["weeks"]
     assert content["hours"] == data["hours"]
@@ -94,6 +101,7 @@ def test_create_contract_without_nanny_by_admin(
     user = create_random_user(db)
     date_today = date.today()
     data = {
+        "child": random_lower_string(),
         "weekdays": random_weekdays(),
         "weeks": 44,
         "hours": 40.0,
@@ -107,12 +115,17 @@ def test_create_contract_without_nanny_by_admin(
     response = client.post(
         f"{settings.API_V1_STR}/contracts/" +
         f"?user_id={user.id}",
-        headers=superuser_token_headers, json=data,
-    )
+        headers=superuser_token_headers, json=data)
     assert response.status_code == 200
     content = response.json()
     assert "id" in content
     assert content["user_id"] == user.id
+    assert isinstance(content["user"], dict)
+    assert content["user"]["id"] == user.id
+    assert content["user"]["firstname"] == user.firstname
+    assert content["user"]["id"] == user.id
+    assert content["user"]["id"] == user.id
+    assert content["user"]["firstname"] == user.firstname
     assert content["weekdays"] == data["weekdays"]
     assert content["weeks"] == data["weeks"]
     assert content["hours"] == data["hours"]
@@ -131,6 +144,7 @@ def test_create_contract_without_nanny_by_user(
     user_id = r.json()["id"]
     date_today = date.today()
     data = {
+        "child": random_lower_string(),
         "weekdays": random_weekdays(),
         "weeks": 44,
         "hours": 40.0,
@@ -150,6 +164,7 @@ def test_create_contract_without_nanny_by_user(
     content = response.json()
     assert "id" in content
     assert content["user_id"] == user_id
+    assert content["user"]["id"] == user_id
     assert content["weekdays"] == data["weekdays"]
     assert content["weeks"] == data["weeks"]
     assert content["hours"] == data["hours"]
@@ -168,6 +183,7 @@ def test_create_contract_by_another_user(
     nanny = create_random_user(db)
     date_today = date.today()
     data = {
+        "child": random_lower_string(),
         "weekdays": random_weekdays(),
         "weeks": 44,
         "hours": 40.0,
@@ -225,6 +241,8 @@ def test_read_contract_by_user(
     assert "id" in content
     assert "user_id" in content
     assert "nanny_id" in content
+    assert content["user_id"] == user_id
+    assert content["user"]["id"] == user_id
     assert content["weekdays"] == contract.weekdays
     assert content["weeks"] == contract.weeks
     assert content["hours"] == contract.hours
@@ -253,6 +271,7 @@ def test_update_contract_by_admin(
     contract = create_random_contract(db)
     date_today = date.today()
     data = {
+        "child": random_lower_string(),
         "weekdays": random_weekdays(),
         "weeks": 44,
         "hours": 40.0,
@@ -289,6 +308,7 @@ def test_update_contract_by_user(
     contract = create_random_contract(db, user_id=user_id)
     date_today = date.today()
     data = {
+        "child": random_lower_string(),
         "weekdays": random_weekdays(),
         "weeks": 44,
         "hours": 40.0,
@@ -323,6 +343,7 @@ def test_update_contract_by_another_user(
     contract = create_random_contract(db)
     date_today = date.today()
     data = {
+        "child": random_lower_string(),
         "weekdays": random_weekdays(),
         "weeks": 44,
         "hours": 40.0,
@@ -358,6 +379,7 @@ def test_update_contract_attach_nanny_by_admin(
     assert "user_id" in content
     assert "nanny_id" in content
     assert content["nanny_id"] == nanny.id
+    assert content["child"] == contract.child
     assert content["weekdays"] == contract.weekdays
     assert content["weeks"] == contract.weeks
     assert content["hours"] == contract.hours
@@ -378,6 +400,7 @@ def test_update_contract_attach_nanny_by_admin(
     assert "user_id" in content
     assert "nanny_id" in content
     assert content["nanny_id"] == nanny.id
+    assert content["child"] == contract.child
     assert content["weekdays"] == contract.weekdays
     assert content["weeks"] == contract.weeks
     assert content["hours"] == contract.hours
@@ -412,6 +435,7 @@ def test_update_contract_attach_nanny_by_user(
     assert "nanny_id" in content
     assert content["user_id"] == user_id
     assert content["nanny_id"] == nanny.id
+    assert content["child"] == contract.child
     assert content["weekdays"] == contract.weekdays
     assert content["weeks"] == contract.weeks
     assert content["hours"] == contract.hours
@@ -433,6 +457,7 @@ def test_update_contract_attach_nanny_by_user(
     assert "nanny_id" in content
     assert content["user_id"] == user_id
     assert content["nanny_id"] == nanny.id
+    assert content["child"] == contract.child
     assert content["weekdays"] == contract.weekdays
     assert content["weeks"] == contract.weeks
     assert content["hours"] == contract.hours
@@ -511,7 +536,6 @@ def test_delete_contract_by_user(
     assert content["end"] == str(contract.end)
 
 
-
 def test_delete_contract_by_another_user(
     client: TestClient, normal_user_token_headers: dict, db: Session
 ) -> None:
@@ -521,6 +545,7 @@ def test_delete_contract_by_another_user(
         headers=normal_user_token_headers,
     )
     assert response.status_code == 400
+
 
 def test_read_contract_month_summary_by_user(
     client: TestClient, normal_user_token_headers: dict, db: Session
@@ -555,7 +580,7 @@ def test_read_contract_month_summary_by_user(
         f"{settings.API_V1_STR}/contracts/{contract.id}/summary/?year={year}&month={month}",
         headers=normal_user_token_headers,
     )
-    print(response.json())
+    # print(response.json())
     assert response.status_code == 200
     content = response.json()
     assert isinstance(content, dict)
@@ -591,6 +616,7 @@ def test_read_contract_month_summary_specific_by_user(
     # Create Contract
     date_today = datetime.strptime("2020-09-01", "%Y-%m-%d").date()
     data = {
+        "child": random_lower_string(),
         "weekdays": "Mon Tue Thu Fri",
         "weeks": 47,
         "hours": 42.0,
@@ -768,7 +794,7 @@ def test_read_contract_month_summary_specific_by_user(
         f"?day_type_id={day_type_id}&contract_id={contract['id']}",
         headers=normal_user_token_headers, json=data,
     )
-    print(response.json())
+    # print(response.json())
     assert response.status_code == 200
     content = response.json()
 

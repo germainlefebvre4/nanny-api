@@ -6,6 +6,7 @@ from app.schemas.user import User
 
 
 class ContractBase(BaseModel):
+    child: str
     weekdays: str
     weeks: int
     hours: float
@@ -18,6 +19,7 @@ class ContractBase(BaseModel):
 
 
 class ContractCreate(ContractBase):
+    child: str
     weekdays: str
     weeks: int
     hours: float
@@ -30,6 +32,7 @@ class ContractCreate(ContractBase):
 
 
 class ContractUpdate(ContractBase):
+    child: str
     weekdays: str
     weeks: int
     hours: float
@@ -45,6 +48,8 @@ class ContractDelete(ContractBase):
     id: int
     user_id: int
     nanny_id: Optional[int] = None
+    child: str
+    weekdays: str
     weeks: int
     hours: float
     price_hour_standard: float
