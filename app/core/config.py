@@ -23,7 +23,7 @@ class Settings(BaseSettings):
             return v
         raise ValueError(v)
 
-    PROJECT_NAME: str = "nanny-api"
+    PROJECT_NAME: str = "Nanny"
     SENTRY_DSN: Optional[HttpUrl] = ""
 
     @validator("SENTRY_DSN", pre=True)
