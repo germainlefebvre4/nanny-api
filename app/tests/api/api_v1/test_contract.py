@@ -619,20 +619,16 @@ def test_read_contract_month_summary_specific_by_user(
         "weekdays": {
             "enabled": True,
             "Mon": {
-                "start": "09:00:00",
-                "end": "18:00:00"
+                "hours": "9"
             },
             "Tue": {
-                "start": "09:00:00",
-                "end": "18:00:00"
+                "hours": "9"
             },
             "Thu": {
-                "start": "09:00:00",
-                "end": "18:00:00"
+                "hours": "9"
             },
             "Fri": {
-                "start": "09:00:00",
-                "end": "18:00:00"
+                "hours": "9"
             }
         },
         "weeks": 47,
