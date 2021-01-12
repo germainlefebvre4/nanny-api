@@ -36,6 +36,6 @@ def init_db(db: Session) -> None:
         )
         user = crud.user.create(db, obj_in=user_in)
     
-    for day_type_name in ["Présence enfant", "Absence enfant", "Maladie enfant", "Maladie nounou", "CP enfant", "CP nounou"]:
+    for day_type_name in ["Jour férié", "Projection du contrat", "Présence enfant", "Absence enfant", "Maladie enfant", "Maladie nounou", "CP enfant", "CP nounou"]:
         day_type_in = DayTypeCreate(name=day_type_name)
         crud.day_type.create(db=db, obj_in=day_type_in)
