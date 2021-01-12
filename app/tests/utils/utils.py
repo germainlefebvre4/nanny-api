@@ -42,6 +42,7 @@ def random_weekdays():
     weekdays_list = ["Mon", "Tue", "Wed", "Thu", "Fri"]
     weekdays_choice = random.choices(weekdays_list, k=random_int_range(1, 5))
     weekdays_dict = dict()
+    weekdays_dict["enabled"] = True
     for weekday in weekdays_choice:
         weekdays_dict[weekday] = dict()
         weekdays_dict[weekday]["hours"] = f"{random.randint(4, 13)}"
