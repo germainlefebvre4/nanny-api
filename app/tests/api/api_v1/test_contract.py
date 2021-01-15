@@ -635,7 +635,7 @@ def test_read_contract_month_summary_specific_by_user(
         "hours": 42.0,
         "price_hour_standard": 3.5,
         "price_hour_extra": 3.8,
-        "price_fees": 3.08,
+        "price_fees": 3.11,
         "price_meals": 0.0,
         "start": str(date_today),
         "end": str(date_today + relativedelta(months=+12, days=-1))
@@ -648,6 +648,7 @@ def test_read_contract_month_summary_specific_by_user(
     assert response.status_code == 200
     contract = response.json()
 
+    # CASE FULL TIME
     # Get contract Summary
     month = 9
     year = 2020
@@ -688,13 +689,13 @@ def test_read_contract_month_summary_specific_by_user(
     assert content["hours_extra"] == 0
     assert content["monthly_hours"] == 178.5
     assert content["monthly_salary"] == 624.75
-    assert content["monthly_fees"] == 52.36
+    assert content["monthly_fees"] == 52.87
     assert content["price_hour_standard"] == 3.50
 
 
     # CASE PRESENCE CHILD
     # Create working day
-    day_type_id = 1 # Presence child
+    day_type_id = 3 # Presence child
     data = {
         "day": "2020-10-09",
         "start": "08:00:00",
@@ -733,13 +734,13 @@ def test_read_contract_month_summary_specific_by_user(
     assert content["hours_extra"] == 0
     assert content["monthly_hours"] == 189
     assert content["monthly_salary"] == 661.50
-    assert content["monthly_fees"] == 55.44
+    assert content["monthly_fees"] == 55.98
     assert content["price_hour_standard"] == contract["price_hour_standard"]
 
 
     ## CASE DISEASE CHILD
     # Create working day
-    day_type_id = 3 # Disease child
+    day_type_id = 5 # Disease child
     data = {
         "day": "2020-10-12",
         "start": "00:00:00",
@@ -778,13 +779,13 @@ def test_read_contract_month_summary_specific_by_user(
     assert content["hours_extra"] == 0
     assert content["monthly_hours"] == 178.5
     assert content["monthly_salary"] == 624.75
-    assert content["monthly_fees"] == 52.36
+    assert content["monthly_fees"] == 52.87
     assert content["price_hour_standard"] == contract["price_hour_standard"]
 
 
     ## CASE ABSENCE CHILD
     # Create working day
-    day_type_id = 2 # Absence child
+    day_type_id = 4 # Absence child
     data = {
         "day": "2020-10-13",
         "start": "00:00:00",
@@ -818,10 +819,10 @@ def test_read_contract_month_summary_specific_by_user(
     assert content["disease_nanny"] == 0
     assert content["daysoff_child"] == 0
     assert content["daysoff_nanny"] == 0
-    assert content["hours_standard"] == 178.5
+    assert content["hours_standard"] == 177.0
     assert content["hours_complementary"] == 0
     assert content["hours_extra"] == 0
-    assert content["monthly_hours"] == 178.5
-    assert content["monthly_salary"] == 624.75
-    assert content["monthly_fees"] == 52.36
+    assert content["monthly_hours"] == 177.0
+    assert content["monthly_salary"] == 619.5
+    assert content["monthly_fees"] == 52.87
     assert content["price_hour_standard"] == contract["price_hour_standard"]
