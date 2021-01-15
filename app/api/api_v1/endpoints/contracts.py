@@ -320,7 +320,6 @@ def read_contract_summary(
     # Flat the list from Working Days objects
     result_dict = [x.__dict__ for x in result]
 
-    print()
 
     # Convert Series to DataFrame
     df = pandas.DataFrame(result_dict, columns=['day', 'start', 'end', 'id', 'contract_id', 'day_type_id', 'created_on', 'updated_on'])
@@ -337,14 +336,16 @@ def read_contract_summary(
     # print(df.to_string())
 
     # Day Types List:
-    #   1 : Presence child
-    #   2 : Absence child
-    #   3 : Disease child
-    #   4 : Disease nanny
-    #   5 : Dayoff child
-    #   6 : Dayoff nanny
+    #   1 : Dayoff
+    #   2 : Inherited contract
+    #   3 : Presence child
+    #   4 : Absence child
+    #   5 : Disease child
+    #   6 : Disease nanny
+    #   7 : Dayoff child
+    #   8 : Dayoff nanny
     business_days_count = len(business_days_pandas)
-    # Working days = Business days - Disease child - Nanny disease - Child daysoff
+    # Working days = Business days - Disease child - Nanny disease - Child daysoff (- Dayoff)
     working_days_count = len([x for x in result if x.day_type_id not in [1, 5, 6, 7]])
     # Presence child days = Inherited presence + Forced presence
     presence_child_days_count = len([x for x in result if x.day_type_id in [2, 3]])
@@ -362,13 +363,13 @@ def read_contract_summary(
         # Add day_duration_real column: real time spent in the day
         # df['day_duration_real'] = df[['weekday']].apply(lambda x: weekdays_duration[x['weekday']], axis=1)
         for index, row in df.iterrows():
-          if df.loc[index, 'day_type_id'] not in [1]:
-            if df.loc[index, 'weekday'] in weekdays_duration.keys():
-                # df.loc[index, 'day_duration_real'] = df.loc[index, weekdays_duration[df.loc[index, 'weekday']]]
-                df.loc[index, 'day_duration_min'] = weekdays_duration[df.loc[index, 'weekday']]
-            else:
-                df.loc[index, 'day_duration_min'] = 0
-                # df.loc[index, 'day_duration_real'] = 0.0
+            if df.loc[index, 'day_type_id'] not in [1]:
+                if df.loc[index, 'weekday'] in weekdays_duration.keys():
+                    df.loc[index, 'day_duration_min'] = weekdays_duration[df.loc[index, 'weekday']]
+                else:
+                    df.loc[index, 'day_duration_min'] = 0
+            if df.loc[index, 'day_type_id'] in [4] and df.loc[index, 'day_duration'] == 0:
+                df.loc[index, 'day_duration'] = float(df.loc[index, 'day_duration_min'])
         
         # Add day_duration_billed column: billed time of the day
         df['day_duration_billed'] = df[['day_duration_min', 'day_duration']].max(axis=1)
@@ -424,11 +425,11 @@ def read_contract_summary(
     monthly_fees = working_days_count*contract.price_fees
 
     # Format float with 2 decimals
-    hours_standard = "{:.2f}".format(hours_standard)
-    hours_complementary = "{:.2f}".format(hours_complementary)
-    hours_extra = "{:.2f}".format(hours_extra)
-    monthly_salary = "{:.2f}".format(monthly_salary)
-    monthly_fees = "{:.2f}".format(monthly_fees)
+    hours_standard = float("{:.2f}".format(hours_standard))
+    hours_complementary = float("{:.2f}".format(hours_complementary))
+    hours_extra = float("{:.2f}".format(hours_extra))
+    monthly_salary = float("{:.2f}".format(monthly_salary))
+    monthly_fees = float("{:.2f}".format(monthly_fees))
 
     summary = dict(
         business_days=business_days_count,
