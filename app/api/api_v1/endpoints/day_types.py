@@ -14,12 +14,13 @@ def read_day_types(
     db: Session = Depends(deps.get_db),
     skip: int = 0,
     limit: int = 100,
+    filtered: bool = False,
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Retrieve day_types.
     """
-    day_types = crud.day_type.get_multi(db, skip=skip, limit=limit)
+    day_types = crud.day_type.get_multi(db, filtered=filtered, skip=skip, limit=limit)
     return day_types
 
 

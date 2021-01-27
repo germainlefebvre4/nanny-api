@@ -9,6 +9,7 @@ class Contract(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     child = Column(String)
+    duration_mode = Column(String)
     weekdays = Column(String)
     weeks = Column(Integer)
     hours = Column(Float)

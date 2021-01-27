@@ -44,6 +44,7 @@ def upgrade():
         'contracts',
         Column('id', Integer, primary_key=True, index=True),
         Column('child', String),
+        Column('duration_mode', String),
         Column('weekdays', JSON),
         Column('weeks', Integer),
         Column('hours', Integer),
