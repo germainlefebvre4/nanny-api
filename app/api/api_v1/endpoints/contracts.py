@@ -178,94 +178,11 @@ def read_working_days(
         working_days = crud.working_day.get_multi_by_contract(
             db=db, contract_id=id)
     
-        
-    holidays_fra = [datetime.strftime(x[0], "%Y-%m-%d") 
-        for x in holidays.FRA(years=int(year)).items() 
-        if x[0] >= datetime.strptime(f"{year}-{month}-01", "%Y-%m-%d").date()
-            and x[0] < datetime.strptime(f"{year}-{month}-01", "%Y-%m-%d").date() + relativedelta(months=+1)
-    ]
-    
-    workingdays_list = [x.day for x in working_days]
-    weekmask = " ".join([x for x in contract.weekdays.keys() if x != "enabled"])
-
-    startDay = datetime.strptime(f"{year}-{month}-01", "%Y-%m-%d").date()
-    endDay = datetime.strptime(f"{year}-{month}-01", "%Y-%m-%d").date() + relativedelta(months=+1)
-    business_days_inherited_pandas = pandas.bdate_range(start=startDay, end=endDay, freq="C", weekmask=weekmask, holidays=holidays_fra+workingdays_list).format()
-    hours_per_day = contract.hours/len(weekmask.split(' '))
-
-    result = working_days + [
-        schemas.WorkingDay(
-            day=x,
-            day_type_id=51,
-            day_type=schemas.DayType(
-                id=51,
-                name="Jour férié",
-            ),
-            contract_id=contract.id,
-            id=0,
-            start=datetime.strptime(f"00:00:00", "%H:%M:%S").time(),
-            end=datetime.strptime(f"00:00:00", "%H:%M:%S").time(),
-        )
-        for x in holidays_fra
-    ] + [
-        schemas.WorkingDay(
-            day=x,
-            day_type_id=50,
-            day_type=schemas.DayType(
-                id=50,
-                name="Jour hérité du contrat",
-            ),
-            contract_id=contract.id,
-            id=0,
-            start=datetime.strptime(f"09:00:00", "%H:%M:%S").time(),
-            end=(datetime.strptime(f"09:00:00", "%H:%M:%S") + relativedelta(minutes=+int(hours_per_day*60))).time(),
-        )
-        for x in business_days_inherited_pandas
-    ]
-    result.sort(key=lambda x: x.day)
+    hours_per_day, business_days_pandas, result = working_days_partial(working_days, contract, year, month, db)
 
     return result
 
-@router.get("/{id}/summary", response_model=Dict[Any, Any])
-def read_contract_summary(
-    *,
-    db: Session = Depends(deps.get_db),
-    id: int,
-    year: str = Query(None, regex="^[2][0-9]{3}", min_length=4, max_length=4),
-    month: str = Query(None, regex="^[01]?[0-9]", min_length=1, max_length=2),
-    current_user: models.User = Depends(deps.get_current_active_user),
-) -> Any:
-    """
-    Retrieve contracts summary by year and month.
-    """
-    if not year and not month:
-        raise HTTPException(status_code=400, detail="Year and/or month not filled")
-    input_date = datetime.strptime(f"{year}-{month}-01", "%Y-%m-%d").date() + relativedelta(months=+1, days=-1)
-    contract = crud.contract.get(db=db, id=id)
-    # contract_start = datetime.strptime(contract.year, "%Y-%m-%d")
-    contract_start = contract.start
-    contract_end = contract.end
-
-    if input_date < contract_start or contract_end < input_date:
-        raise HTTPException(status_code=400, detail="Date range not included in contract")
-
-    contract = crud.contract.get(db=db, id=id)
-    if not contract:
-        raise HTTPException(status_code=404, detail="Contract not found")
-    if (not crud.user.is_superuser(current_user) and
-            (contract.user_id != current_user.id)):
-        raise HTTPException(status_code=400, detail="Not enough permissions")
-    
-    if year and month:
-        month_date = datetime.strptime(f"{year}-{month}", "%Y-%m").date()
-        next_month_date = month_date + relativedelta(months=+1, days=-1)
-        working_days = crud.working_day.get_multi_by_contract_by_date(
-            db=db, contract_id=id, start=month_date, end=next_month_date)
-    else:
-        working_days = crud.working_day.get_multi_by_contract(
-            db=db, contract_id=id)
-    
-        
+def working_days_partial(working_days, contract, year, month, db):
     holidays_fra = [datetime.strftime(x[0], "%Y-%m-%d") 
         for x in holidays.FRA(years=int(year)).items() 
         if x[0] >= datetime.strptime(f"{year}-{month}-01", "%Y-%m-%d").date()
@@ -317,6 +234,49 @@ def read_contract_summary(
     ]
     result.sort(key=lambda x: x.day)
 
+    return hours_per_day, business_days_pandas, result
+
+@router.get("/{id}/summary", response_model=Dict[Any, Any])
+def read_contract_summary(
+    *,
+    db: Session = Depends(deps.get_db),
+    id: int,
+    year: str = Query(None, regex="^[2][0-9]{3}", min_length=4, max_length=4),
+    month: str = Query(None, regex="^[01]?[0-9]", min_length=1, max_length=2),
+    current_user: models.User = Depends(deps.get_current_active_user),
+) -> Any:
+    """
+    Retrieve contracts summary by year and month.
+    """
+    if not year and not month:
+        raise HTTPException(status_code=400, detail="Year and/or month not filled")
+    input_date = datetime.strptime(f"{year}-{month}-01", "%Y-%m-%d").date() + relativedelta(months=+1, days=-1)
+    contract = crud.contract.get(db=db, id=id)
+    # contract_start = datetime.strptime(contract.year, "%Y-%m-%d")
+    contract_start = contract.start
+    contract_end = contract.end
+
+    if input_date < contract_start or contract_end < input_date:
+        raise HTTPException(status_code=400, detail="Date range not included in contract")
+
+    contract = crud.contract.get(db=db, id=id)
+    if not contract:
+        raise HTTPException(status_code=404, detail="Contract not found")
+    if (not crud.user.is_superuser(current_user) and
+            (contract.user_id != current_user.id)):
+        raise HTTPException(status_code=400, detail="Not enough permissions")
+    
+    if year and month:
+        month_date = datetime.strptime(f"{year}-{month}", "%Y-%m").date()
+        next_month_date = month_date + relativedelta(months=+1, days=-1)
+        working_days = crud.working_day.get_multi_by_contract_by_date(
+            db=db, contract_id=id, start=month_date, end=next_month_date)
+    else:
+        working_days = crud.working_day.get_multi_by_contract(
+            db=db, contract_id=id)
+    
+    hours_per_day, business_days_pandas, result = working_days_partial(working_days, contract, year, month, db)
+
     # Flat the list from Working Days objects
     result_dict = [x.__dict__ for x in result]
 
@@ -363,7 +323,7 @@ def read_contract_summary(
         # Add day_duration_real column: real time spent in the day
         # df['day_duration_real'] = df[['weekday']].apply(lambda x: weekdays_duration[x['weekday']], axis=1)
         for index, row in df.iterrows():
-            if df.loc[index, 'day_type_id'] not in [1]:
+            if df.loc[index, 'day_type_id'] not in [1,5,6,7]:
                 if df.loc[index, 'weekday'] in weekdays_duration.keys():
                     df.loc[index, 'day_duration_min'] = weekdays_duration[df.loc[index, 'weekday']]
                 else:
@@ -373,6 +333,10 @@ def read_contract_summary(
         
         # Add day_duration_billed column: billed time of the day
         df['day_duration_billed'] = df[['day_duration_min', 'day_duration']].max(axis=1)
+        # Evicted billed duration if 
+        # df.loc[df['day_type_id name'] == 5, 'day_duration_billed'] = 0
+
+        print(df.to_string())
 
         # Set hours and salary
         monthly_hours = 0
@@ -407,7 +371,8 @@ def read_contract_summary(
         # Group by week and sum for each week (date exposed is the last day of the related week)
         week_durations = df.groupby(pandas.Grouper(freq='W-SUN'))['day_duration'].sum()
         for index, day_duration in week_durations.iteritems():
-            week_duration = day_duration.total_seconds()/3600
+            # week_duration = day_duration.total_seconds()/3600
+            week_duration = day_duration
             week_hours_standard = min(week_duration, min(45, contract.hours))
             week_hours_complementary = min(max(0, week_duration-contract.hours), abs(45-week_duration))
             week_hours_extra = max(0, week_duration-45)
@@ -422,7 +387,7 @@ def read_contract_summary(
         hours_complementary * contract.price_hour_standard + \
         hours_extra * (contract.price_hour_extra)
     # Fees = Workings days * Price/hour
-    monthly_fees = working_days_count*contract.price_fees
+    monthly_fees = presence_child_days_count*contract.price_fees
 
     # Format float with 2 decimals
     hours_standard = float("{:.2f}".format(hours_standard))
