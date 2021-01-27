@@ -203,35 +203,53 @@ def working_days_partial(working_days, contract, year, month, db):
     day_type_inherited_contract_name = "Projection du contrat"
     day_type_inherited_contract_id = crud.day_type.get_by_name(db, name=day_type_inherited_contract_name).id
 
-    result = working_days + [
-        schemas.WorkingDay(
-            day=x,
-            day_type_id=day_type_national_dayoff_id,
-            day_type=schemas.DayType(
-                id=day_type_national_dayoff_id,
-                name=day_type_national_dayoff_name,
-            ),
-            contract_id=contract.id,
-            id=0,
-            start=datetime.strptime(f"00:00:00", "%H:%M:%S").time(),
-            end=datetime.strptime(f"00:00:00", "%H:%M:%S").time(),
-        )
-        for x in holidays_fra
-    ] + [
-        schemas.WorkingDay(
-            day=x,
-            day_type_id=day_type_inherited_contract_id,
-            day_type=schemas.DayType(
-                id=day_type_inherited_contract_id,
-                name=day_type_inherited_contract_name,
-            ),
-            contract_id=contract.id,
-            id=0,
-            start=datetime.strptime(f"08:00:00", "%H:%M:%S").time(),
-            end=(datetime.strptime(f"08:00:00", "%H:%M:%S") + relativedelta(minutes=+int(hours_per_day*60))).time(),
-        )
-        for x in business_days_inherited_pandas
-    ]
+    if contract.duration_mode == "daily":
+        result = working_days + [
+            schemas.WorkingDay(
+                day=x,
+                day_type_id=day_type_national_dayoff_id,
+                day_type=schemas.DayType(
+                    id=day_type_national_dayoff_id,
+                    name=day_type_national_dayoff_name,
+                ),
+                contract_id=contract.id,
+                id=0,
+                start=datetime.strptime(f"00:00:00", "%H:%M:%S").time(),
+                end=datetime.strptime(f"00:00:00", "%H:%M:%S").time(),
+            )
+            for x in holidays_fra
+        ] + [
+            schemas.WorkingDay(
+                day=x,
+                day_type_id=day_type_inherited_contract_id,
+                day_type=schemas.DayType(
+                    id=day_type_inherited_contract_id,
+                    name=day_type_inherited_contract_name,
+                ),
+                contract_id=contract.id,
+                id=0,
+                start=datetime.strptime(f"08:00:00", "%H:%M:%S").time(),
+                end=(datetime.strptime(f"08:00:00", "%H:%M:%S") + relativedelta(minutes=+int(hours_per_day*60))).time(),
+            )
+            for x in business_days_inherited_pandas
+        ]
+    elif contract.duration_mode == "free":
+        result = working_days + [
+            schemas.WorkingDay(
+                day=x,
+                day_type_id=day_type_national_dayoff_id,
+                day_type=schemas.DayType(
+                    id=day_type_national_dayoff_id,
+                    name=day_type_national_dayoff_name,
+                ),
+                contract_id=contract.id,
+                id=0,
+                start=datetime.strptime(f"00:00:00", "%H:%M:%S").time(),
+                end=datetime.strptime(f"00:00:00", "%H:%M:%S").time(),
+            )
+            for x in holidays_fra
+        ]
+
     result.sort(key=lambda x: x.day)
 
     return hours_per_day, business_days_pandas, result
@@ -256,8 +274,11 @@ def read_contract_summary(
     contract_start = contract.start
     contract_end = contract.end
 
-    if input_date < contract_start or contract_end < input_date:
-        raise HTTPException(status_code=400, detail="Date range not included in contract")
+    # if contract_start and contract_end:
+    #     if input_date < contract_start or contract_end < input_date:
+    #         raise HTTPException(status_code=400, detail="Date range not included in contract")
+    # else:
+    #     raise HTTPException(status_code=400, detail="Date range not included in contract")
 
     contract = crud.contract.get(db=db, id=id)
     if not contract:
@@ -316,7 +337,7 @@ def read_contract_summary(
     daysoff_nanny_days_count = len([x for x in result if x.day_type_id in [8]])
 
     weekdays_duration = dict()
-    if contract.weekdays["enabled"]:
+    if contract.duration_mode == "daily":
         for weekday in [x for x in contract.weekdays if "enabled" not in x]:
             weekdays_duration[weekday] = contract.weekdays[weekday]["hours"]
 
@@ -335,8 +356,6 @@ def read_contract_summary(
         df['day_duration_billed'] = df[['day_duration_min', 'day_duration']].max(axis=1)
         # Evicted billed duration if 
         # df.loc[df['day_type_id name'] == 5, 'day_duration_billed'] = 0
-
-        print(df.to_string())
 
         # Set hours and salary
         monthly_hours = 0
@@ -359,7 +378,7 @@ def read_contract_summary(
             hours_complementary += week_hours_complementary
             hours_extra += week_hours_extra
 
-    else:
+    elif contract.duration_mode == "free":
         monthly_hours =+ hours_per_day * absence_child_days_count
         monthly_salary = 0
         monthly_fees = 0
@@ -429,7 +448,11 @@ def create_working_day(
     """
     Create new working_day.
     """
+    if (day_type_id in ["1", "2"]):
+        raise HTTPException(status_code=400, detail="Day Type not authorized")
+
     contract = crud.contract.get(db, id=id)
+
     if (int(current_user.id) == int(contract.user_id)) \
             or (int(current_user.id) == int(contract.nanny_id)) \
             or bool(current_user.is_superuser):

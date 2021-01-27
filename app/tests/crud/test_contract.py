@@ -20,6 +20,7 @@ def test_create_contract(db: Session) -> None:
 
     date_today = date.today()
     child = random_lower_string()
+    duration_mode = "daily"
     weekdays = random_weekdays()
     weeks = random_int_range(20, 47)
     hours = random_int_range(10, 50)
@@ -34,7 +35,7 @@ def test_create_contract(db: Session) -> None:
     created_on = datetime.now()
 
     contract_in = ContractCreate(
-        child=child, weekdays=weekdays, weeks=weeks, hours=hours,
+        child=child, duration_mode=duration_mode, weekdays=weekdays, weeks=weeks, hours=hours,
         price_hour_standard=price_hour_standard, price_fees=price_fees,
         price_hour_extra=price_hour_extra, price_meals=price_meals,
         start=start, end=end)
@@ -50,6 +51,7 @@ def test_create_contract(db: Session) -> None:
     assert contract.nanny.id == nanny.id
     assert contract.nanny.email == nanny.email
     assert contract.nanny.firstname == nanny.firstname
+    assert contract.duration_mode == duration_mode
     assert contract.weekdays == weekdays
     assert contract.weeks == weeks
     assert contract.hours == hours
@@ -68,6 +70,7 @@ def test_get_contract(db: Session) -> None:
 
     date_today = date.today()
     child = random_lower_string()
+    duration_mode = "daily"
     weekdays = random_weekdays()
     weeks = random_int_range(20, 47)
     hours = random_int_range(10, 50)
@@ -79,7 +82,7 @@ def test_get_contract(db: Session) -> None:
     end = str(date_today + relativedelta(months=+12, days=-1))
 
     contract_in = ContractCreate(
-        child=child, weekdays=weekdays, weeks=weeks, hours=hours,
+        child=child, duration_mode=duration_mode, weekdays=weekdays, weeks=weeks, hours=hours,
         price_hour_standard=price_hour_standard, price_fees=price_fees,
         price_hour_extra=price_hour_extra, price_meals=price_meals,
         start=start, end=end)
@@ -98,6 +101,7 @@ def test_get_contract(db: Session) -> None:
     assert contract.nanny.id == stored_contract.nanny.id
     assert contract.nanny.email == stored_contract.nanny.email
     assert contract.nanny.firstname == stored_contract.nanny.firstname
+    assert contract.duration_mode == stored_contract.duration_mode
     assert contract.weekdays == stored_contract.weekdays
     assert contract.weeks == stored_contract.weeks
     assert contract.hours == stored_contract.hours
@@ -117,6 +121,7 @@ def test_get_contract_by_user(db: Session) -> None:
 
     date_today = date.today()
     child = random_lower_string()
+    duration_mode = "daily"
     weekdays = random_weekdays()
     weeks = random_int_range(20, 47)
     hours = random_int_range(10, 50)
@@ -128,7 +133,7 @@ def test_get_contract_by_user(db: Session) -> None:
     end = str(date_today + relativedelta(months=+12, days=-1))
 
     contract_in = ContractCreate(
-        child=child, weekdays=weekdays, weeks=weeks, hours=hours,
+        child=child, duration_mode=duration_mode, weekdays=weekdays, weeks=weeks, hours=hours,
         price_hour_standard=price_hour_standard, price_fees=price_fees,
         price_hour_extra=price_hour_extra, price_meals=price_meals,
         start=start, end=end)
@@ -147,6 +152,7 @@ def test_get_contract_by_user(db: Session) -> None:
     assert contract.nanny.id == stored_contract.nanny.id
     assert contract.nanny.email == stored_contract.nanny.email
     assert contract.nanny.firstname == stored_contract.nanny.firstname
+    assert contract.duration_mode == stored_contract.duration_mode
     assert contract.weekdays == stored_contract.weekdays
     assert contract.weeks == stored_contract.weeks
     assert contract.hours == stored_contract.hours
@@ -164,6 +170,7 @@ def test_get_contract_by_nanny(db: Session) -> None:
 
     date_today = date.today()
     child = random_lower_string()
+    duration_mode = "daily"
     weekdays = random_weekdays()
     weeks = random_int_range(20, 47)
     hours = random_int_range(10, 50)
@@ -176,7 +183,7 @@ def test_get_contract_by_nanny(db: Session) -> None:
 
     contract_in = ContractCreate(
         user_id=user.id, nanny_id=nanny.id,
-        child=child, weekdays=weekdays, weeks=weeks, hours=hours,
+        child=child, duration_mode=duration_mode, weekdays=weekdays, weeks=weeks, hours=hours,
         price_hour_standard=price_hour_standard,
         price_hour_extra=price_hour_extra, price_fees=price_fees,
         price_meals=price_meals, start=start, end=end)
@@ -196,6 +203,7 @@ def test_get_contract_by_nanny(db: Session) -> None:
     assert contract.nanny.id == stored_contract.nanny.id
     assert contract.nanny.email == stored_contract.nanny.email
     assert contract.nanny.firstname == stored_contract.nanny.firstname
+    assert contract.duration_mode == stored_contract.duration_mode
     assert contract.weekdays == stored_contract.weekdays
     assert contract.weeks == stored_contract.weeks
     assert contract.hours == stored_contract.hours
@@ -213,6 +221,7 @@ def test_update_contract(db: Session) -> None:
 
     date_today = date.today()
     child = random_lower_string()
+    duration_mode = "daily"
     weekdays = random_weekdays()
     weeks = random_int_range(20, 47)
     hours = random_int_range(10, 50)
@@ -227,14 +236,14 @@ def test_update_contract(db: Session) -> None:
 
     contract_in = ContractCreate(
         user_id=user.id, nanny_id=nanny.id,
-        child=child, weekdays=weekdays, weeks=weeks, hours=hours,
+        child=child, duration_mode=duration_mode, weekdays=weekdays, weeks=weeks, hours=hours,
         price_hour_standard=price_hour_standard,
         price_hour_extra=price_hour_extra, price_fees=price_fees,
         price_meals=price_meals, start=start, end=end)
     contract = crud.contract.create_with_owner(
         db=db, obj_in=contract_in, user_id=user.id, nanny_id=nanny.id)
     contract_update = ContractUpdate(
-        child=child, weekdays=weekdays, weeks=weeks, hours=hours,
+        child=child, duration_mode=duration_mode, weekdays=weekdays, weeks=weeks, hours=hours,
         price_hour_standard=price_hour_standard,
         price_hour_extra=price_hour_extra, price_fees=price_fees,
         price_meals=price_meals, start=start, end=end)
@@ -248,6 +257,7 @@ def test_update_contract(db: Session) -> None:
     assert contract.nanny.id == contract2.nanny.id
     assert contract.nanny.email == contract2.nanny.email
     assert contract.nanny.firstname == contract2.nanny.firstname
+    assert contract.duration_mode == contract2.duration_mode
     assert contract.weekdays == contract2.weekdays
     assert contract.weeks == contract2.weeks
     assert contract.hours == contract2.hours
@@ -267,6 +277,7 @@ def test_delete_contract(db: Session) -> None:
 
     date_today = date.today()
     child = random_lower_string()
+    duration_mode = "daily"
     weekdays = random_weekdays()
     weeks = random_int_range(20, 47)
     hours = random_int_range(10, 50)
@@ -279,7 +290,7 @@ def test_delete_contract(db: Session) -> None:
 
     contract_in = ContractCreate(
         user_id=user.id, nanny_id=nanny.id,
-        child=child, weekdays=weekdays, weeks=weeks, hours=hours,
+        child=child, duration_mode=duration_mode, weekdays=weekdays, weeks=weeks, hours=hours,
         price_hour_standard=price_hour_standard, price_hour_extra=price_hour_extra,
         price_fees=price_fees, price_meals=price_meals, start=start, end=end)
     contract = crud.contract.create_with_owner(
@@ -296,6 +307,7 @@ def test_delete_contract(db: Session) -> None:
     assert contract2.nanny.id == contract.nanny.id
     assert contract2.nanny.email == contract.nanny.email
     assert contract.nanny.firstname == contract.nanny.firstname
+    assert contract2.duration_mode == contract.duration_mode
     assert contract2.weekdays == contract.weekdays
     assert contract2.weeks == contract.weeks
     assert contract2.hours == contract.hours
