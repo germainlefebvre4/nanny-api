@@ -37,6 +37,7 @@ def database_initialization(db):
     alembic_cfg = alembic.config.Config('alembic.ini')
     alembic_cfg.attributes['configure_logger'] = False
     # Database upgrade
+    alembic.command.downgrade(alembic_cfg, '6e523d653806') # Temporary fix when error occured
     alembic.command.upgrade(alembic_cfg, 'head')
     init_db(db)
     yield

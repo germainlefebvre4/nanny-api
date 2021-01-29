@@ -1,13 +1,15 @@
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 import random
+import json
 
 from sqlalchemy.orm import Session
 
 from app import crud, models
 from app.schemas.contract import ContractCreate
 from app.tests.utils.utils import (
-    random_int_range, random_float_range, random_lower_string)
+    random_int_range, random_float_range, random_lower_string,
+    random_time_range, random_weekdays)
 
 from app.tests.utils.user import create_random_user
 
@@ -31,9 +33,8 @@ def create_random_contract(
     today_date = date.today()
     first_day_previous_month_date = datetime.strptime(str(today_date)[:7]+"-01", "%Y-%m-%d").date() + relativedelta(months=-1)
     
-    weekdays_list = ["Mon", "Tue", "Wed", "Thu", "Fri"]
     child = random_lower_string()
-    weekdays = " ".join(random.sample(weekdays_list, k=random_int_range(2, 5)))
+    weekdays = random_weekdays()
     weeks = random_int_range(20, 47)
     hours = random_int_range(10, 50)
     price_hour_standard = random_float_range(2.5, 4, 1)

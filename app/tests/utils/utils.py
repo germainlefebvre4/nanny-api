@@ -1,5 +1,6 @@
 import random
 import string
+import json
 from datetime import date, time, datetime, timedelta
 
 from typing import Dict
@@ -39,7 +40,12 @@ def random_time_range(start, end) -> time:
 
 def random_weekdays():
     weekdays_list = ["Mon", "Tue", "Wed", "Thu", "Fri"]
-    return " ".join(random.choices(weekdays_list, k=random_int_range(1, 5)))
+    weekdays_choice = random.choices(weekdays_list, k=random_int_range(1, 5))
+    weekdays_dict = dict()
+    for weekday in weekdays_choice:
+        weekdays_dict[weekday] = dict()
+        weekdays_dict[weekday]["hours"] = f"{random.randint(4, 13)}"
+    return weekdays_dict
 
 
 def random_email() -> str:
