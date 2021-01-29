@@ -335,7 +335,7 @@ def test_read_working_days_from_contract_by_month_by_admin(
         if x[0] >= datetime.strptime(f"{year}-{month}-01", "%Y-%m-%d").date()
             and x[0] < datetime.strptime(f"{year}-{month}-01", "%Y-%m-%d").date() + relativedelta(months=+1)
     ]
-    weekmask = " ".join([x for x in contract.weekdays.keys() if x != "enabled"])
+    weekmask = contract.weekdays
     startDay = datetime.strptime(f"{year}-{month}-01", "%Y-%m-%d").date()
     endDay = datetime.strptime(f"{year}-{month}-01", "%Y-%m-%d").date() + relativedelta(months=+1)
     workingdays_list = [x.day for x in working_days]
@@ -396,7 +396,7 @@ def test_read_working_days_from_contract_by_month_by_user(
         if x[0] >= datetime.strptime(f"{year}-{month}-01", "%Y-%m-%d").date()
             and x[0] < datetime.strptime(f"{year}-{month}-01", "%Y-%m-%d").date() + relativedelta(months=+1)
     ]
-    weekmask = " ".join([x for x in contract.weekdays.keys() if x != "enabled"])
+    weekmask = contract.weekdays
     startDay = datetime.strptime(f"{year}-{month}-01", "%Y-%m-%d").date()
     endDay = datetime.strptime(f"{year}-{month}-01", "%Y-%m-%d").date() + relativedelta(months=+1)
     workingdays_list = [x.day for x in working_days]

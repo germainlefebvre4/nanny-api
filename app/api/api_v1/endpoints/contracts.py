@@ -2,7 +2,6 @@ from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 import holidays
 import pandas
-import json
 
 from typing import Any, List, Optional, Dict
 
@@ -31,9 +30,6 @@ def read_contracts(
         contracts = crud.contract.get_multi_by_user(
             db=db, user_id=current_user.id, skip=skip, limit=limit
         )
-    # for contract in contracts:
-    #     tmp = json.loads(contract["weekdays"])
-    #     contract["weekdays"] = tmp
     return contracts
 
 
@@ -81,7 +77,6 @@ def update_contract(
     if (not crud.user.is_superuser(current_user) and
             (contract.user_id != current_user.id)):
         raise HTTPException(status_code=400, detail="Not enough permissions")
-    contract_in.weekdays = json.dumps(contract_in.weekdays)
     contract = crud.contract.update(db=db, db_obj=contract, obj_in=contract_in)
     return contract
 
@@ -186,7 +181,7 @@ def read_working_days(
     ]
     
     workingdays_list = [x.day for x in working_days]
-    weekmask = " ".join([x for x in contract.weekdays.keys() if x != "enabled"])
+    weekmask = contract.weekdays
 
     startDay = datetime.strptime(f"{year}-{month}-01", "%Y-%m-%d").date()
     endDay = datetime.strptime(f"{year}-{month}-01", "%Y-%m-%d").date() + relativedelta(months=+1)
@@ -273,7 +268,7 @@ def read_contract_summary(
     ]
     
     workingdays_list = [x.day for x in working_days]
-    weekmask = " ".join([x for x in contract.weekdays.keys() if x != "enabled"])
+    weekmask = contract.weekdays
 
     startDay = datetime.strptime(f"{year}-{month}-01", "%Y-%m-%d").date()
     endDay = datetime.strptime(f"{year}-{month}-01", "%Y-%m-%d").date() + relativedelta(months=+1, days=-1)

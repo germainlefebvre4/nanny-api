@@ -580,6 +580,7 @@ def test_read_contract_month_summary_by_user(
         f"{settings.API_V1_STR}/contracts/{contract.id}/summary/?year={year}&month={month}",
         headers=normal_user_token_headers,
     )
+    # print(response.json())
     assert response.status_code == 200
     content = response.json()
     assert isinstance(content, dict)
@@ -616,21 +617,7 @@ def test_read_contract_month_summary_specific_by_user(
     date_today = datetime.strptime("2020-09-01", "%Y-%m-%d").date()
     data = {
         "child": random_lower_string(),
-        "weekdays": {
-            "enabled": True,
-            "Mon": {
-                "hours": "9"
-            },
-            "Tue": {
-                "hours": "9"
-            },
-            "Thu": {
-                "hours": "9"
-            },
-            "Fri": {
-                "hours": "9"
-            }
-        },
+        "weekdays": "Mon Tue Thu Fri",
         "weeks": 47,
         "hours": 42.0,
         "price_hour_standard": 3.5,
@@ -645,6 +632,7 @@ def test_read_contract_month_summary_specific_by_user(
         f"?user_id={user_id}&nanny_id={nanny.id}",
         headers=normal_user_token_headers, json=data,
     )
+    # print(response.json())
     assert response.status_code == 200
     contract = response.json()
 
@@ -656,6 +644,7 @@ def test_read_contract_month_summary_specific_by_user(
         f"{settings.API_V1_STR}/contracts/{contract['id']}/summary/?year={year}&month={month}",
         headers=normal_user_token_headers,
     )
+    # print(response.json())
     assert response.status_code == 200
     content = response.json()
     assert isinstance(content, dict)
@@ -691,6 +680,15 @@ def test_read_contract_month_summary_specific_by_user(
     assert content["monthly_fees"] == 52.36
     assert content["price_hour_standard"] == 3.50
 
+    # Get day type
+    # response = client.get(
+    #     f"{settings.API_V1_STR}/day_types/",
+    #     headers=normal_user_token_headers,
+    # )
+    # assert response.status_code == 200
+    # content = response.json()
+    # print(content)
+
 
     # CASE PRESENCE CHILD
     # Create working day
@@ -716,6 +714,7 @@ def test_read_contract_month_summary_specific_by_user(
         f"{settings.API_V1_STR}/contracts/{contract['id']}/summary/?year={year}&month={month}",
         headers=normal_user_token_headers,
     )
+    # print(response.json())
     assert response.status_code == 200
     content = response.json()
     assert isinstance(content, dict)
@@ -795,6 +794,7 @@ def test_read_contract_month_summary_specific_by_user(
         f"?day_type_id={day_type_id}&contract_id={contract['id']}",
         headers=normal_user_token_headers, json=data,
     )
+    # print(response.json())
     assert response.status_code == 200
     content = response.json()
 

@@ -1,5 +1,4 @@
 from datetime import datetime
-import json
 
 from typing import List, Dict, Union, Any
 
@@ -17,7 +16,6 @@ class CRUDContract(CRUDBase[Contract, ContractCreate, ContractUpdate]):
         self, db: Session, *, obj_in: ContractCreate, user_id: int, nanny_id: int
     ) -> Contract:
         obj_in_data = jsonable_encoder(obj_in)
-        obj_in_data["weekdays"] = json.dumps(obj_in_data["weekdays"])
         created_on = datetime.now()
         db_obj = self.model(**obj_in_data, user_id=user_id, nanny_id=nanny_id,
             created_on=created_on)
