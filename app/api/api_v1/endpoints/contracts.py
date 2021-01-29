@@ -338,7 +338,7 @@ def read_contract_summary(
 
     weekdays_duration = dict()
     if contract.duration_mode == "daily":
-        for weekday in [x for x in contract.weekdays if "enabled" not in x]:
+        for weekday in contract.weekdays:
             weekdays_duration[weekday] = contract.weekdays[weekday]["hours"]
 
         # Add day_duration_real column: real time spent in the day
