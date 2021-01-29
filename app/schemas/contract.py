@@ -7,6 +7,7 @@ from app.schemas.user import User
 
 class ContractBase(BaseModel):
     child: str
+    duration_mode: str
     weekdays: dict = {"enabled": False}
     weeks: int
     hours: float
@@ -20,6 +21,7 @@ class ContractBase(BaseModel):
 
 class ContractCreate(ContractBase):
     child: str
+    duration_mode: str
     weekdays: dict = {"enabled": False}
     weeks: int
     hours: float
@@ -33,6 +35,7 @@ class ContractCreate(ContractBase):
 
 class ContractUpdate(ContractBase):
     child: str
+    duration_mode: str
     weekdays: dict = {"enabled": False}
     weeks: int
     hours: float
@@ -49,6 +52,7 @@ class ContractDelete(ContractBase):
     user_id: int
     nanny_id: Optional[int] = None
     child: str
+    duration_mode: str
     weekdays: dict = {"enabled": False}
     weeks: int
     hours: float

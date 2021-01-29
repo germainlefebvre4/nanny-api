@@ -34,6 +34,7 @@ def create_random_contract(
     first_day_previous_month_date = datetime.strptime(str(today_date)[:7]+"-01", "%Y-%m-%d").date() + relativedelta(months=-1)
     
     child = random_lower_string()
+    duration_mode = "daily"
     weekdays = random_weekdays()
     weeks = random_int_range(20, 47)
     hours = random_int_range(10, 50)
@@ -45,7 +46,7 @@ def create_random_contract(
     end = str(first_day_previous_month_date + relativedelta(months=+12, days=-1))
 
     contract_in = ContractCreate(
-            child=child, weekdays=weekdays, weeks=weeks, hours=hours,
+            child=child, duration_mode=duration_mode, weekdays=weekdays, weeks=weeks, hours=hours,
             price_hour_standard=price_hour_standard, price_hour_extra=price_hour_extra,
             price_fees=price_fees, price_meals=price_meals, start=start, end=end,
         )
