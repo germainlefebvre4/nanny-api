@@ -3,6 +3,7 @@ from dateutil.relativedelta import relativedelta
 import holidays
 import pandas
 import json
+import math
 
 from typing import Any, List, Optional, Dict
 
@@ -190,7 +191,7 @@ def working_days_partial(working_days, contract, year, month, db):
     ]
     
     workingdays_list = [x.day for x in working_days]
-    weekmask = " ".join([x for x in contract.weekdays.keys() if x != "enabled"])
+    weekmask = " ".join([x for x in contract.weekdays.keys()])
 
     startDay = datetime.strptime(f"{year}-{month}-01", "%Y-%m-%d").date()
     endDay = datetime.strptime(f"{year}-{month}-01", "%Y-%m-%d").date() + relativedelta(months=+1, days=-1)
@@ -344,7 +345,7 @@ def read_contract_summary(
         # Add day_duration_real column: real time spent in the day
         # df['day_duration_real'] = df[['weekday']].apply(lambda x: weekdays_duration[x['weekday']], axis=1)
         for index, row in df.iterrows():
-            if df.loc[index, 'day_type_id'] not in [1,5,6,7]:
+            if df.loc[index, 'day_type_id'] not in [1,5,7]:
                 if df.loc[index, 'weekday'] in weekdays_duration.keys():
                     df.loc[index, 'day_duration_min'] = weekdays_duration[df.loc[index, 'weekday']]
                 else:
@@ -369,8 +370,9 @@ def read_contract_summary(
         # Browse data range by week
         week_durations = df.groupby(pandas.Grouper(freq='W-SUN'))['day_duration_billed'].sum()
         for index, week_duration in week_durations.iteritems():
+            week_duration = math.ceil(week_duration)
             week_hours_standard = min(week_duration, min(45, contract.hours))
-            week_hours_complementary = min(max(0, week_duration-contract.hours), abs(45-week_duration))
+            week_hours_complementary = max(min(week_duration-contract.hours, abs(45-contract.hours)), 0)
             week_hours_extra = max(0, week_duration-45)
 
             monthly_hours += week_duration
@@ -391,7 +393,7 @@ def read_contract_summary(
         week_durations = df.groupby(pandas.Grouper(freq='W-SUN'))['day_duration'].sum()
         for index, day_duration in week_durations.iteritems():
             # week_duration = day_duration.total_seconds()/3600
-            week_duration = day_duration
+            week_duration = math.ceil(day_duration)
             week_hours_standard = min(week_duration, min(45, contract.hours))
             week_hours_complementary = min(max(0, week_duration-contract.hours), abs(45-week_duration))
             week_hours_extra = max(0, week_duration-45)
@@ -462,6 +464,15 @@ def create_working_day(
             raise HTTPException(status_code=400, detail="User not found")
     else:
         raise HTTPException(status_code=400, detail="User not responsible")
+
+    # print(working_day_in)
+    working_day_exists = crud.working_day.get_by_day(
+        db, day_type_id=day_type_id,
+        contract_id=contract.id, day=working_day_in.day)
+    # print(working_day_exists)
+    if working_day_exists:
+        raise HTTPException(status_code=400, detail="Working day already exists")
+
     working_day = crud.working_day.create_with_owner(
         db=db, obj_in=working_day_in,
         day_type_id=day_type_id, contract_id=id)

@@ -52,9 +52,11 @@ def create_working_day(
     else:
         raise HTTPException(status_code=400, detail="User not responsible")
 
+    # print(working_day_in)
     working_day_exists = crud.working_day.get_by_day(
         db, day_type_id=day_type_id,
         contract_id=contract_id, day=working_day_in.day)
+    # print(working_day_exists)
     if working_day_exists:
         raise HTTPException(status_code=400, detail="Working day already exists")
 

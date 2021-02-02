@@ -653,7 +653,7 @@ def test_read_contract_month_summary_specific_by_user(
         "weeks": 47,
         "hours": 42.0,
         "price_hour_standard": 3.5,
-        "price_hour_extra": 3.8,
+        "price_hour_extra": 3.85,
         "price_fees": 3.11,
         "price_meals": 0.0,
         "start": str(date_today),
@@ -703,11 +703,11 @@ def test_read_contract_month_summary_specific_by_user(
     assert content["disease_nanny"] == 0
     assert content["daysoff_child"] == 0
     assert content["daysoff_nanny"] == 0
-    assert content["hours_standard"] == 178.5
+    assert content["hours_standard"] == 179
     assert content["hours_complementary"] == 0
     assert content["hours_extra"] == 0
-    assert content["monthly_hours"] == 178.5
-    assert content["monthly_salary"] == 624.75
+    assert content["monthly_hours"] == 179
+    assert content["monthly_salary"] == 626.5
     assert content["monthly_fees"] == 52.87
     assert content["price_hour_standard"] == 3.50
 
@@ -793,11 +793,11 @@ def test_read_contract_month_summary_specific_by_user(
     assert content["disease_nanny"] == 0
     assert content["daysoff_child"] == 0
     assert content["daysoff_nanny"] == 0
-    assert content["hours_standard"] == 178.5
+    assert content["hours_standard"] == 179
     assert content["hours_complementary"] == 0
     assert content["hours_extra"] == 0
-    assert content["monthly_hours"] == 178.5
-    assert content["monthly_salary"] == 624.75
+    assert content["monthly_hours"] == 179
+    assert content["monthly_salary"] == 626.50
     assert content["monthly_fees"] == 52.87
     assert content["price_hour_standard"] == contract["price_hour_standard"]
 
@@ -845,3 +845,126 @@ def test_read_contract_month_summary_specific_by_user(
     assert content["monthly_salary"] == 619.5
     assert content["monthly_fees"] == 49.76
     assert content["price_hour_standard"] == contract["price_hour_standard"]
+
+
+def test_read_contract_month_summary_specific_real_december_2020_by_user(
+    client: TestClient, normal_user_token_headers: dict, db: Session
+) -> None:
+    r = client.get(
+        f"{settings.API_V1_STR}/users/me",
+        headers=normal_user_token_headers)
+    user_id = r.json()["id"]
+    
+    # Create User
+    # contract = create_random_contract(db, user_id=user_id)
+    nanny = create_random_user(db)
+
+    # Create Contract
+    date_today = datetime.strptime("2020-09-01", "%Y-%m-%d").date()
+    data = {
+        "child": random_lower_string(),
+        "duration_mode": "daily",
+        "weekdays": {
+            "Mon": {
+                "hours": "8"
+            },
+            "Tue": {
+                "hours": "8"
+            },
+            "Wed": {
+                "hours": "8"
+            },
+            "Thu": {
+                "hours": "8"
+            },
+            "Fri": {
+                "hours": "8"
+            }
+        },
+        "weeks": 42,
+        "hours": 40.0,
+        "price_hour_standard": 3.5,
+        "price_hour_extra": 3.85,
+        "price_fees": 3.11,
+        "price_meals": 0.0,
+        "start": "2020-09-01",
+        "end": "2021-08-31"
+    }
+    response = client.post(
+        f"{settings.API_V1_STR}/contracts/" +
+        f"?user_id={user_id}&nanny_id={nanny.id}",
+        headers=normal_user_token_headers, json=data,
+    )
+    assert response.status_code == 200
+    contract = response.json()
+
+    # Day Types List:
+    #   1 : Dayoff
+    #   2 : Inherited contract
+    #   3 : Presence child
+    #   4 : Absence child
+    #   5 : Disease child
+    #   6 : Disease nanny
+    #   7 : Dayoff child
+    #   8 : Dayoff nanny
+
+    working_days_list = [
+        {"data": {"day": "2021-01-04", "start": "8:35:00","end": "18:30:00"}, "day_type_id": 3},
+        {"data": {"day": "2021-01-05", "start": "8:35:00","end": "18:20:00"}, "day_type_id": 3},
+        {"data": {"day": "2021-01-06", "start": "9:10:00","end": "17:55:00"}, "day_type_id": 3},
+        {"data": {"day": "2021-01-07", "start": "8:50:00","end": "17:30:00"}, "day_type_id": 3},
+        {"data": {"day": "2021-01-08", "start": "00:00:00","end": "00:00:00"}, "day_type_id": 6},
+        {"data": {"day": "2021-01-11", "start": "8:45:00","end": "18:10:00"}, "day_type_id": 3},
+        {"data": {"day": "2021-01-12", "start": "8:20:00","end": "17:45:00"}, "day_type_id": 3},
+        {"data": {"day": "2021-01-13", "start": "8:20:00","end": "18:05:00"}, "day_type_id": 3},
+        {"data": {"day": "2021-01-14", "start": "8:45:00","end": "18:30:00"}, "day_type_id": 3},
+        {"data": {"day": "2021-01-15", "start": "8:50:00","end": "18:20:00"}, "day_type_id": 3},
+        {"data": {"day": "2021-01-18", "start": "8:45:00","end": "17:50:00"}, "day_type_id": 3},
+        {"data": {"day": "2021-01-19", "start": "8:40:00","end": "16:00:00"}, "day_type_id": 3},
+        {"data": {"day": "2021-01-20", "start": "8:50:00","end": "18:00:00"}, "day_type_id": 3},
+        {"data": {"day": "2021-01-21", "start": "8:45:00","end": "17:45:00"}, "day_type_id": 3},
+        {"data": {"day": "2021-01-22", "start": "8:40:00","end": "18:10:00"}, "day_type_id": 3},
+        {"data": {"day": "2021-01-25", "start": "9:05:00","end": "18:10:00"}, "day_type_id": 3},
+        {"data": {"day": "2021-01-26", "start": "8:25:00","end": "18:05:00"}, "day_type_id": 3},
+        {"data": {"day": "2021-01-27", "start": "8:40:00","end": "17:55:00"}, "day_type_id": 3},
+        {"data": {"day": "2021-01-28", "start": "9:15:00","end": "17:50:00"}, "day_type_id": 3},
+        {"data": {"day": "2021-01-29", "start": "8:35:00","end": "18:15:00"}, "day_type_id": 3}
+    ]
+    # Create working days
+    for working_day in working_days_list:
+        response = client.post(
+            f"{settings.API_V1_STR}/contracts/{contract['id']}/working_days" +
+            f"?day_type_id={working_day['day_type_id']}",
+            headers=normal_user_token_headers, json=working_day['data'],
+        )
+        assert response.status_code == 200
+
+
+
+    # Get contract summary
+    month = 1
+    year = 2021
+
+    response = client.get(
+        f"{settings.API_V1_STR}/contracts/{contract['id']}/summary/?year={year}&month={month}",
+        headers=normal_user_token_headers,
+    )
+    assert response.status_code == 200
+    content = response.json()
+    assert isinstance(content, dict)
+
+    assert content["business_days"] == 20
+    assert content["working_days"] == 19
+    assert content["presence_child"] == 19
+    assert content["absence_child"] == 0
+    assert content["disease_child"] == 0
+    assert content["disease_nanny"] == 1
+    assert content["daysoff_child"] == 0
+    assert content["daysoff_nanny"] == 0
+    assert content["hours_standard"] == 158
+    assert content["hours_complementary"] == 15
+    assert content["hours_extra"] == 5
+    assert content["monthly_hours"] == 178
+    assert content["monthly_salary"] == 624.75
+    assert content["monthly_fees"] == 59.09
+    # assert content["price_hour_standard"] == contract["price_hour_standard"]
